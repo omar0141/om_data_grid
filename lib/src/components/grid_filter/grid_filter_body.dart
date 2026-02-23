@@ -325,8 +325,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                                   fontSize: mySize(xs: 16, md: 14),
                                   fontWeight: FontWeight.bold,
                                   backgroundColor: widget
-                                      .configuration
-                                      .primaryColor
+                                      .configuration.primaryColor
                                       .withOpacity(0.3),
                                 ),
                               ),
@@ -344,7 +343,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
     );
   }
 
-  void keepTheSelectedItemsWhileSearching(item) {
+  void keepTheSelectedItemsWhileSearching(Map<String, dynamic> item) {
     int orgIndex = orgData.indexWhere(
       (orgItem) => orgItem["value"] == item["value"],
     );
@@ -421,14 +420,10 @@ class _GridFilterBodyState extends State<GridFilterBody> {
           }
         }
       }
-      orgData = orgValues
-          .toSet()
-          .map((obj) => Map.from({"value": obj}))
-          .toList();
-      dataSource = values
-          .toSet()
-          .map((obj) => Map.from({"value": obj}))
-          .toList();
+      orgData =
+          orgValues.toSet().map((obj) => Map.from({"value": obj})).toList();
+      dataSource =
+          values.toSet().map((obj) => Map.from({"value": obj})).toList();
     } else {
       orgData = availableData
           .map((obj) => obj[key].toString())
@@ -547,8 +542,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
             ),
             child: TextField(
               controller: controller,
-              readOnly:
-                  [
+              readOnly: [
                     GridRowTypeEnum.date,
                     GridRowTypeEnum.dateTime,
                     GridRowTypeEnum.time,
@@ -578,13 +572,13 @@ class _GridFilterBodyState extends State<GridFilterBody> {
 
                     DateTimeRange? pickedRange =
                         await GridDatePickerUtils.showModernDateRangePicker(
-                          context: context,
-                          configuration: widget.configuration,
-                          initialDateRange: DateTimeRange(
-                            start: start,
-                            end: end,
-                          ),
-                        );
+                      context: context,
+                      configuration: widget.configuration,
+                      initialDateRange: DateTimeRange(
+                        start: start,
+                        end: end,
+                      ),
+                    );
 
                     if (pickedRange != null) {
                       setState(() {
@@ -607,10 +601,10 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                         DateTime.tryParse(condition.value) ?? DateTime.now();
                     DateTime? picked =
                         await GridDatePickerUtils.showModernDatePicker(
-                          context: context,
-                          configuration: widget.configuration,
-                          initialDate: current,
-                        );
+                      context: context,
+                      configuration: widget.configuration,
+                      initialDate: current,
+                    );
                     if (picked != null) {
                       setState(() {
                         condition.value = picked.toIso8601String();
@@ -625,9 +619,9 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   if (condition.type == FilterConditionType.between) {
                     TimeRange? picked =
                         await GridDatePickerUtils.showModernTimeRangePicker(
-                          context: context,
-                          configuration: widget.configuration,
-                        );
+                      context: context,
+                      configuration: widget.configuration,
+                    );
                     if (picked != null) {
                       final now = DateTime.now();
                       final startDt = DateTime(
@@ -654,9 +648,9 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   } else {
                     TimeOfDay? pickedTime =
                         await GridDatePickerUtils.showModernTimePicker(
-                          context: context,
-                          configuration: widget.configuration,
-                        );
+                      context: context,
+                      configuration: widget.configuration,
+                    );
                     if (pickedTime != null) {
                       final now = DateTime.now();
                       final dt = DateTime(
@@ -725,8 +719,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
               ),
               child: TextField(
                 controller: controllerTo,
-                readOnly:
-                    [
+                readOnly: [
                       GridRowTypeEnum.date,
                       GridRowTypeEnum.dateTime,
                       GridRowTypeEnum.time,
@@ -752,9 +745,9 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                       condition.type == FilterConditionType.between) {
                     TimeRange? picked =
                         await GridDatePickerUtils.showModernTimeRangePicker(
-                          context: context,
-                          configuration: widget.configuration,
-                        );
+                      context: context,
+                      configuration: widget.configuration,
+                    );
                     if (picked != null) {
                       final now = DateTime.now();
                       final startDt = DateTime(
@@ -840,7 +833,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
     setState(() {});
   }
 
-  String getTextFromValue(item) {
+  String getTextFromValue(Map<String, dynamic> item) {
     return FilterUtils.getDisplayValue(item["value"], attributes);
   }
 
@@ -907,8 +900,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                 }
 
                 // 6. Update filter icon visibility
-                attributes.filter =
-                    attributes.notSelectedFilterData != null &&
+                attributes.filter = attributes.notSelectedFilterData != null &&
                     attributes.notSelectedFilterData!.isNotEmpty;
 
                 List data = FilterUtils.performFiltering(

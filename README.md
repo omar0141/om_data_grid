@@ -9,7 +9,7 @@ A high-performance, feature-rich, and fully customizable DataGrid for Flutter. D
 
 ## 🌐 Live Demo
 
-Check out the interactive demo: **[Live Web Demo](https://omar01411.github.io/data_grid_release/)**
+Check out the interactive demo: **[Live Web Demo](https://omar0141.github.io/om_data_grid_release/)**
 
 ---
 

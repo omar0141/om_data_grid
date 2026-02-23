@@ -15,7 +15,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
   @override
   void initState() {
     super.initState();
-    data = List.generate(5, (index) {
+    data = List.generate(10000, (index) {
       final departments = ['Development', 'Design', 'Marketing', 'Sales', 'HR'];
       final names = [
         'John Doe',

@@ -39,6 +39,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: example/build/web
-          branch: gh-pages
-          # token: ${{ secrets.DEMO_DEPLOY_TOKEN }} # (Optional) Use a Personal Access Token as a Secret named DEMO_DEPLOY_TOKEN
-          # repository-name: omar0141/om_data_grid_release # (Optional) Set this if you want to deploy to a different repository
+          branch: main # Deploying to main branch of the release repo
+          token: ${{ secrets.DEMO_DEPLOY_TOKEN }}
+          repository-name: omar0141/om_data_grid_release

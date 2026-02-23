@@ -7,6 +7,7 @@ import 'package:om_data_grid/src/enums/aggregation_type_enum.dart';
 import 'package:om_data_grid/src/utils/filter_utils.dart';
 import 'package:expressions/expressions.dart';
 
+/// Controller for the Data Grid, managing state, data, and configuration.
 class DatagridController extends ChangeNotifier {
   List<Map<String, dynamic>> _data;
   List<Map<String, dynamic>> _filteredData;
@@ -24,14 +25,31 @@ class DatagridController extends ChangeNotifier {
   void Function(List<Map<String, dynamic>> data, List<GridColumnModel> columns)?
   onVisualize;
 
+  /// Callback when the add button is pressed.
   void Function()? onAddPressed;
 
+  /// Callback to show the column chooser dialog.
   void Function()? onShowColumnChooser;
+
+  /// Callback to reset the grid state.
   void Function()? onReset;
+
+  /// Callback when a row is reordered.
   void Function(int oldIndex, int newIndex)? onRowReorder;
+
+  /// Callback invoked before a row is reordered.
+  /// Return true to allow, false to cancel.
   Future<bool> Function(int oldIndex, int newIndex)? onBeforeRowReorder;
+
+  /// Callback when a column is reordered.
   void Function(int oldIndex, int newIndex)? onColumnReorder;
 
+  /// Creates a [DatagridController].
+  ///
+  /// [data] - The initial list of data rows.
+  /// [columnModels] - Configuration for the grid columns.
+  /// [configuration] - General configuration settings for the grid.
+  /// [additionalSidePanelTabs] - Custom tabs to add to the side panel.
   DatagridController({
     required List<Map<String, dynamic>> data,
     required List<GridColumnModel> columnModels,

@@ -4,27 +4,57 @@ import '../enums/selection_mode_enum.dart';
 import '../enums/grid_border_visibility_enum.dart';
 import 'side_panel_config.dart';
 
+/// Defines how column widths are calculated.
 enum ColumnWidthMode {
+  /// Columns fill the available width.
   fill,
+
+  /// Columns sized automatically.
   auto,
+
+  /// Columns sized to fit their cell values.
   fitByCellValue,
+
+  /// Columns sized to fit their header name.
   fitByColumnName,
+
+  /// The last column fills the remaining space.
   lastColumnFill,
+
+  /// No automatic sizing.
   none,
 }
 
+/// Defines the style of pagination.
 enum PaginationMode {
-  simple, // showing "Page 1 of 10"
-  pages, // showing [1, 2, 3...]
+  /// Shows "Page X of Y".
+  simple,
+
+  /// Shows numbered page buttons [1, 2, 3...].
+  pages,
 }
 
-enum FrozenPaneScrollMode { fixed, sticky }
+/// Defines the scrolling behavior of frozen panes.
+enum FrozenPaneScrollMode {
+  /// Frozen panes remain fixed.
+  fixed,
 
+  /// Frozen panes stick to the edge.
+  sticky,
+}
+
+/// Configuration for the quick filter bar.
 class QuickFilterConfig {
+  /// The key of the column to filter.
   final String columnKey;
+
+  /// Whether multiple values can be selected.
   final bool isMultiSelect;
+
+  /// Whether to show the column title.
   final bool showTitle;
 
+  /// Creates a [QuickFilterConfig].
   const QuickFilterConfig({
     required this.columnKey,
     this.isMultiSelect = false,
@@ -32,17 +62,28 @@ class QuickFilterConfig {
   });
 }
 
+/// Represents an item in the grid's context menu.
 class DatagridContextMenuItem {
+  /// Label for the menu item.
   final String label;
+
+  /// Icon for the menu item.
   final IconData icon;
+
+  /// Value associated with the menu item.
   final String value;
+
+  /// Whether the action is destructive (e.g., delete).
   final bool isDestructive;
+
+  /// Callback when the item is pressed.
   final void Function(
     List<Map<String, dynamic>> selectedRows,
     List<GridColumnModel> selectedColumns,
   )?
   onPressed;
 
+  /// Creates a [DatagridContextMenuItem].
   const DatagridContextMenuItem({
     required this.label,
     required this.icon,
@@ -52,6 +93,7 @@ class DatagridContextMenuItem {
   });
 }
 
+/// Configuration for the Data Grid's appearance and behavior.
 class DatagridConfiguration {
   final Color headerBackgroundColor;
   final Color headerForegroundColor;

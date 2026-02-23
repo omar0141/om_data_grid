@@ -1,11 +1,21 @@
+/// Model representing a header in a combo box.
 class ComboBoxHeaderModel {
+  /// The key identifier of the header.
   String? key;
+
+  /// The display name of the header.
   String? name;
+
+  /// The width of the header column.
   double? width;
+
+  /// Mobile visibility flag.
   int? isMobile;
 
+  /// Creates a [ComboBoxHeaderModel].
   ComboBoxHeaderModel({this.key, this.name, this.width, this.isMobile});
 
+  /// Creates a [ComboBoxHeaderModel] from JSON.
   ComboBoxHeaderModel.fromJson(Map<String, dynamic> json) {
     key = json['key'];
     name = json['name'];
@@ -13,6 +23,7 @@ class ComboBoxHeaderModel {
     isMobile = json['is_mobile'];
   }
 
+  /// Converts to JSON map.
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['key'] = key;

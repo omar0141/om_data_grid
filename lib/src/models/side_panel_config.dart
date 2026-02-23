@@ -1,14 +1,25 @@
 import 'package:om_data_grid/src/utils/datagrid_controller.dart';
 import 'package:flutter/material.dart';
 
+/// Configuration for a tab in the grid's side panel.
 class GridSidePanelTab {
+  /// Unique identifier for the tab.
   final String id;
+
+  /// Icon to display for the tab.
   final IconData icon;
+
+  /// Label for the tab.
   final String label;
+
+  /// Builder function to create the tab's content.
   final Widget Function(BuildContext context, DatagridController controller)
   builder;
+
+  /// Whether the tab is visible.
   final bool visible;
 
+  /// Creates a [GridSidePanelTab].
   const GridSidePanelTab({
     required this.id,
     required this.icon,
@@ -17,6 +28,7 @@ class GridSidePanelTab {
     this.visible = true,
   });
 
+  /// Creates a copy of this tab with modified properties.
   GridSidePanelTab copyWith({
     String? id,
     IconData? icon,

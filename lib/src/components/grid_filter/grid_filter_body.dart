@@ -31,7 +31,7 @@ class GridFilterBody extends StatefulWidget {
   final DatagridConfiguration configuration;
   final String? globalSearchText;
 
-  static clearSearch({
+  static void clearSearch({
     GridColumnModel? attribute,
     required List<dynamic> orgData,
     required List<GridColumnModel> allAttributes,
@@ -47,7 +47,7 @@ class GridFilterBody extends StatefulWidget {
     );
   }
 
-  static _performFilteringWithoutState({
+  static void _performFilteringWithoutState({
     GridColumnModel? attribute,
     required List<dynamic> orgData,
     required List<GridColumnModel> allAttributes,

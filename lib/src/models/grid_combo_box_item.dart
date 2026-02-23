@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 
+/// Represents an item in a combo box grid column.
 class GridComboBoxItem {
+  /// The underlying value of the item.
   String? value;
+
+  /// The display text of the item.
   String text;
+
+  /// Optional color associated with the item.
   Color? color;
+
+  /// Input string (used for filtering).
   String? input = "";
+
+  /// Additional data associated with the item.
   Map<String, dynamic> extraData;
 
+  /// Creates a [GridComboBoxItem].
   GridComboBoxItem({
     required this.value,
     required this.text,

@@ -23,21 +23,47 @@ double screenWidth = 0.0;
 double screenHeight = 0.0;
 
 class Datagrid extends StatefulWidget {
+  /// The main widget for the Data Grid.
+  ///
+  /// This widget renders the grid with columns, rows, and various features like
+  /// sorting, filtering, selection, and editing.
   const Datagrid({
     super.key,
 
+    /// Callback for when the selection changes.
+    /// Returns a list of selected rows as maps.
     this.onSelectionChanged,
+
+    /// Callback for when a row is tapped.
+    /// Returns the data of the tapped row.
     this.onRowTap,
+
+    /// Callback for search operations.
     this.onSearch,
+
+    /// Callback for when rows are reordered.
     this.onRowReorder,
+
+    /// Callback called before row reordering happens.
     this.onBeforeRowReorder,
+
+    /// Callback for when columns are reordered.
     this.onColumnReorder,
+
+    /// Whether the grid is currently in editing mode.
     this.isEditing = false,
+
+    /// The controller for the Data Grid.
+    /// Manages state, configuration, and data operations.
     required this.controller,
   });
 
+  /// Function to call when selection changes.
   final Function(List<Map<String, dynamic>>)? onSelectionChanged;
+
+  /// Function to call when a row is tapped.
   final Function(Map<String, dynamic>)? onRowTap;
+
   final void Function(List<dynamic>)? onSearch;
   final void Function(int oldIndex, int newIndex)? onRowReorder;
   final Future<bool> Function(int oldIndex, int newIndex)? onBeforeRowReorder;

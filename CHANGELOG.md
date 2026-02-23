@@ -1,3 +1,6 @@
+## 0.0.6
+- update to last versions of packages
+
 ## 0.0.5
 
 - Fix static analysis issues.

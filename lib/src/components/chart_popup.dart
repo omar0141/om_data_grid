@@ -51,10 +51,10 @@ class _ChartPopupState extends State<ChartPopup> {
   bool _isExporting = false;
 
   // Global Keys for charts to capture images
-  final GlobalKey<SfCartesianChartState> _cartesianChartKey = GlobalKey();
-  final GlobalKey<SfCircularChartState> _circularChartKey = GlobalKey();
-  final GlobalKey<SfFunnelChartState> _funnelChartKey = GlobalKey();
-  final GlobalKey<SfPyramidChartState> _pyramidChartKey = GlobalKey();
+  GlobalKey<SfCartesianChartState> _cartesianChartKey = GlobalKey();
+  GlobalKey<SfCircularChartState> _circularChartKey = GlobalKey();
+  GlobalKey<SfFunnelChartState> _funnelChartKey = GlobalKey();
+  GlobalKey<SfPyramidChartState> _pyramidChartKey = GlobalKey();
 
   @override
   void initState() {
@@ -74,14 +74,12 @@ class _ChartPopupState extends State<ChartPopup> {
     _titleController = TextEditingController(text: 'Data Analysis');
 
     // Filter columns that can be shown in charts
-    final visibleChartColumns = widget.columns
-        .where((c) => c.showInChart)
-        .toList();
+    final visibleChartColumns =
+        widget.columns.where((c) => c.showInChart).toList();
 
     // Initialize X-Axis
-    final xAxisOptions = visibleChartColumns
-        .where((c) => c.canBeXAxis)
-        .toList();
+    final xAxisOptions =
+        visibleChartColumns.where((c) => c.canBeXAxis).toList();
     if (xAxisOptions.isNotEmpty) {
       _xAxisColumn = xAxisOptions.first.column.key;
     } else {
@@ -103,9 +101,8 @@ class _ChartPopupState extends State<ChartPopup> {
       // Select all numeric columns by default
       _yAxisColumns = List.from(numericKeys);
     } else {
-      final yAxisOptions = visibleChartColumns
-          .where((c) => c.canBeYAxis)
-          .toList();
+      final yAxisOptions =
+          visibleChartColumns.where((c) => c.canBeYAxis).toList();
       if (yAxisOptions.isNotEmpty) {
         _yAxisColumns = [yAxisOptions.first.column.key];
       } else {
@@ -236,9 +233,8 @@ class _ChartPopupState extends State<ChartPopup> {
         onTapDown: (_) => widget.onBringToFront?.call(),
         child: Material(
           elevation: _isFullScreen ? 0 : 12,
-          borderRadius: _isFullScreen
-              ? BorderRadius.zero
-              : BorderRadius.circular(8),
+          borderRadius:
+              _isFullScreen ? BorderRadius.zero : BorderRadius.circular(8),
           clipBehavior: Clip.antiAlias,
           child: Container(
             decoration: BoxDecoration(
@@ -354,10 +350,21 @@ class _ChartPopupState extends State<ChartPopup> {
                       showTooltip: _showTooltip,
                       isTransposed: _isTransposed,
                       onTabChanged: (i) => setState(() => _activeTab = i),
-                      onChartTypeChanged: (t) =>
-                          setState(() => _selectedChartType = t),
+                      onChartTypeChanged: (t) => setState(() {
+                        _selectedChartType = t;
+                        _cartesianChartKey = GlobalKey();
+                        _circularChartKey = GlobalKey();
+                        _funnelChartKey = GlobalKey();
+                        _pyramidChartKey = GlobalKey();
+                      }),
                       onXAxisChanged: (v) => setState(() => _xAxisColumn = v),
-                      onYAxisChanged: (v) => setState(() => _yAxisColumns = v),
+                      onYAxisChanged: (v) => setState(() {
+                        _yAxisColumns = v;
+                        _cartesianChartKey = GlobalKey();
+                        _circularChartKey = GlobalKey();
+                        _funnelChartKey = GlobalKey();
+                        _pyramidChartKey = GlobalKey();
+                      }),
                       onShowLegendChanged: (v) =>
                           setState(() => _showLegend = v),
                       onShowDataLabelsChanged: (v) =>
@@ -455,7 +462,13 @@ class _ChartPopupState extends State<ChartPopup> {
                       setModalState(() {});
                     },
                     onChartTypeChanged: (t) {
-                      setState(() => _selectedChartType = t);
+                      setState(() {
+                        _selectedChartType = t;
+                        _cartesianChartKey = GlobalKey();
+                        _circularChartKey = GlobalKey();
+                        _funnelChartKey = GlobalKey();
+                        _pyramidChartKey = GlobalKey();
+                      });
                       setModalState(() {});
                     },
                     onXAxisChanged: (v) {
@@ -463,7 +476,13 @@ class _ChartPopupState extends State<ChartPopup> {
                       setModalState(() {});
                     },
                     onYAxisChanged: (v) {
-                      setState(() => _yAxisColumns = v);
+                      setState(() {
+                        _yAxisColumns = v;
+                        _cartesianChartKey = GlobalKey();
+                        _circularChartKey = GlobalKey();
+                        _funnelChartKey = GlobalKey();
+                        _pyramidChartKey = GlobalKey();
+                      });
                       setModalState(() {});
                     },
                     onShowLegendChanged: (v) {

@@ -1,6 +1,6 @@
 name: om_data_grid
 description: "A powerful, customizable, and high-performance data grid for Flutter apps, with support for advanced filtering, sorting, grouping, and charting."
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/omar0141/om_data_grid
 repository: https://github.com/omar0141/om_data_grid
 issue_tracker: https://github.com/omar0141/om_data_grid/issues
@@ -25,18 +25,18 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   iconsax_flutter: ^1.0.1
-  syncfusion_flutter_charts: ^27.2.5
-  syncfusion_flutter_pdf: ^27.2.5
-  syncfusion_flutter_xlsio: ^27.2.5
-  path_provider: ^2.1.1
+  syncfusion_flutter_charts: ^32.2.5
+  syncfusion_flutter_pdf: ^32.2.5
+  syncfusion_flutter_xlsio: ^32.2.5
+  path_provider: ^2.1.5
   open_file_plus: ^3.4.1+1
-  universal_html: ^2.2.4
-  expressions: ^0.2.5+2
-  intl: ^0.18.1
-  image_picker: ^1.0.4
-  file_picker: ^8.0.7
-  syncfusion_flutter_datepicker: ^27.2.5
-  http: ^1.2.1
+  universal_html: ^2.3.0
+  expressions: ^0.2.5+3	
+  intl: ^0.20.2
+  image_picker: ^1.2.1
+  file_picker: ^10.3.10
+  syncfusion_flutter_datepicker: ^32.2.5
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

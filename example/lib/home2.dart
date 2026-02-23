@@ -40,7 +40,6 @@ class _HomeScreen2State extends State<HomeScreen2> {
         "Date": "2023-${(index % 12) + 1}-${(index % 28) + 1}",
         "Time": "${10 + (index % 12)}:30",
         "LastLogin": DateTime.now().subtract(Duration(days: index)),
-        "IsActive": index % 2 == 0,
         "Avatar":
             "https://api.dicebear.com/7.x/avataaars/png?seed=${index + 1}",
         "Status": ['Active', 'Pending', 'Inactive'][index % 3],
@@ -61,6 +60,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         title: "Full Name",
         width: 180,
         showPlaceholderWhileScrolling: false,
+        canBeXAxis: true,
       ),
       GridColumn(
         key: "Job",
@@ -79,12 +79,14 @@ class _HomeScreen2State extends State<HomeScreen2> {
         displayKey: "label",
         valueKey: "value",
         showPlaceholderWhileScrolling: false,
+        canBeXAxis: true,
       ),
       GridColumn(
         key: "Experience",
         title: "Years Exp",
         width: 120,
         type: GridRowTypeEnum.integer,
+        canBeYAxis: true,
       ),
       GridColumn(
         key: "Rating",
@@ -94,13 +96,8 @@ class _HomeScreen2State extends State<HomeScreen2> {
         decimalSeparator: '.',
         thousandsSeparator: ',',
         decimalDigits: 1,
+        canBeYAxis: true,
       ),
-      // GridColumn(
-      //   key: "IsActive",
-      //   title: "Active",
-      //   width: 100,
-      //   type: GridRowTypeEnum.iosSwitch,
-      // ),
       GridColumn(
         key: "Date",
         title: "Join Date",

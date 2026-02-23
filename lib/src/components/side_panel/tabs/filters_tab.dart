@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class FiltersTab extends StatefulWidget {
-  final DatagridController controller;
+  final OmDataGridController controller;
 
   const FiltersTab({super.key, required this.controller});
 
@@ -61,7 +61,7 @@ class _FiltersTabState extends State<FiltersTab> {
         .toList();
 
     final comboItems = filterableColumns
-        .map((col) => GridComboBoxItem(value: col.key, text: col.title))
+        .map((col) => OmGridComboBoxItem(value: col.key, text: col.title))
         .toList();
 
     return Column(
@@ -87,11 +87,11 @@ class _FiltersTabState extends State<FiltersTab> {
                   );
                   col.filter = true;
                   if (col.advancedFilter == null) {
-                    col.advancedFilter = AdvancedFilterModel(
-                      conditions: [FilterCondition()],
+                    col.advancedFilter = OmAdvancedFilterModel(
+                      conditions: [OmFilterCondition()],
                     );
                   } else if (col.advancedFilter!.conditions.isEmpty) {
-                    col.advancedFilter!.conditions.add(FilterCondition());
+                    col.advancedFilter!.conditions.add(OmFilterCondition());
                   }
                 });
               }
@@ -135,7 +135,7 @@ class _FiltersTabState extends State<FiltersTab> {
   }
 
   void _applyFilters() {
-    final newData = FilterUtils.performFiltering(
+    final newData = OmFilterUtils.performFiltering(
       data: widget.controller.data,
       allColumns: widget.controller.columnModels,
       globalSearch: widget.controller.globalSearchText,
@@ -146,10 +146,10 @@ class _FiltersTabState extends State<FiltersTab> {
 }
 
 class _FilterCard extends StatefulWidget {
-  final GridColumnModel columnModel;
+  final OmGridColumnModel columnModel;
   final VoidCallback onRemove;
   final VoidCallback onApply;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
 
   const _FilterCard({
     super.key,
@@ -207,12 +207,12 @@ class _FilterCardState extends State<_FilterCard> {
   @override
   Widget build(BuildContext context) {
     final advancedFilter = widget.columnModel.advancedFilter ??=
-        AdvancedFilterModel(conditions: [FilterCondition()]);
+        OmAdvancedFilterModel(conditions: [OmFilterCondition()]);
     if (advancedFilter.conditions.isEmpty) {
-      advancedFilter.conditions.add(FilterCondition());
+      advancedFilter.conditions.add(OmFilterCondition());
     }
     if (advancedFilter.conditions.length < 2) {
-      advancedFilter.conditions.add(FilterCondition());
+      advancedFilter.conditions.add(OmFilterCondition());
     }
 
     final condition1 = advancedFilter.conditions[0];
@@ -279,11 +279,11 @@ class _FilterCardState extends State<_FilterCard> {
                 children: [
                   _buildOperatorRadio(
                     "And",
-                    FilterOperator.and,
+                    OmFilterOperator.and,
                     advancedFilter,
                   ),
                   const SizedBox(width: 16),
-                  _buildOperatorRadio("Or", FilterOperator.or, advancedFilter),
+                  _buildOperatorRadio("Or", OmFilterOperator.or, advancedFilter),
                 ],
               ),
             ),
@@ -310,9 +310,9 @@ class _FilterCardState extends State<_FilterCard> {
                         _textController1To.text = '';
                         _textController2.text = '';
                         _textController2To.text = '';
-                        condition1.type = FilterConditionType.contains;
-                        condition2.type = FilterConditionType.contains;
-                        advancedFilter.operator = FilterOperator.and;
+                        condition1.type = OmFilterConditionType.contains;
+                        condition2.type = OmFilterConditionType.contains;
+                        advancedFilter.operator = OmFilterOperator.and;
                       });
                       widget.onApply();
                     },
@@ -343,8 +343,8 @@ class _FilterCardState extends State<_FilterCard> {
 
   Widget _buildOperatorRadio(
     String label,
-    FilterOperator value,
-    AdvancedFilterModel model,
+    OmFilterOperator value,
+    OmAdvancedFilterModel model,
   ) {
     return InkWell(
       onTap: () {
@@ -357,7 +357,7 @@ class _FilterCardState extends State<_FilterCard> {
           SizedBox(
             width: 24,
             height: 24,
-            child: Radio<FilterOperator>(
+            child: Radio<OmFilterOperator>(
               value: value,
               activeColor: widget.configuration.primaryColor,
               groupValue: model.operator,
@@ -377,11 +377,11 @@ class _FilterCardState extends State<_FilterCard> {
   }
 
   Widget _buildConditionSection(
-    FilterCondition condition,
+    OmFilterCondition condition,
     TextEditingController controller,
     TextEditingController controllerTo,
   ) {
-    bool isBetween = condition.type == FilterConditionType.between;
+    bool isBetween = condition.type == OmFilterConditionType.between;
 
     return Column(
       children: [
@@ -393,10 +393,10 @@ class _FilterCardState extends State<_FilterCard> {
               borderRadius: BorderRadius.circular(4),
             ),
             child: GridComboBox(
-              items: FilterConditionType.values.map((e) {
+              items: OmFilterConditionType.values.map((e) {
                 String label = e.toString().split('.').last;
                 label = label[0].toUpperCase() + label.substring(1);
-                return GridComboBoxItem(value: e.toString(), text: label);
+                return OmGridComboBoxItem(value: e.toString(), text: label);
               }).toList(),
               initialValue: condition.type.toString(),
               height: 36,
@@ -407,7 +407,7 @@ class _FilterCardState extends State<_FilterCard> {
               onChange: (val) {
                 if (val != null) {
                   setState(() {
-                    condition.type = FilterConditionType.values.firstWhere(
+                    condition.type = OmFilterConditionType.values.firstWhere(
                       (e) => e.toString() == val,
                     );
                   });
@@ -418,8 +418,8 @@ class _FilterCardState extends State<_FilterCard> {
             ),
           ),
         ),
-        if (condition.type != FilterConditionType.empty &&
-            condition.type != FilterConditionType.notEmpty)
+        if (condition.type != OmFilterConditionType.empty &&
+            condition.type != OmFilterConditionType.notEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: Column(
@@ -435,28 +435,28 @@ class _FilterCardState extends State<_FilterCard> {
                     controller: controller,
                     readOnly:
                         [
-                          GridRowTypeEnum.date,
-                          GridRowTypeEnum.dateTime,
-                          GridRowTypeEnum.time,
+                          OmGridRowTypeEnum.date,
+                          OmGridRowTypeEnum.dateTime,
+                          OmGridRowTypeEnum.time,
                         ].contains(widget.columnModel.type) &&
                         ![
-                          FilterConditionType.contains,
-                          FilterConditionType.notContains,
-                          FilterConditionType.startsWith,
-                          FilterConditionType.endsWith,
+                          OmFilterConditionType.contains,
+                          OmFilterConditionType.notContains,
+                          OmFilterConditionType.startsWith,
+                          OmFilterConditionType.endsWith,
                         ].contains(condition.type),
                     onTap: () async {
                       if ([
-                        FilterConditionType.contains,
-                        FilterConditionType.notContains,
-                        FilterConditionType.startsWith,
-                        FilterConditionType.endsWith,
+                        OmFilterConditionType.contains,
+                        OmFilterConditionType.notContains,
+                        OmFilterConditionType.startsWith,
+                        OmFilterConditionType.endsWith,
                       ].contains(condition.type)) {
                         return;
                       }
-                      if (widget.columnModel.type == GridRowTypeEnum.date ||
-                          widget.columnModel.type == GridRowTypeEnum.dateTime) {
-                        if (condition.type == FilterConditionType.between) {
+                      if (widget.columnModel.type == OmGridRowTypeEnum.date ||
+                          widget.columnModel.type == OmGridRowTypeEnum.dateTime) {
+                        if (condition.type == OmFilterConditionType.between) {
                           DateTime start =
                               DateTime.tryParse(condition.value) ??
                               DateTime.now();
@@ -517,7 +517,7 @@ class _FilterCardState extends State<_FilterCard> {
                           }
                         }
                       } else if (widget.columnModel.type ==
-                          GridRowTypeEnum.time) {
+                          OmGridRowTypeEnum.time) {
                         TimeOfDay? pickedTime =
                             await GridDatePickerUtils.showModernTimePicker(
                               context: context,
@@ -584,14 +584,14 @@ class _FilterCardState extends State<_FilterCard> {
                     child: TextField(
                       controller: controllerTo,
                       readOnly: [
-                        GridRowTypeEnum.date,
-                        GridRowTypeEnum.dateTime,
-                        GridRowTypeEnum.time,
+                        OmGridRowTypeEnum.date,
+                        OmGridRowTypeEnum.dateTime,
+                        OmGridRowTypeEnum.time,
                       ].contains(widget.columnModel.type),
                       onTap: () async {
-                        if (widget.columnModel.type == GridRowTypeEnum.date ||
+                        if (widget.columnModel.type == OmGridRowTypeEnum.date ||
                             widget.columnModel.type ==
-                                GridRowTypeEnum.dateTime) {
+                                OmGridRowTypeEnum.dateTime) {
                           DateTime start =
                               DateTime.tryParse(condition.value) ??
                               DateTime.now();
@@ -611,7 +611,7 @@ class _FilterCardState extends State<_FilterCard> {
 
                           if (pickedRange != null) {
                             setState(() {
-                              condition.type = FilterConditionType.between;
+                              condition.type = OmFilterConditionType.between;
                               condition.value = pickedRange.start
                                   .toIso8601String();
                               condition.valueTo = pickedRange.end
@@ -630,7 +630,7 @@ class _FilterCardState extends State<_FilterCard> {
                             widget.onApply();
                           }
                         } else if (widget.columnModel.type ==
-                            GridRowTypeEnum.time) {
+                            OmGridRowTypeEnum.time) {
                           TimeOfDay? pickedTime =
                               await GridDatePickerUtils.showModernTimePicker(
                                 context: context,

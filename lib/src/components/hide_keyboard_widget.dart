@@ -1,8 +1,8 @@
 import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:flutter/material.dart';
 
-class Hidekeyboardwidget extends StatelessWidget {
-  const Hidekeyboardwidget({
+class OmHideKeyboardWidget extends StatelessWidget {
+  const OmHideKeyboardWidget({
     super.key,
     required this.child,
     this.additionHeight = 40,
@@ -10,7 +10,7 @@ class Hidekeyboardwidget extends StatelessWidget {
   });
   final Widget child;
   final double additionHeight;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
 
   @override
   Widget build(BuildContext context) {

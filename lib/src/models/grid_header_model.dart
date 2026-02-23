@@ -1,5 +1,5 @@
 /// Model representing a header in a combo box.
-class ComboBoxHeaderModel {
+class OmComboBoxHeaderModel {
   /// The key identifier of the header.
   String? key;
 
@@ -12,11 +12,11 @@ class ComboBoxHeaderModel {
   /// Mobile visibility flag.
   int? isMobile;
 
-  /// Creates a [ComboBoxHeaderModel].
-  ComboBoxHeaderModel({this.key, this.name, this.width, this.isMobile});
+  /// Creates a [OmComboBoxHeaderModel].
+  OmComboBoxHeaderModel({this.key, this.name, this.width, this.isMobile});
 
-  /// Creates a [ComboBoxHeaderModel] from JSON.
-  ComboBoxHeaderModel.fromJson(Map<String, dynamic> json) {
+  /// Creates a [OmComboBoxHeaderModel] from JSON.
+  OmComboBoxHeaderModel.fromJson(Map<String, dynamic> json) {
     key = json['key'];
     name = json['name'];
     width = double.tryParse(json['width']?.toString() ?? '');

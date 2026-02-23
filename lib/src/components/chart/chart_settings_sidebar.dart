@@ -6,13 +6,13 @@ import 'chart_types.dart';
 import '../../models/grid_column_model.dart';
 import '../../models/datagrid_configuration.dart';
 
-class ChartSettingsSidebar extends StatelessWidget {
+class OmChartSettingsSidebar extends StatelessWidget {
   final int activeTab;
-  final ChartType selectedChartType;
+  final OmChartType selectedChartType;
   final String xAxisColumn;
   final List<String> yAxisColumns;
-  final List<GridColumnModel> columns;
-  final DatagridConfiguration configuration;
+  final List<OmGridColumnModel> columns;
+  final OmDataGridConfiguration configuration;
   final TextEditingController titleController;
   final bool showLegend;
   final bool showDataLabels;
@@ -20,7 +20,7 @@ class ChartSettingsSidebar extends StatelessWidget {
   final bool isTransposed;
   final bool isMobile;
   final Function(int) onTabChanged;
-  final Function(ChartType) onChartTypeChanged;
+  final Function(OmChartType) onChartTypeChanged;
   final Function(String) onXAxisChanged;
   final Function(List<String>) onYAxisChanged;
   final Function(bool) onShowLegendChanged;
@@ -33,7 +33,7 @@ class ChartSettingsSidebar extends StatelessWidget {
   final VoidCallback? onExportPDF;
   final VoidCallback? onExportExcel;
 
-  const ChartSettingsSidebar({
+  const OmChartSettingsSidebar({
     super.key,
     required this.activeTab,
     required this.selectedChartType,
@@ -106,7 +106,7 @@ class ChartSettingsSidebar extends StatelessWidget {
                   children: [
                     if (onExportPDF != null)
                       Expanded(
-                        child: DefaultButton(
+                        child: OmDefaultButton(
                           text: "Export PDF",
                           press: onExportPDF,
                           leadingIcon: Image.asset(
@@ -124,7 +124,7 @@ class ChartSettingsSidebar extends StatelessWidget {
                       const SizedBox(width: 12),
                     if (onExportExcel != null)
                       Expanded(
-                        child: DefaultButton(
+                        child: OmDefaultButton(
                           text: "Export Excel",
                           press: onExportExcel,
                           leadingIcon: Image.asset(
@@ -394,7 +394,7 @@ class ChartSettingsSidebar extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: ChartType.values.length,
+      itemCount: OmChartType.values.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: isMobile ? 4 : 3,
         mainAxisSpacing: 8,
@@ -402,7 +402,7 @@ class ChartSettingsSidebar extends StatelessWidget {
         mainAxisExtent: isMobile ? 70 : 80,
       ),
       itemBuilder: (context, index) {
-        final type = ChartType.values[index];
+        final type = OmChartType.values[index];
         final isSelected = selectedChartType == type;
         return InkWell(
           onTap: () {
@@ -453,72 +453,72 @@ class ChartSettingsSidebar extends StatelessWidget {
     );
   }
 
-  String _getDisplayNameForType(ChartType type) {
+  String _getDisplayNameForType(OmChartType type) {
     switch (type) {
-      case ChartType.bar:
+      case OmChartType.bar:
         return 'Bar';
-      case ChartType.line:
+      case OmChartType.line:
         return 'Line';
-      case ChartType.column:
+      case OmChartType.column:
         return 'Column';
-      case ChartType.pie:
+      case OmChartType.pie:
         return 'Pie';
-      case ChartType.area:
+      case OmChartType.area:
         return 'Area';
-      case ChartType.scatter:
+      case OmChartType.scatter:
         return 'Scatter';
-      case ChartType.spline:
+      case OmChartType.spline:
         return 'Spline';
-      case ChartType.stepline:
+      case OmChartType.stepline:
         return 'Step Line';
-      case ChartType.doughnut:
+      case OmChartType.doughnut:
         return 'Doughnut';
-      case ChartType.funnel:
+      case OmChartType.funnel:
         return 'Funnel';
-      case ChartType.pyramid:
+      case OmChartType.pyramid:
         return 'Pyramid';
-      case ChartType.radialBar:
+      case OmChartType.radialBar:
         return 'Radial Bar';
-      case ChartType.histogram:
+      case OmChartType.histogram:
         return 'Histogram';
-      case ChartType.stackedBar:
+      case OmChartType.stackedBar:
         return 'Stacked Bar';
-      case ChartType.stackedColumn:
+      case OmChartType.stackedColumn:
         return 'Stacked Column';
     }
   }
 
-  IconData _getIconForType(ChartType type) {
+  IconData _getIconForType(OmChartType type) {
     switch (type) {
-      case ChartType.bar:
+      case OmChartType.bar:
         return Icons.align_horizontal_left;
-      case ChartType.line:
+      case OmChartType.line:
         return Icons.show_chart;
-      case ChartType.column:
+      case OmChartType.column:
         return Icons.bar_chart;
-      case ChartType.pie:
+      case OmChartType.pie:
         return Icons.pie_chart;
-      case ChartType.area:
+      case OmChartType.area:
         return Icons.area_chart;
-      case ChartType.scatter:
+      case OmChartType.scatter:
         return Icons.scatter_plot;
-      case ChartType.spline:
+      case OmChartType.spline:
         return Icons.gesture;
-      case ChartType.stepline:
+      case OmChartType.stepline:
         return Icons.stacked_line_chart;
-      case ChartType.doughnut:
+      case OmChartType.doughnut:
         return Icons.donut_large;
-      case ChartType.funnel:
+      case OmChartType.funnel:
         return Icons.filter_list;
-      case ChartType.pyramid:
+      case OmChartType.pyramid:
         return Icons.change_history;
-      case ChartType.radialBar:
+      case OmChartType.radialBar:
         return Icons.rotate_right;
-      case ChartType.histogram:
+      case OmChartType.histogram:
         return Icons.analytics;
-      case ChartType.stackedBar:
+      case OmChartType.stackedBar:
         return Icons.view_headline;
-      case ChartType.stackedColumn:
+      case OmChartType.stackedColumn:
         return Icons.view_week;
     }
   }
@@ -547,7 +547,7 @@ class ChartSettingsSidebar extends StatelessWidget {
               .where((e) => e.showInChart && e.canBeXAxis)
               .map(
                 (e) =>
-                    GridComboBoxItem(value: e.column.key, text: e.column.title),
+                    OmGridComboBoxItem(value: e.column.key, text: e.column.title),
               )
               .toList(),
           initialValue: value,

@@ -2,8 +2,8 @@ import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class DefaultButton extends StatefulWidget {
-  const DefaultButton({
+class OmDefaultButton extends StatefulWidget {
+  const OmDefaultButton({
     super.key,
     this.text,
     this.press,
@@ -33,15 +33,15 @@ class DefaultButton extends StatefulWidget {
   final EdgeInsetsGeometry? padding;
   final BorderRadiusDirectional? borderRadius;
   final FontWeight? fontWeight;
-  final DatagridConfiguration? configuration;
+  final OmDataGridConfiguration? configuration;
   final double? height;
   final double? width;
 
   @override
-  State<DefaultButton> createState() => _DefaultButtonState();
+  State<OmDefaultButton> createState() => _DefaultButtonState();
 }
 
-class _DefaultButtonState extends State<DefaultButton> {
+class _DefaultButtonState extends State<OmDefaultButton> {
   bool loading = false;
 
   @override

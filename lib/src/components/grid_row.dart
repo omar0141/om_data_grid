@@ -5,8 +5,8 @@ import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/enums/grid_border_visibility_enum.dart';
 import 'package:om_data_grid/src/models/advanced_filter_model.dart';
 
-class GridRow extends StatefulWidget {
-  const GridRow({
+class OmGridRow extends StatefulWidget {
+  const OmGridRow({
     super.key,
     required this.rowIndex,
     required this.columns,
@@ -31,9 +31,9 @@ class GridRow extends StatefulWidget {
   });
 
   final int rowIndex;
-  final List<GridColumnModel> columns;
+  final List<OmGridColumnModel> columns;
   final Map<String, dynamic> row;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
   final List<double?> columnWidths;
   final bool isSelected;
   final bool isHovered;
@@ -52,10 +52,10 @@ class GridRow extends StatefulWidget {
   final Function(int columnIndex, TapDownDetails details)? onSecondaryTapDown;
 
   @override
-  State<GridRow> createState() => _GridRowState();
+  State<OmGridRow> createState() => _GridRowState();
 }
 
-class _GridRowState extends State<GridRow> {
+class _GridRowState extends State<OmGridRow> {
   bool _renderedOnce = false;
 
   @override
@@ -90,9 +90,9 @@ class _GridRowState extends State<GridRow> {
               border: BorderDirectional(
                 bottom:
                     (widget.configuration.rowBorderVisibility ==
-                            GridBorderVisibility.horizontal ||
+                            OmGridBorderVisibility.horizontal ||
                         widget.configuration.rowBorderVisibility ==
-                            GridBorderVisibility.both)
+                            OmGridBorderVisibility.both)
                     ? BorderSide(
                         width: widget.configuration.rowBorderWidth,
                         color: widget.configuration.rowBorderColor,
@@ -216,7 +216,7 @@ class _GridRowState extends State<GridRow> {
   Widget _buildCellWrapper(
     BuildContext context,
     int index,
-    GridColumnModel column,
+    OmGridColumnModel column,
     bool cellSelected,
     bool isFirstVisible,
   ) {
@@ -242,7 +242,7 @@ class _GridRowState extends State<GridRow> {
   }
 
   Container rowWidget(
-    GridColumnModel column,
+    OmGridColumnModel column,
     int index,
     BuildContext context,
     bool cellSelected,
@@ -282,9 +282,9 @@ class _GridRowState extends State<GridRow> {
           start:
               !isFirstVisible &&
                   (widget.configuration.rowBorderVisibility ==
-                          GridBorderVisibility.vertical ||
+                          OmGridBorderVisibility.vertical ||
                       widget.configuration.rowBorderVisibility ==
-                          GridBorderVisibility.both)
+                          OmGridBorderVisibility.both)
               ? BorderSide(
                   width: widget.configuration.rowBorderWidth,
                   color: widget.configuration.rowBorderColor,
@@ -306,7 +306,7 @@ class _GridRowState extends State<GridRow> {
             }
             if (column.advancedFilter != null) {
               for (var cond in column.advancedFilter!.conditions) {
-                if (cond.type == FilterConditionType.contains &&
+                if (cond.type == OmFilterConditionType.contains &&
                     cond.value.isNotEmpty) {
                   terms.add(cond.value);
                 }

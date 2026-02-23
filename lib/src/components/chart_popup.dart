@@ -10,15 +10,15 @@ import 'chart/chart_renderer.dart';
 import 'chart/chart_settings_sidebar.dart';
 import 'chart/chart_export_handler.dart';
 
-class ChartPopup extends StatefulWidget {
+class OmChartPopup extends StatefulWidget {
   final List<Map<String, dynamic>> data;
-  final List<GridColumnModel> columns;
+  final List<OmGridColumnModel> columns;
   final VoidCallback onClose;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
   final VoidCallback? onBringToFront;
   final Offset initialPosition;
 
-  const ChartPopup({
+  const OmChartPopup({
     super.key,
     required this.data,
     required this.columns,
@@ -29,15 +29,15 @@ class ChartPopup extends StatefulWidget {
   });
 
   @override
-  State<ChartPopup> createState() => _ChartPopupState();
+  State<OmChartPopup> createState() => _ChartPopupState();
 }
 
-class _ChartPopupState extends State<ChartPopup> {
+class _ChartPopupState extends State<OmChartPopup> {
   late Offset _position;
   double _width = 850;
   double _height = 600;
   bool _isFullScreen = false;
-  ChartType _selectedChartType = ChartType.column;
+  OmChartType _selectedChartType = OmChartType.column;
   late String _xAxisColumn;
   late List<String> _yAxisColumns;
 
@@ -132,13 +132,13 @@ class _ChartPopupState extends State<ChartPopup> {
   Future<Uint8List?> _captureChartImage() async {
     try {
       ui.Image? image;
-      if (_selectedChartType == ChartType.funnel) {
+      if (_selectedChartType == OmChartType.funnel) {
         image = await _funnelChartKey.currentState?.toImage(pixelRatio: 2.0);
-      } else if (_selectedChartType == ChartType.pyramid) {
+      } else if (_selectedChartType == OmChartType.pyramid) {
         image = await _pyramidChartKey.currentState?.toImage(pixelRatio: 2.0);
-      } else if (_selectedChartType == ChartType.pie ||
-          _selectedChartType == ChartType.doughnut ||
-          _selectedChartType == ChartType.radialBar) {
+      } else if (_selectedChartType == OmChartType.pie ||
+          _selectedChartType == OmChartType.doughnut ||
+          _selectedChartType == OmChartType.radialBar) {
         image = await _circularChartKey.currentState?.toImage(pixelRatio: 2.0);
       } else {
         image = await _cartesianChartKey.currentState?.toImage(pixelRatio: 2.0);
@@ -163,7 +163,7 @@ class _ChartPopupState extends State<ChartPopup> {
       if (bytes == null) {
         throw Exception('Failed to capture chart image');
       }
-      await ChartExportHandler.exportToPDF(
+      await OmChartExportHandler.exportToPDF(
         chartImageBytes: bytes,
         title: _titleController.text,
       );
@@ -191,7 +191,7 @@ class _ChartPopupState extends State<ChartPopup> {
     setState(() => _isExporting = true);
     try {
       final bytes = await _captureChartImage();
-      await ChartExportHandler.exportToExcel(
+      await OmChartExportHandler.exportToExcel(
         data: widget.data,
         xAxisColumn: _xAxisColumn,
         yAxisColumns: _yAxisColumns,
@@ -337,7 +337,7 @@ class _ChartPopupState extends State<ChartPopup> {
               : Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ChartSettingsSidebar(
+                    OmChartSettingsSidebar(
                       activeTab: _activeTab,
                       selectedChartType: _selectedChartType,
                       xAxisColumn: _xAxisColumn,
@@ -444,7 +444,7 @@ class _ChartPopupState extends State<ChartPopup> {
             Expanded(
               child: StatefulBuilder(
                 builder: (context, setModalState) {
-                  return ChartSettingsSidebar(
+                  return OmChartSettingsSidebar(
                     isMobile: true,
                     activeTab: index,
                     selectedChartType: _selectedChartType,
@@ -619,7 +619,7 @@ class _ChartPopupState extends State<ChartPopup> {
       for (var col in widget.columns) col.column.key: col.column.title,
     };
 
-    return ChartRenderer(
+    return OmChartRenderer(
       selectedChartType: _selectedChartType,
       rawData: widget.data,
       title: _titleController.text,

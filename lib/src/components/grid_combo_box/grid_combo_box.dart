@@ -5,7 +5,7 @@ import 'package:om_data_grid/src/models/grid_combo_box_item.dart';
 import 'package:om_data_grid/src/models/grid_header_model.dart';
 import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:om_data_grid/src/utils/platform_helper.dart'
-    show PlatformHelper;
+    show OmPlatformHelper;
 import 'package:om_data_grid/src/utils/scroll_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,8 +17,8 @@ class GridComboBox extends FormField<String> {
   GridComboBox({
     super.key,
     this.value,
-    List<GridComboBoxItem> selectedItems = const [],
-    required List<GridComboBoxItem> items,
+    List<OmGridComboBoxItem> selectedItems = const [],
+    required List<OmGridComboBoxItem> items,
     bool enabled = true,
     bool multipleSelect = false,
     String? initialValue,
@@ -49,13 +49,13 @@ class GridComboBox extends FormField<String> {
     TextAlign textAlign = TextAlign.start,
     bool autoOpen = false,
     String? hintText,
-    Future<GridComboBoxItem?> Function()? onAddNewItem,
+    Future<OmGridComboBoxItem?> Function()? onAddNewItem,
     FocusNode? focusNode,
     double? overlayWidth,
-    List<ComboBoxHeaderModel> headers = const [],
+    List<OmComboBoxHeaderModel> headers = const [],
     double height = 50,
     bool showClearButton = true,
-    DatagridConfiguration? configuration,
+    OmDataGridConfiguration? configuration,
   }) : super(
          initialValue: value ?? initialValue,
          builder: (FormFieldState<String> field) {
@@ -142,8 +142,8 @@ class _ComboBoxFormFieldState extends FormFieldState<String> {
 
 class _ComboBoxInput extends StatefulWidget {
   final _ComboBoxFormFieldState state;
-  final List<GridComboBoxItem> selectedItems;
-  final List<GridComboBoxItem> items;
+  final List<OmGridComboBoxItem> selectedItems;
+  final List<OmGridComboBoxItem> items;
   final bool multipleSelect;
   final bool enableSearch;
   final String? initialText;
@@ -170,13 +170,13 @@ class _ComboBoxInput extends StatefulWidget {
   final TextAlign textAlign;
   final bool autoOpen;
   final String? hintText;
-  final Future<GridComboBoxItem?> Function()? onAddNewItem;
+  final Future<OmGridComboBoxItem?> Function()? onAddNewItem;
   final FocusNode? focusNode;
   final double? overlayWidth;
-  final List<ComboBoxHeaderModel> headers;
+  final List<OmComboBoxHeaderModel> headers;
   final double height;
   final bool showClearButton;
-  final DatagridConfiguration? configuration;
+  final OmDataGridConfiguration? configuration;
 
   const _ComboBoxInput({
     required this.state,
@@ -233,9 +233,9 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
   Color? myColor;
   late RegExp regExp;
   List<String> mySelectedItems = [];
-  List<GridComboBoxItem> selectedItems = [];
-  List<GridComboBoxItem> orgData = [];
-  List<GridComboBoxItem> dataSource = [];
+  List<OmGridComboBoxItem> selectedItems = [];
+  List<OmGridComboBoxItem> orgData = [];
+  List<OmGridComboBoxItem> dataSource = [];
   int selectedIndex = -1;
   final ScrollController _scrollController = ScrollController();
   final itemHeight = 50.0;
@@ -311,7 +311,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
   void initData() {
     orgData = widget.items
         .map(
-          (e) => GridComboBoxItem(
+          (e) => OmGridComboBoxItem(
             value: e.value,
             text: e.text,
             color: e.color,
@@ -322,7 +322,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
         .toList();
     dataSource = orgData
         .map(
-          (e) => GridComboBoxItem(
+          (e) => OmGridComboBoxItem(
             value: e.value,
             text: e.text,
             color: e.color,
@@ -338,7 +338,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
       } else {
         selectedItems = widget.selectedItems
             .map(
-              (e) => GridComboBoxItem(
+              (e) => OmGridComboBoxItem(
                 value: e.value,
                 text: e.text,
                 color: e.color,
@@ -398,7 +398,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
 
   double _calculateItemsHeight(
     BuildContext context,
-    List<GridComboBoxItem> items,
+    List<OmGridComboBoxItem> items,
   ) {
     final screenHeight = MediaQuery.of(context).size.height;
     double height = (items.length * itemHeight).clamp(0.0, screenHeight * 0.4);
@@ -507,7 +507,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => CustomBottomSheet(
+      builder: (context) => OmCustomBottomSheet(
         configuration: widget.configuration,
         child: itemsWidget(),
       ),
@@ -630,7 +630,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                     InkWell(
                       onTap: () async {
                         _hideOverlay();
-                        GridComboBoxItem? newItem =
+                        OmGridComboBoxItem? newItem =
                             await widget.onAddNewItem!();
                         if (newItem == null) return;
                         dataSource.add(newItem);
@@ -793,7 +793,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
   }
 
   void _scrollToSelectedItem() {
-    ScrollHelper().scrollToSelectedItem(
+    OmScrollHelper().scrollToSelectedItem(
       scrollController: _scrollController,
       selectedIndex: selectedIndex,
       itemHeight: itemHeight,
@@ -804,7 +804,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
     if (value.isEmpty) {
       dataSource = orgData
           .map(
-            (e) => GridComboBoxItem(
+            (e) => OmGridComboBoxItem(
               value: e.value,
               text: e.text,
               color: e.color,
@@ -827,7 +827,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
               });
             })
             .map(
-              (e) => GridComboBoxItem(
+              (e) => OmGridComboBoxItem(
                 value: e.value,
                 text: e.text,
                 color: e.color,
@@ -842,7 +842,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
               (item) => item.text.toLowerCase().contains(value.toLowerCase()),
             )
             .map(
-              (e) => GridComboBoxItem(
+              (e) => OmGridComboBoxItem(
                 value: e.value,
                 text: e.text,
                 color: e.color,
@@ -898,7 +898,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
               widget.onChange?.call(myValue);
             });
           }
-          if (PlatformHelper.isDesktop == false) {
+          if (OmPlatformHelper.isDesktop == false) {
             isOpen = false;
             Navigator.of(context).pop();
           } else {

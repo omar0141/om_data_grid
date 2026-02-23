@@ -14,8 +14,8 @@ class FormulaBlock {
 }
 
 class FormulaBuilderDialog extends StatefulWidget {
-  final DatagridController controller;
-  final GridColumnModel? existing;
+  final OmDataGridController controller;
+  final OmGridColumnModel? existing;
 
   const FormulaBuilderDialog({
     super.key,
@@ -57,7 +57,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
 
     // Sort columns by title length descending to match longest titles first
     final sortedCols =
-        List<GridColumnModel>.from(widget.controller.columnModels)
+        List<OmGridColumnModel>.from(widget.controller.columnModels)
           ..where((c) => !c.key.startsWith('__'))
           ..sort(
             (a, b) => b.column.title.length.compareTo(a.column.title.length),

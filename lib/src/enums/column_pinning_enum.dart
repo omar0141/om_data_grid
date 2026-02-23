@@ -1,5 +1,5 @@
 /// Defines the pinning behavior of a column.
-enum ColumnPinning {
+enum OmColumnPinning {
   /// The column is not pinned and scrolls normally.
   none,
 

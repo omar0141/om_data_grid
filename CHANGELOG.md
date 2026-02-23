@@ -1,4 +1,9 @@
+## 0.0.7
+
+- update class names
+
 ## 0.0.6
+
 - update to last versions of packages
 
 ## 0.0.5

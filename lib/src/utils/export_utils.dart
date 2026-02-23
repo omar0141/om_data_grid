@@ -12,11 +12,11 @@ import 'dart:convert' show base64Encode;
 import '../models/grid_column_model.dart';
 import '../models/datagrid_configuration.dart';
 
-class GridExportHandler {
+class OmGridExportHandler {
   static Future<void> exportToExcel({
     required List<Map<String, dynamic>> data,
-    required List<GridColumnModel> columns,
-    required DatagridConfiguration configuration,
+    required List<OmGridColumnModel> columns,
+    required OmDataGridConfiguration configuration,
     String fileName = 'Grid_Export.xlsx',
   }) async {
     try {
@@ -62,8 +62,8 @@ class GridExportHandler {
 
   static List<int> _generateExcelBytes(
     List<Map<String, dynamic>> data,
-    List<GridColumnModel> columns,
-    DatagridConfiguration configuration,
+    List<OmGridColumnModel> columns,
+    OmDataGridConfiguration configuration,
   ) {
     final xls.Workbook workbook = xls.Workbook();
     final xls.Worksheet sheet = workbook.worksheets[0];
@@ -139,8 +139,8 @@ class GridExportHandler {
 
   static Future<void> exportToPDF({
     required List<Map<String, dynamic>> data,
-    required List<GridColumnModel> columns,
-    required DatagridConfiguration configuration,
+    required List<OmGridColumnModel> columns,
+    required OmDataGridConfiguration configuration,
     String title = '',
     String fileName = 'Grid_Export.pdf',
   }) async {
@@ -182,8 +182,8 @@ class GridExportHandler {
 
   static List<int> _generatePdfBytes(
     List<Map<String, dynamic>> data,
-    List<GridColumnModel> columns,
-    DatagridConfiguration configuration,
+    List<OmGridColumnModel> columns,
+    OmDataGridConfiguration configuration,
     String title,
   ) {
     final PdfDocument document = PdfDocument();

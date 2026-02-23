@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-class GridCellFormatters {
+class OmGridCellFormatters {
   static final Map<String, DateFormat> _dateFormats = {};
   static final RegExp thousandsRegExp = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 
@@ -39,6 +39,6 @@ class GridCellFormatters {
   }
 }
 
-class GridCellConstants {
+class OmGridCellConstants {
   static final DateFormat defaultDateFormatter = DateFormat.yMd();
 }

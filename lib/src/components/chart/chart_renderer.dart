@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'chart_types.dart';
 
-class ChartRenderer extends StatelessWidget {
-  final ChartType selectedChartType;
+class OmChartRenderer extends StatelessWidget {
+  final OmChartType selectedChartType;
   final List<Map<String, dynamic>> rawData;
   final String title;
   final bool showLegend;
@@ -18,7 +18,7 @@ class ChartRenderer extends StatelessWidget {
   final GlobalKey<SfFunnelChartState> funnelChartKey;
   final GlobalKey<SfPyramidChartState> pyramidChartKey;
 
-  const ChartRenderer({
+  const OmChartRenderer({
     super.key,
     required this.selectedChartType,
     required this.rawData,
@@ -84,10 +84,10 @@ class ChartRenderer extends StatelessWidget {
 
     // Prepare data for non-cartesian charts (take only the first Y key)
     final String firstYKey = yAxisKeys.isNotEmpty ? yAxisKeys.last : '';
-    final List<ChartSampleData> simpleChartData = groupedData.map((row) {
+    final List<OmChartSampleData> simpleChartData = groupedData.map((row) {
       final xVal = row[xAxisKey]?.toString() ?? '';
       final yVal = row[firstYKey];
-      return ChartSampleData(
+      return OmChartSampleData(
         x: xVal,
         y: yVal is num
             ? yVal.toDouble()
@@ -96,40 +96,40 @@ class ChartRenderer extends StatelessWidget {
     }).toList();
 
     switch (selectedChartType) {
-      case ChartType.funnel:
+      case OmChartType.funnel:
         return SfFunnelChart(
           key: funnelChartKey,
           title: chartTitle,
           legend: legend,
           tooltipBehavior: tooltipBehavior,
-          series: FunnelSeries<ChartSampleData, String>(
+          series: FunnelSeries<OmChartSampleData, String>(
             dataSource: simpleChartData,
             xValueMapper: (d, _) => d.x,
             yValueMapper: (d, _) => d.y,
             dataLabelSettings: dataLabelSettings,
           ),
         );
-      case ChartType.pyramid:
+      case OmChartType.pyramid:
         return SfPyramidChart(
           key: pyramidChartKey,
           title: chartTitle,
           legend: legend,
           tooltipBehavior: tooltipBehavior,
-          series: PyramidSeries<ChartSampleData, String>(
+          series: PyramidSeries<OmChartSampleData, String>(
             dataSource: simpleChartData,
             xValueMapper: (d, _) => d.x,
             yValueMapper: (d, _) => d.y,
             dataLabelSettings: dataLabelSettings,
           ),
         );
-      case ChartType.radialBar:
+      case OmChartType.radialBar:
         return SfCircularChart(
           key: circularChartKey,
           title: chartTitle,
           legend: legend,
           tooltipBehavior: tooltipBehavior,
-          series: <CircularSeries<ChartSampleData, String>>[
-            RadialBarSeries<ChartSampleData, String>(
+          series: <CircularSeries<OmChartSampleData, String>>[
+            RadialBarSeries<OmChartSampleData, String>(
               dataSource: simpleChartData,
               xValueMapper: (d, _) => d.x,
               yValueMapper: (d, _) => d.y,
@@ -137,7 +137,7 @@ class ChartRenderer extends StatelessWidget {
             ),
           ],
         );
-      case ChartType.histogram:
+      case OmChartType.histogram:
         return SfCartesianChart(
           key: cartesianChartKey,
           title: chartTitle,
@@ -157,23 +157,23 @@ class ChartRenderer extends StatelessWidget {
             ),
           ],
         );
-      case ChartType.pie:
-      case ChartType.doughnut:
+      case OmChartType.pie:
+      case OmChartType.doughnut:
         return SfCircularChart(
           key: circularChartKey,
           title: chartTitle,
           legend: legend,
           tooltipBehavior: tooltipBehavior,
-          series: <CircularSeries<ChartSampleData, String>>[
-            if (selectedChartType == ChartType.pie)
-              PieSeries<ChartSampleData, String>(
+          series: <CircularSeries<OmChartSampleData, String>>[
+            if (selectedChartType == OmChartType.pie)
+              PieSeries<OmChartSampleData, String>(
                 dataSource: simpleChartData,
                 xValueMapper: (d, _) => d.x,
                 yValueMapper: (d, _) => d.y,
                 dataLabelSettings: dataLabelSettings,
               )
             else
-              DoughnutSeries<ChartSampleData, String>(
+              DoughnutSeries<OmChartSampleData, String>(
                 dataSource: simpleChartData,
                 innerRadius: '60%',
                 xValueMapper: (d, _) => d.x,
@@ -213,7 +213,7 @@ class ChartRenderer extends StatelessWidget {
       final String seriesName = columnTitles[yKey] ?? yKey;
 
       switch (selectedChartType) {
-        case ChartType.line:
+        case OmChartType.line:
           return LineSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -227,7 +227,7 @@ class ChartRenderer extends StatelessWidget {
             dataLabelSettings: dls,
             markerSettings: const MarkerSettings(isVisible: true),
           );
-        case ChartType.bar:
+        case OmChartType.bar:
           return BarSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -243,7 +243,7 @@ class ChartRenderer extends StatelessWidget {
               right: Radius.circular(4),
             ),
           );
-        case ChartType.column:
+        case OmChartType.column:
           return ColumnSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -257,7 +257,7 @@ class ChartRenderer extends StatelessWidget {
             dataLabelSettings: dls,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
           );
-        case ChartType.area:
+        case OmChartType.area:
           return AreaSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -270,7 +270,7 @@ class ChartRenderer extends StatelessWidget {
             },
             dataLabelSettings: dls,
           );
-        case ChartType.stackedBar:
+        case OmChartType.stackedBar:
           return StackedBarSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -283,7 +283,7 @@ class ChartRenderer extends StatelessWidget {
             },
             dataLabelSettings: dls,
           );
-        case ChartType.stackedColumn:
+        case OmChartType.stackedColumn:
           return StackedColumnSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -296,7 +296,7 @@ class ChartRenderer extends StatelessWidget {
             },
             dataLabelSettings: dls,
           );
-        case ChartType.scatter:
+        case OmChartType.scatter:
           return ScatterSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -309,7 +309,7 @@ class ChartRenderer extends StatelessWidget {
             },
             dataLabelSettings: dls,
           );
-        case ChartType.spline:
+        case OmChartType.spline:
           return SplineSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,
@@ -322,7 +322,7 @@ class ChartRenderer extends StatelessWidget {
             },
             dataLabelSettings: dls,
           );
-        case ChartType.stepline:
+        case OmChartType.stepline:
           return StepLineSeries<Map<String, dynamic>, String>(
             name: seriesName,
             dataSource: groupedData,

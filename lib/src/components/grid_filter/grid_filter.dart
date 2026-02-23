@@ -17,10 +17,10 @@ class GridFilter extends StatelessWidget {
   });
   final List<dynamic> dataSource;
   final List<dynamic> orgData;
-  final GridColumnModel attributes;
-  final List<GridColumnModel> allAttributes;
+  final OmGridColumnModel attributes;
+  final List<OmGridColumnModel> allAttributes;
   final void Function(List<dynamic>) onSearch;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
   final String? globalSearchText;
 
   @override

@@ -2,7 +2,7 @@ import 'package:om_data_grid/src/utils/datagrid_controller.dart';
 import 'package:flutter/material.dart';
 
 /// Configuration for a tab in the grid's side panel.
-class GridSidePanelTab {
+class OmGridSidePanelTab {
   /// Unique identifier for the tab.
   final String id;
 
@@ -13,14 +13,14 @@ class GridSidePanelTab {
   final String label;
 
   /// Builder function to create the tab's content.
-  final Widget Function(BuildContext context, DatagridController controller)
+  final Widget Function(BuildContext context, OmDataGridController controller)
   builder;
 
   /// Whether the tab is visible.
   final bool visible;
 
-  /// Creates a [GridSidePanelTab].
-  const GridSidePanelTab({
+  /// Creates a [OmGridSidePanelTab].
+  const OmGridSidePanelTab({
     required this.id,
     required this.icon,
     required this.label,
@@ -29,15 +29,15 @@ class GridSidePanelTab {
   });
 
   /// Creates a copy of this tab with modified properties.
-  GridSidePanelTab copyWith({
+  OmGridSidePanelTab copyWith({
     String? id,
     IconData? icon,
     String? label,
-    Widget Function(BuildContext context, DatagridController controller)?
+    Widget Function(BuildContext context, OmDataGridController controller)?
     builder,
     bool? visible,
   }) {
-    return GridSidePanelTab(
+    return OmGridSidePanelTab(
       id: id ?? this.id,
       icon: icon ?? this.icon,
       label: label ?? this.label,
@@ -47,7 +47,7 @@ class GridSidePanelTab {
   }
 }
 
-class SidePanelConfiguration {
+class OmSidePanelConfiguration {
   final Color? backgroundColor;
   final Color? activeTabColor;
   final Color? inactiveTabColor;
@@ -59,7 +59,7 @@ class SidePanelConfiguration {
   final double expandedWidth;
   final Duration animationDuration;
 
-  const SidePanelConfiguration({
+  const OmSidePanelConfiguration({
     this.backgroundColor = const Color(0xFFF9F9F9),
     this.activeTabColor = Colors.white,
     this.inactiveTabColor = Colors.transparent,
@@ -72,7 +72,7 @@ class SidePanelConfiguration {
     this.animationDuration = const Duration(milliseconds: 200),
   });
 
-  SidePanelConfiguration copyWith({
+  OmSidePanelConfiguration copyWith({
     Color? backgroundColor,
     Color? activeTabColor,
     Color? inactiveTabColor,
@@ -84,7 +84,7 @@ class SidePanelConfiguration {
     double? expandedWidth,
     Duration? animationDuration,
   }) {
-    return SidePanelConfiguration(
+    return OmSidePanelConfiguration(
       backgroundColor: backgroundColor ?? this.backgroundColor,
       activeTabColor: activeTabColor ?? this.activeTabColor,
       inactiveTabColor: inactiveTabColor ?? this.inactiveTabColor,

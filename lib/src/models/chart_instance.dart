@@ -2,7 +2,7 @@ import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:flutter/material.dart';
 
 /// Represents an instance of a chart within the grid.
-class ChartInstance {
+class OmChartInstance {
   /// Unique identifier for the chart.
   final String id;
 
@@ -10,13 +10,13 @@ class ChartInstance {
   final List<Map<String, dynamic>> data;
 
   /// Columns used in the chart configuration.
-  final List<GridColumnModel> columns;
+  final List<OmGridColumnModel> columns;
 
   /// Initial position of the chart on screen.
   final Offset initialPosition;
 
-  /// Creates a [ChartInstance].
-  ChartInstance({
+  /// Creates a [OmChartInstance].
+  OmChartInstance({
     required this.id,
     required this.data,
     required this.columns,

@@ -1,5 +1,5 @@
 /// Defines the type of aggregation to perform on a column's data.
-enum AggregationType {
+enum OmAggregationType {
   /// No aggregation.
   none,
 

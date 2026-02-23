@@ -1,5 +1,5 @@
 /// Defines which borders should be visible in the grid.
-enum GridBorderVisibility {
+enum OmGridBorderVisibility {
   /// No borders are visible.
   none,
 

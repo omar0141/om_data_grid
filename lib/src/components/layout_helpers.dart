@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class MaybeExpanded extends StatelessWidget {
+class OmMaybeExpanded extends StatelessWidget {
   final bool expand;
   final Widget child;
 
-  const MaybeExpanded({super.key, required this.expand, required this.child});
+  const OmMaybeExpanded({super.key, required this.expand, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +15,11 @@ class MaybeExpanded extends StatelessWidget {
   }
 }
 
-class MaybeIntrinsicHeight extends StatelessWidget {
+class OmMaybeIntrinsicHeight extends StatelessWidget {
   final bool intrinsic;
   final Widget child;
 
-  const MaybeIntrinsicHeight({
+  const OmMaybeIntrinsicHeight({
     super.key,
     required this.intrinsic,
     required this.child,

@@ -11,8 +11,8 @@ import 'package:om_data_grid/src/utils/datagrid_utils.dart';
 import 'package:flutter/material.dart';
 
 class GridMainContainer extends StatefulWidget {
-  final DatagridController controller;
-  final List<GridColumnModel> internalColumns;
+  final OmDataGridController controller;
+  final List<OmGridColumnModel> internalColumns;
   final List<double?> columnWidths;
   final List<Map<String, dynamic>> filterDatasource;
   final ScrollController horizontalScrollController;
@@ -22,7 +22,7 @@ class GridMainContainer extends StatefulWidget {
   final BoxConstraints constraints;
   final bool isSidePanelExpanded;
 
-  // Props for GridBody
+  // Props for OmGridBody
   final List<dynamic> flattenedItems;
   final Set<String> expandedGroups;
   final Set<Map<String, dynamic>> selectedRows;
@@ -155,7 +155,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
       ),
     );
 
-    final currentColumnWidths = DatagridUtils.calculateColumnWidths(
+    final currentColumnWidths = OmDatagridUtils.calculateColumnWidths(
       columns: widget.internalColumns,
       data: widget.filterDatasource,
       configuration: config,
@@ -184,9 +184,9 @@ class _GridMainContainerState extends State<GridMainContainer> {
 
     for (var i in visibleIndices) {
       final col = widget.internalColumns[i];
-      if (col.pinning == ColumnPinning.left || legacyLeft.contains(i)) {
+      if (col.pinning == OmColumnPinning.left || legacyLeft.contains(i)) {
         leftIndices.add(i);
-      } else if (col.pinning == ColumnPinning.right ||
+      } else if (col.pinning == OmColumnPinning.right ||
           legacyRight.contains(i)) {
         rightIndices.add(i);
       } else {
@@ -195,7 +195,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
     }
 
     final bool isSticky =
-        config.frozenPaneScrollMode == FrozenPaneScrollMode.sticky;
+        config.frozenPaneScrollMode == OmFrozenPaneScrollMode.sticky;
 
     final middleIndices = isSticky ? visibleIndices : otherIndices;
 
@@ -228,7 +228,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
             ? MainAxisSize.min
             : MainAxisSize.max,
         children: [
-          GridHeader(
+          OmGridHeader(
             controller: widget.controller,
             columns: widget.internalColumns,
             visibleIndicesToRender: indices,
@@ -256,7 +256,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
               onSearchChanged: widget.onQuickSearchChanged,
             ),
           if (config.shrinkWrapRows)
-            GridBody(
+            OmGridBody(
               flattenedItems: widget.flattenedItems,
               configuration: config,
               internalColumns: widget.internalColumns,
@@ -286,7 +286,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
             )
           else
             Expanded(
-              child: GridBody(
+              child: OmGridBody(
                 flattenedItems: widget.flattenedItems,
                 configuration: config,
                 internalColumns: widget.internalColumns,

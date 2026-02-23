@@ -5,7 +5,7 @@ import '../enums/grid_border_visibility_enum.dart';
 import 'side_panel_config.dart';
 
 /// Defines how column widths are calculated.
-enum ColumnWidthMode {
+enum OmColumnWidthMode {
   /// Columns fill the available width.
   fill,
 
@@ -26,7 +26,7 @@ enum ColumnWidthMode {
 }
 
 /// Defines the style of pagination.
-enum PaginationMode {
+enum OmPaginationMode {
   /// Shows "Page X of Y".
   simple,
 
@@ -35,7 +35,7 @@ enum PaginationMode {
 }
 
 /// Defines the scrolling behavior of frozen panes.
-enum FrozenPaneScrollMode {
+enum OmFrozenPaneScrollMode {
   /// Frozen panes remain fixed.
   fixed,
 
@@ -44,7 +44,7 @@ enum FrozenPaneScrollMode {
 }
 
 /// Configuration for the quick filter bar.
-class QuickFilterConfig {
+class OmQuickFilterConfig {
   /// The key of the column to filter.
   final String columnKey;
 
@@ -54,8 +54,8 @@ class QuickFilterConfig {
   /// Whether to show the column title.
   final bool showTitle;
 
-  /// Creates a [QuickFilterConfig].
-  const QuickFilterConfig({
+  /// Creates a [OmQuickFilterConfig].
+  const OmQuickFilterConfig({
     required this.columnKey,
     this.isMultiSelect = false,
     this.showTitle = false,
@@ -63,7 +63,7 @@ class QuickFilterConfig {
 }
 
 /// Represents an item in the grid's context menu.
-class DatagridContextMenuItem {
+class OmDataGridContextMenuItem {
   /// Label for the menu item.
   final String label;
 
@@ -79,12 +79,11 @@ class DatagridContextMenuItem {
   /// Callback when the item is pressed.
   final void Function(
     List<Map<String, dynamic>> selectedRows,
-    List<GridColumnModel> selectedColumns,
-  )?
-  onPressed;
+    List<OmGridColumnModel> selectedColumns,
+  )? onPressed;
 
-  /// Creates a [DatagridContextMenuItem].
-  const DatagridContextMenuItem({
+  /// Creates a [OmDataGridContextMenuItem].
+  const OmDataGridContextMenuItem({
     required this.label,
     required this.icon,
     required this.value,
@@ -94,7 +93,7 @@ class DatagridContextMenuItem {
 }
 
 /// Configuration for the Data Grid's appearance and behavior.
-class DatagridConfiguration {
+class OmDataGridConfiguration {
   final Color headerBackgroundColor;
   final Color headerForegroundColor;
   final Color rowBackgroundColor;
@@ -106,8 +105,8 @@ class DatagridConfiguration {
   final double headerBorderWidth;
   final Color rowBorderColor;
   final double rowBorderWidth;
-  final GridBorderVisibility headerBorderVisibility;
-  final GridBorderVisibility rowBorderVisibility;
+  final OmGridBorderVisibility headerBorderVisibility;
+  final OmGridBorderVisibility rowBorderVisibility;
   final TextStyle? headerTextStyle;
   final TextStyle? rowTextStyle;
   final TextStyle? selectedRowTextStyle;
@@ -137,16 +136,17 @@ class DatagridConfiguration {
   final double rowHeight;
   final double headerHeight;
   final double cacheExtent;
-  final ColumnWidthMode columnWidthMode;
+  final OmColumnWidthMode columnWidthMode;
   final bool allowPagination;
   final int rowsPerPage;
-  final PaginationMode paginationMode;
+  final OmPaginationMode paginationMode;
   final bool allowSorting;
   final bool allowColumnReordering;
   final bool allowRowReordering; // Add field
-  final SelectionMode selectionMode;
+  final bool resetPageOnDataChange;
+  final OmSelectionMode selectionMode;
   final List<int>? rowsPerPageOptions;
-  final List<QuickFilterConfig>? quickFilters;
+  final List<OmQuickFilterConfig>? quickFilters;
   final bool showSettingsButton;
   final bool showClearFiltersButton;
   final bool showAddButton;
@@ -196,7 +196,7 @@ class DatagridConfiguration {
   final Color? dialogBackgroundColor;
   final Color? dialogSurfaceTintColor;
   final Color? dialogTextColor;
-  final List<DatagridContextMenuItem>? contextMenuItems;
+  final List<OmDataGridContextMenuItem>? contextMenuItems;
   final bool useDefaultContextMenuItems;
   final bool showCopyMenuItem;
   final bool showCopyHeaderMenuItem;
@@ -204,7 +204,7 @@ class DatagridConfiguration {
   final bool showSortMenuItem;
   final bool showFilterBySelectionMenuItem;
   final bool showChartsMenuItem;
-  final SidePanelConfiguration sidePanelConfiguration;
+  final OmSidePanelConfiguration sidePanelConfiguration;
   final bool showColumnsTab;
   final bool showFiltersTab;
   final bool showQuickSearch;
@@ -218,7 +218,7 @@ class DatagridConfiguration {
   final bool shrinkWrapColumns;
   final double frozenPaneElevation;
   final BorderSide? frozenPaneBorderSide;
-  final FrozenPaneScrollMode frozenPaneScrollMode;
+  final OmFrozenPaneScrollMode frozenPaneScrollMode;
   final Color? filterTabItemBackgroundColor;
   final Color? filterTabItemBorderColor;
   final Color? filterTabItemParamsColor;
@@ -247,7 +247,7 @@ class DatagridConfiguration {
   final Color? contextMenuAggregationIconColor;
   final Color? contextMenuLayoutIconColor;
 
-  const DatagridConfiguration({
+  const OmDataGridConfiguration({
     this.headerBackgroundColor = const Color(0xFFE7E7E7),
     this.headerForegroundColor = const Color(0xFF131313),
     this.rowBackgroundColor = Colors.transparent,
@@ -259,8 +259,8 @@ class DatagridConfiguration {
     this.headerBorderWidth = 0.5,
     this.rowBorderColor = const Color(0xFFE5E5E5),
     this.rowBorderWidth = 0.5,
-    this.headerBorderVisibility = GridBorderVisibility.both,
-    this.rowBorderVisibility = GridBorderVisibility.both,
+    this.headerBorderVisibility = OmGridBorderVisibility.both,
+    this.rowBorderVisibility = OmGridBorderVisibility.both,
     this.headerTextStyle,
     this.rowTextStyle,
     this.selectedRowTextStyle,
@@ -295,14 +295,15 @@ class DatagridConfiguration {
     this.rowHeight = 40.0,
     this.headerHeight = 50.0,
     this.cacheExtent = 250.0,
-    this.columnWidthMode = ColumnWidthMode.fill,
+    this.columnWidthMode = OmColumnWidthMode.fill,
     this.allowPagination = true,
     this.rowsPerPage = 250,
-    this.paginationMode = PaginationMode.pages,
+    this.paginationMode = OmPaginationMode.pages,
     this.allowSorting = true,
     this.allowColumnReordering = true,
     this.allowRowReordering = false, // Add default false
-    this.selectionMode = SelectionMode.none,
+    this.resetPageOnDataChange = false,
+    this.selectionMode = OmSelectionMode.none,
     this.rowsPerPageOptions,
     this.quickFilters,
     this.showSettingsButton = true,
@@ -367,7 +368,7 @@ class DatagridConfiguration {
     this.showSortMenuItem = true,
     this.showFilterBySelectionMenuItem = true,
     this.showChartsMenuItem = true,
-    this.sidePanelConfiguration = const SidePanelConfiguration(),
+    this.sidePanelConfiguration = const OmSidePanelConfiguration(),
     this.showColumnsTab = true,
     this.showFiltersTab = true,
     this.showQuickSearch = false,
@@ -384,7 +385,7 @@ class DatagridConfiguration {
       color: Color(0xFFE5E5E5),
       width: 1,
     ),
-    this.frozenPaneScrollMode = FrozenPaneScrollMode.sticky,
+    this.frozenPaneScrollMode = OmFrozenPaneScrollMode.sticky,
     this.filterTabItemBackgroundColor = const Color(0xFFFFFFFF),
     this.filterTabItemBorderColor = const Color(0xFFEEEEEE),
     this.filterTabItemParamsColor = const Color(0xDD000000),
@@ -414,7 +415,7 @@ class DatagridConfiguration {
     this.contextMenuLayoutIconColor,
   });
 
-  DatagridConfiguration copyWith({
+  OmDataGridConfiguration copyWith({
     Color? headerBackgroundColor,
     Color? headerForegroundColor,
     Color? rowBackgroundColor,
@@ -426,8 +427,8 @@ class DatagridConfiguration {
     double? headerBorderWidth,
     Color? rowBorderColor,
     double? rowBorderWidth,
-    GridBorderVisibility? headerBorderVisibility,
-    GridBorderVisibility? rowBorderVisibility,
+    OmGridBorderVisibility? headerBorderVisibility,
+    OmGridBorderVisibility? rowBorderVisibility,
     TextStyle? headerTextStyle,
     TextStyle? rowTextStyle,
     TextStyle? selectedRowTextStyle,
@@ -456,16 +457,17 @@ class DatagridConfiguration {
     double? minColumnWidth,
     double? rowHeight,
     double? headerHeight,
-    ColumnWidthMode? columnWidthMode,
+    OmColumnWidthMode? columnWidthMode,
     bool? allowPagination,
     int? rowsPerPage,
-    PaginationMode? paginationMode,
+    OmPaginationMode? paginationMode,
     bool? allowSorting,
     bool? allowColumnReordering,
+    bool? resetPageOnDataChange,
     bool? allowRowReordering,
-    SelectionMode? selectionMode,
+    OmSelectionMode? selectionMode,
     List<int>? rowsPerPageOptions,
-    List<QuickFilterConfig>? quickFilters,
+    List<OmQuickFilterConfig>? quickFilters,
     bool? showSettingsButton,
     bool? showClearFiltersButton,
     bool? showAddButton,
@@ -515,9 +517,9 @@ class DatagridConfiguration {
     Color? dialogBackgroundColor,
     Color? dialogSurfaceTintColor,
     Color? dialogTextColor,
-    List<DatagridContextMenuItem>? contextMenuItems,
+    List<OmDataGridContextMenuItem>? contextMenuItems,
     bool? useDefaultContextMenuItems,
-    SidePanelConfiguration? sidePanelConfiguration,
+    OmSidePanelConfiguration? sidePanelConfiguration,
     bool? showColumnsTab,
     bool? showFiltersTab,
     bool? showQuickSearch,
@@ -530,7 +532,7 @@ class DatagridConfiguration {
     bool? shrinkWrapColumns,
     double? frozenPaneElevation,
     BorderSide? frozenPaneBorderSide,
-    FrozenPaneScrollMode? frozenPaneScrollMode,
+    OmFrozenPaneScrollMode? frozenPaneScrollMode,
     Color? filterTabItemBackgroundColor,
     Color? filterTabItemBorderColor,
     Color? filterTabItemParamsColor,
@@ -559,7 +561,7 @@ class DatagridConfiguration {
     Color? contextMenuAggregationIconColor,
     Color? contextMenuLayoutIconColor,
   }) {
-    return DatagridConfiguration(
+    return OmDataGridConfiguration(
       headerBackgroundColor:
           headerBackgroundColor ?? this.headerBackgroundColor,
       headerForegroundColor:
@@ -584,18 +586,16 @@ class DatagridConfiguration {
       resizeHandleWidth: resizeHandleWidth ?? this.resizeHandleWidth,
       paginationBackgroundColor:
           paginationBackgroundColor ?? this.paginationBackgroundColor,
-      paginationSelectedBackgroundColor:
-          paginationSelectedBackgroundColor ??
+      paginationSelectedBackgroundColor: paginationSelectedBackgroundColor ??
           this.paginationSelectedBackgroundColor,
-      paginationSelectedForegroundColor:
-          paginationSelectedForegroundColor ??
+      paginationSelectedForegroundColor: paginationSelectedForegroundColor ??
           this.paginationSelectedForegroundColor,
       paginationUnselectedBackgroundColor:
           paginationUnselectedBackgroundColor ??
-          this.paginationUnselectedBackgroundColor,
+              this.paginationUnselectedBackgroundColor,
       paginationUnselectedForegroundColor:
           paginationUnselectedForegroundColor ??
-          this.paginationUnselectedForegroundColor,
+              this.paginationUnselectedForegroundColor,
       paginationTextColor: paginationTextColor ?? this.paginationTextColor,
       gridBackgroundColor: gridBackgroundColor ?? this.gridBackgroundColor,
       gridBorderColor: gridBorderColor ?? this.gridBorderColor,
@@ -603,11 +603,9 @@ class DatagridConfiguration {
       sortIconColor: sortIconColor ?? this.sortIconColor,
       filterPopupBackgroundColor:
           filterPopupBackgroundColor ?? this.filterPopupBackgroundColor,
-      keyboardHideButtonBackgroundColor:
-          keyboardHideButtonBackgroundColor ??
+      keyboardHideButtonBackgroundColor: keyboardHideButtonBackgroundColor ??
           this.keyboardHideButtonBackgroundColor,
-      keyboardHideButtonForegroundColor:
-          keyboardHideButtonForegroundColor ??
+      keyboardHideButtonForegroundColor: keyboardHideButtonForegroundColor ??
           this.keyboardHideButtonForegroundColor,
       primaryColor: primaryColor ?? this.primaryColor,
       errorColor: errorColor ?? this.errorColor,
@@ -628,6 +626,8 @@ class DatagridConfiguration {
       allowSorting: allowSorting ?? this.allowSorting,
       allowColumnReordering:
           allowColumnReordering ?? this.allowColumnReordering,
+      resetPageOnDataChange:
+          resetPageOnDataChange ?? this.resetPageOnDataChange,
       allowRowReordering: allowRowReordering ?? this.allowRowReordering,
       selectionMode: selectionMode ?? this.selectionMode,
       rowsPerPageOptions: rowsPerPageOptions ?? this.rowsPerPageOptions,
@@ -674,11 +674,9 @@ class DatagridConfiguration {
           columnSearchBorderColor ?? this.columnSearchBorderColor,
       columnSearchIconColor:
           columnSearchIconColor ?? this.columnSearchIconColor,
-      dragFeedbackOutsideBackgroundColor:
-          dragFeedbackOutsideBackgroundColor ??
+      dragFeedbackOutsideBackgroundColor: dragFeedbackOutsideBackgroundColor ??
           this.dragFeedbackOutsideBackgroundColor,
-      dragFeedbackInsideBackgroundColor:
-          dragFeedbackInsideBackgroundColor ??
+      dragFeedbackInsideBackgroundColor: dragFeedbackInsideBackgroundColor ??
           this.dragFeedbackInsideBackgroundColor,
       dragFeedbackOutsideBorderColor:
           dragFeedbackOutsideBorderColor ?? this.dragFeedbackOutsideBorderColor,
@@ -700,8 +698,7 @@ class DatagridConfiguration {
           bottomPanelSectionBorderColor ?? this.bottomPanelSectionBorderColor,
       bottomPanelDragTargetColor:
           bottomPanelDragTargetColor ?? this.bottomPanelDragTargetColor,
-      bottomPanelDragTargetInactiveColor:
-          bottomPanelDragTargetInactiveColor ??
+      bottomPanelDragTargetInactiveColor: bottomPanelDragTargetInactiveColor ??
           this.bottomPanelDragTargetInactiveColor,
       bottomPanelIconColor: bottomPanelIconColor ?? this.bottomPanelIconColor,
       menuBackgroundColor: menuBackgroundColor ?? this.menuBackgroundColor,
@@ -743,8 +740,7 @@ class DatagridConfiguration {
           chartPopupBackgroundColor ?? this.chartPopupBackgroundColor,
       chartPopupBorderColor:
           chartPopupBorderColor ?? this.chartPopupBorderColor,
-      chartPopupLoadingBackgroundColor:
-          chartPopupLoadingBackgroundColor ??
+      chartPopupLoadingBackgroundColor: chartPopupLoadingBackgroundColor ??
           this.chartPopupLoadingBackgroundColor,
       chartPopupLoadingTextColor:
           chartPopupLoadingTextColor ?? this.chartPopupLoadingTextColor,
@@ -763,15 +759,14 @@ class DatagridConfiguration {
       closeButtonColor: closeButtonColor ?? this.closeButtonColor,
       chartSettingsSidebarBackgroundColor:
           chartSettingsSidebarBackgroundColor ??
-          this.chartSettingsSidebarBackgroundColor,
+              this.chartSettingsSidebarBackgroundColor,
       contextMenuIconColor: contextMenuIconColor ?? this.contextMenuIconColor,
       contextMenuTextColor: contextMenuTextColor ?? this.contextMenuTextColor,
       contextMenuDestructiveColor:
           contextMenuDestructiveColor ?? this.contextMenuDestructiveColor,
       contextMenuSectionHeaderColor:
           contextMenuSectionHeaderColor ?? this.contextMenuSectionHeaderColor,
-      contextMenuItemIconBackgroundColor:
-          contextMenuItemIconBackgroundColor ??
+      contextMenuItemIconBackgroundColor: contextMenuItemIconBackgroundColor ??
           this.contextMenuItemIconBackgroundColor,
       contextMenuSortIconColor:
           contextMenuSortIconColor ?? this.contextMenuSortIconColor,
@@ -779,8 +774,7 @@ class DatagridConfiguration {
           contextMenuPinIconColor ?? this.contextMenuPinIconColor,
       contextMenuGroupIconColor:
           contextMenuGroupIconColor ?? this.contextMenuGroupIconColor,
-      contextMenuAggregationIconColor:
-          contextMenuAggregationIconColor ??
+      contextMenuAggregationIconColor: contextMenuAggregationIconColor ??
           this.contextMenuAggregationIconColor,
       contextMenuLayoutIconColor:
           contextMenuLayoutIconColor ?? this.contextMenuLayoutIconColor,

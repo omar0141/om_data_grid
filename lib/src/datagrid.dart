@@ -22,12 +22,12 @@ import 'package:om_data_grid/src/components/formula_builder_dialog.dart';
 double screenWidth = 0.0;
 double screenHeight = 0.0;
 
-class Datagrid extends StatefulWidget {
+class OmDataGrid extends StatefulWidget {
   /// The main widget for the Data Grid.
   ///
   /// This widget renders the grid with columns, rows, and various features like
   /// sorting, filtering, selection, and editing.
-  const Datagrid({
+  const OmDataGrid({
     super.key,
 
     /// Callback for when the selection changes.
@@ -68,15 +68,15 @@ class Datagrid extends StatefulWidget {
   final void Function(int oldIndex, int newIndex)? onRowReorder;
   final Future<bool> Function(int oldIndex, int newIndex)? onBeforeRowReorder;
   final void Function(int oldIndex, int newIndex)? onColumnReorder;
-  final DatagridController controller;
+  final OmDataGridController controller;
   final bool isEditing;
 
   @override
-  State<Datagrid> createState() => _DatagridState();
+  State<OmDataGrid> createState() => _DatagridState();
 }
 
-class _DatagridState extends State<Datagrid> {
-  late List<GridColumnModel> internalColumns;
+class _DatagridState extends State<OmDataGrid> {
+  late List<OmGridColumnModel> internalColumns;
   late List<double?> columnWidths;
   final GlobalKey _gridKey = GlobalKey();
   final ScrollController _horizontalScrollController = ScrollController();
@@ -91,13 +91,13 @@ class _DatagridState extends State<Datagrid> {
   bool? _sortAscending; // null = none, true = asc, false = desc
   int _currentPage = 0;
   final Set<Map<String, dynamic>> _selectedRows = {};
-  final Set<CellPosition> _selectedCells = {};
-  CellPosition? _selectionStart;
-  CellPosition? _selectionEnd;
-  CellPosition? _selectionAnchor;
+  final Set<OmCellPosition> _selectedCells = {};
+  OmCellPosition? _selectionStart;
+  OmCellPosition? _selectionEnd;
+  OmCellPosition? _selectionAnchor;
   bool _isSelecting = false;
   int? _hoveredRowIndex; // track hovered row index
-  final List<ChartInstance> _activeCharts = [];
+  final List<OmChartInstance> _activeCharts = [];
   late int _rowsPerPage;
   bool _isInternalUpdate = false;
   bool _isSidePanelExpanded = false;
@@ -174,12 +174,17 @@ class _DatagridState extends State<Datagrid> {
   void _handleControllerChange() {
     if (mounted && !_isInternalUpdate) {
       setState(() {
-        _initializeInternalColumns(resetSort: false);
+        _initializeInternalColumns(
+            resetSort: false,
+            resetPage: widget.controller.configuration.resetPageOnDataChange);
       });
     }
   }
 
-  void _initializeInternalColumns({bool resetSort = true}) {
+  void _initializeInternalColumns({
+    bool resetSort = true,
+    bool resetPage = true,
+  }) {
     internalColumns = List.from(widget.controller.columnModels);
 
     if (widget.controller.configuration.allowRowReordering) {
@@ -189,8 +194,8 @@ class _DatagridState extends State<Datagrid> {
       if (!alreadyHasReorder) {
         internalColumns.insert(
           0,
-          GridColumnModel(
-            column: GridColumn(
+          OmGridColumnModel(
+            column: OmGridColumn(
               key: '__reorder_column__',
               title: '',
               width: 50,
@@ -218,7 +223,16 @@ class _DatagridState extends State<Datagrid> {
     } else {
       _applySort();
     }
-    _currentPage = 0;
+
+    if (resetPage) {
+      _currentPage = 0;
+    } else {
+      final int totalItems = filterDatasource.length;
+      final int maxPage = totalItems > 0 ? (totalItems - 1) ~/ _rowsPerPage : 0;
+      if (_currentPage > maxPage) {
+        _currentPage = maxPage;
+      }
+    }
     _selectedRows.clear();
     _selectedCells.clear();
     _selectionStart = null;
@@ -233,7 +247,7 @@ class _DatagridState extends State<Datagrid> {
   }
 
   @override
-  void didUpdateWidget(Datagrid oldWidget) {
+  void didUpdateWidget(OmDataGrid oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
@@ -299,8 +313,8 @@ class _DatagridState extends State<Datagrid> {
     }
 
     setState(() {
-      final List<GridColumnModel> newColumns = List.from(internalColumns);
-      final GridColumnModel col = newColumns.removeAt(oldIndex);
+      final List<OmGridColumnModel> newColumns = List.from(internalColumns);
+      final OmGridColumnModel col = newColumns.removeAt(oldIndex);
       newColumns.insert(newIndex, col);
       internalColumns = newColumns;
 
@@ -363,11 +377,11 @@ class _DatagridState extends State<Datagrid> {
         orElse: () => internalColumns[0],
       );
       final bool isDateOrTime = [
-        GridRowTypeEnum.date,
-        GridRowTypeEnum.time,
-        GridRowTypeEnum.dateTime,
+        OmGridRowTypeEnum.date,
+        OmGridRowTypeEnum.time,
+        OmGridRowTypeEnum.dateTime,
       ].contains(col.type);
-      final bool isTime = col.type == GridRowTypeEnum.time;
+      final bool isTime = col.type == OmGridRowTypeEnum.time;
 
       filterDatasource.sort((a, b) {
         dynamic valA = a[_sortColumnKey!];
@@ -379,8 +393,8 @@ class _DatagridState extends State<Datagrid> {
 
         int result;
         if (isDateOrTime) {
-          final dA = GridDateTimeUtils.tryParse(valA, isTime: isTime);
-          final dB = GridDateTimeUtils.tryParse(valB, isTime: isTime);
+          final dA = OmGridDateTimeUtils.tryParse(valA, isTime: isTime);
+          final dB = OmGridDateTimeUtils.tryParse(valB, isTime: isTime);
           if (dA != null && dB != null) {
             result = dA.compareTo(dB);
           } else {
@@ -403,7 +417,7 @@ class _DatagridState extends State<Datagrid> {
     if (groupedColumns.isEmpty) {
       _flattenedItems = _paginatedData;
     } else {
-      final groupedData = DatagridUtils.groupData(
+      final groupedData = OmDatagridUtils.groupData(
         data: filterDatasource,
         groupKeys: groupedColumns,
       );
@@ -475,17 +489,17 @@ class _DatagridState extends State<Datagrid> {
       widget.onRowTap!(row);
     }
 
-    if (widget.controller.configuration.selectionMode == SelectionMode.none) {
+    if (widget.controller.configuration.selectionMode == OmSelectionMode.none) {
       return;
     }
 
     setState(() {
-      if (widget.controller.configuration.selectionMode != SelectionMode.cell) {
+      if (widget.controller.configuration.selectionMode != OmSelectionMode.cell) {
         _selectionStart = null;
         _selectionEnd = null;
       }
       if (widget.controller.configuration.selectionMode ==
-          SelectionMode.single) {
+          OmSelectionMode.single) {
         if (_selectedRows.contains(row)) {
           _selectedRows.clear();
         } else {
@@ -493,7 +507,7 @@ class _DatagridState extends State<Datagrid> {
           _selectedRows.add(row);
         }
       } else if (widget.controller.configuration.selectionMode ==
-          SelectionMode.multiple) {
+          OmSelectionMode.multiple) {
         if (_selectedRows.contains(row)) {
           _selectedRows.remove(row);
         } else {
@@ -508,7 +522,7 @@ class _DatagridState extends State<Datagrid> {
   }
 
   void _handleCellTapDown(int colIndex, int rowIndex) {
-    if (widget.controller.configuration.selectionMode != SelectionMode.cell) {
+    if (widget.controller.configuration.selectionMode != OmSelectionMode.cell) {
       return;
     }
     // Prevent selection start on reorder column
@@ -527,7 +541,7 @@ class _DatagridState extends State<Datagrid> {
           LogicalKeyboardKey.shiftRight,
         );
 
-    final pos = CellPosition(rowIndex: rowIndex, columnIndex: colIndex);
+    final pos = OmCellPosition(rowIndex: rowIndex, columnIndex: colIndex);
 
     setState(() {
       if (isShiftPressed && _selectionAnchor != null) {
@@ -560,7 +574,7 @@ class _DatagridState extends State<Datagrid> {
   void _handleCellPanUpdate(int colIndex, int rowIndex) {
     if (!_isSelecting) return;
     setState(() {
-      _selectionEnd = CellPosition(rowIndex: rowIndex, columnIndex: colIndex);
+      _selectionEnd = OmCellPosition(rowIndex: rowIndex, columnIndex: colIndex);
     });
   }
 
@@ -584,7 +598,7 @@ class _DatagridState extends State<Datagrid> {
 
         for (int r = minRow; r <= maxRow; r++) {
           for (int c = minCol; c <= maxCol; c++) {
-            _selectedCells.add(CellPosition(rowIndex: r, columnIndex: c));
+            _selectedCells.add(OmCellPosition(rowIndex: r, columnIndex: c));
           }
         }
       }
@@ -600,7 +614,7 @@ class _DatagridState extends State<Datagrid> {
       return false;
     }
 
-    final pos = CellPosition(rowIndex: rowIndex, columnIndex: colIndex);
+    final pos = OmCellPosition(rowIndex: rowIndex, columnIndex: colIndex);
 
     // Check if in discrete selection set
     if (_selectedCells.contains(pos)) return true;
@@ -622,27 +636,27 @@ class _DatagridState extends State<Datagrid> {
     final config = widget.controller.configuration;
 
     if (columnIndex != null) {
-      if (config.selectionMode == SelectionMode.cell) {
+      if (config.selectionMode == OmSelectionMode.cell) {
         if (!_isCellSelected(columnIndex, rowIndex)) {
           _handleCellTapDown(columnIndex, rowIndex);
         } else {
           // If already selected, ensure _selectionStart/End point to the clicked cell
           // so that actions like 'filter by selection' use the correct cell context
-          _selectionStart = CellPosition(
+          _selectionStart = OmCellPosition(
             rowIndex: rowIndex,
             columnIndex: columnIndex,
           );
           _selectionEnd = _selectionStart;
         }
-      } else if (config.selectionMode == SelectionMode.single ||
-          config.selectionMode == SelectionMode.multiple) {
+      } else if (config.selectionMode == OmSelectionMode.single ||
+          config.selectionMode == OmSelectionMode.multiple) {
         final row = _flattenedItems[rowIndex];
         if (row is Map<String, dynamic> && row['isGroup'] != true) {
           if (!_selectedRows.contains(row)) {
             _handleRowTap(row);
           }
           // Set selection start/end even in row mode so context actions know which cell was clicked
-          _selectionStart = CellPosition(
+          _selectionStart = OmCellPosition(
             rowIndex: rowIndex,
             columnIndex: columnIndex,
           );
@@ -652,7 +666,7 @@ class _DatagridState extends State<Datagrid> {
     }
 
     if ((_selectionStart == null || _selectionEnd == null) &&
-        config.selectionMode == SelectionMode.none) {
+        config.selectionMode == OmSelectionMode.none) {
       // If no selection logic, maybe just show simple menu or nothing?
       // For now, let's keep existing logic which relies on selection.
       // Or we can pretend the clicked row is selected for the action scope if reasonable.
@@ -780,8 +794,8 @@ class _DatagridState extends State<Datagrid> {
     String formula = selectedCols.map((c) => c.column.title).join(" + ");
 
     // Create a dummy model to pass the formula
-    final dummy = GridColumnModel(
-      column: GridColumn(key: '', title: '', formula: formula),
+    final dummy = OmGridColumnModel(
+      column: OmGridColumn(key: '', title: '', formula: formula),
     );
 
     showDialog(
@@ -793,7 +807,7 @@ class _DatagridState extends State<Datagrid> {
 
   List<Map<String, dynamic>> _getSelectedData() {
     if (_selectedCells.isEmpty) {
-      return DatagridLogicHelper.getSelectedData(
+      return OmDatagridLogicHelper.getSelectedData(
         start: _selectionStart,
         end: _selectionEnd,
         flattenedItems: _flattenedItems,
@@ -813,9 +827,9 @@ class _DatagridState extends State<Datagrid> {
     return selectedData;
   }
 
-  List<GridColumnModel> _getSelectedColumns() {
+  List<OmGridColumnModel> _getSelectedColumns() {
     if (_selectedCells.isEmpty) {
-      return DatagridLogicHelper.getSelectedColumns(
+      return OmDatagridLogicHelper.getSelectedColumns(
         start: _selectionStart,
         end: _selectionEnd,
         internalColumns: internalColumns,
@@ -824,7 +838,7 @@ class _DatagridState extends State<Datagrid> {
 
     final Set<int> colIndices =
         _selectedCells.map((c) => c.columnIndex).toSet();
-    final List<GridColumnModel> selected = [];
+    final List<OmGridColumnModel> selected = [];
     for (var idx in colIndices) {
       if (idx >= 0 && idx < internalColumns.length) {
         selected.add(internalColumns[idx]);
@@ -834,7 +848,7 @@ class _DatagridState extends State<Datagrid> {
   }
 
   void _copyToClipboard({required bool includeHeader}) {
-    DatagridLogicHelper.copyToClipboard(
+    OmDatagridLogicHelper.copyToClipboard(
       rows: _getSelectedData(),
       cols: _getSelectedColumns(),
       includeHeader: includeHeader,
@@ -850,14 +864,14 @@ class _DatagridState extends State<Datagrid> {
     final col = internalColumns[_selectionStart!.columnIndex];
     final value = row[col.key];
 
-    col.notSelectedFilterData = FilterUtils.getExcludedValuesForSelection(
+    col.notSelectedFilterData = OmFilterUtils.getExcludedValuesForSelection(
       data: widget.controller.data,
       columnKey: col.key,
       selectedValue: value,
     );
     col.filter = true;
 
-    _filteredUnsortedData = FilterUtils.performFiltering(
+    _filteredUnsortedData = OmFilterUtils.performFiltering(
       data: widget.controller.data,
       allColumns: internalColumns,
       globalSearch: widget.controller.globalSearchText,
@@ -955,7 +969,7 @@ class _DatagridState extends State<Datagrid> {
 
   void _showChartPopup(
     List<Map<String, dynamic>> data,
-    List<GridColumnModel> columns,
+    List<OmGridColumnModel> columns,
   ) {
     final Size screenSize = MediaQuery.of(context).size;
     if (screenSize.width < 600) {
@@ -964,7 +978,7 @@ class _DatagridState extends State<Datagrid> {
           builder: (context) => Scaffold(
             body: Stack(
               children: [
-                ChartPopup(
+                OmChartPopup(
                   data: data,
                   columns: columns,
                   onClose: () => Navigator.of(context).pop(),
@@ -982,7 +996,7 @@ class _DatagridState extends State<Datagrid> {
         final offset = 50.0 + (_activeCharts.length * 30.0);
 
         _activeCharts.add(
-          ChartInstance(
+          OmChartInstance(
             id: id,
             data: data,
             columns: columns,
@@ -1016,7 +1030,7 @@ class _DatagridState extends State<Datagrid> {
     col.quickFilterText = value;
     col.filter = value.isNotEmpty;
 
-    final newData = FilterUtils.performFiltering(
+    final newData = OmFilterUtils.performFiltering(
       data: widget.controller.data,
       allColumns: internalColumns,
       globalSearch: widget.controller.globalSearchText,
@@ -1125,7 +1139,7 @@ class _DatagridState extends State<Datagrid> {
                     config.shrinkWrapRows ? MainAxisSize.min : MainAxisSize.max,
                 children: [
                   if (config.showGroupingPanel && config.enableGrouping)
-                    GridGroupPanel(
+                    OmGridGroupPanel(
                       controller: widget.controller,
                       groupedColumns: widget.controller.groupedColumns,
                       internalColumns: internalColumns,
@@ -1149,13 +1163,13 @@ class _DatagridState extends State<Datagrid> {
                         _expandedGroups.clear();
                       }),
                     ),
-                  MaybeExpanded(
+                  OmMaybeExpanded(
                     expand: !config.shrinkWrapRows,
-                    child: MaybeIntrinsicHeight(
+                    child: OmMaybeIntrinsicHeight(
                       intrinsic: config.shrinkWrapRows,
                       child: Row(
                         children: [
-                          GridSidePanel(
+                          OmGridSidePanel(
                             controller: widget.controller,
                             onClose: () {},
                             isExpanded: _isSidePanelExpanded,
@@ -1211,7 +1225,7 @@ class _DatagridState extends State<Datagrid> {
                     ),
                   ),
                   if (config.allowPagination)
-                    GridFooter(
+                    OmGridFooter(
                       totalRows: filterDatasource.length,
                       configuration: widget.controller.configuration,
                       currentPage: _currentPage,
@@ -1235,7 +1249,7 @@ class _DatagridState extends State<Datagrid> {
             },
           ),
           ..._activeCharts.map(
-            (chart) => ChartPopup(
+            (chart) => OmChartPopup(
               key: ValueKey(chart.id),
               data: chart.data,
               columns: chart.columns,
@@ -1255,7 +1269,7 @@ class _DatagridState extends State<Datagrid> {
             ),
           ),
           if (_isColumnChooserVisible)
-            ColumnChooserPopup(
+            OmColumnChooserPopup(
               controller: widget.controller,
               onClose: () {
                 setState(() {

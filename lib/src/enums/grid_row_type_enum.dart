@@ -1,5 +1,5 @@
 /// Defines the type of data or widget to render in a grid cell.
-enum GridRowTypeEnum {
+enum OmGridRowTypeEnum {
   /// Display text content.
   text,
 

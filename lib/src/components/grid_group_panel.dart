@@ -4,17 +4,17 @@ import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
 
-class GridGroupPanel extends StatelessWidget {
-  final DatagridController controller;
+class OmGridGroupPanel extends StatelessWidget {
+  final OmDataGridController controller;
   final List<String> groupedColumns;
-  final List<GridColumnModel> internalColumns;
-  final DatagridConfiguration configuration;
+  final List<OmGridColumnModel> internalColumns;
+  final OmDataGridConfiguration configuration;
   final Function(String) onGroupAdded;
   final Function(String) onGroupRemoved;
   final Function(int, int) onGroupReordered;
   final VoidCallback onClearAll;
 
-  const GridGroupPanel({
+  const OmGridGroupPanel({
     super.key,
     required this.controller,
     required this.groupedColumns,
@@ -28,7 +28,7 @@ class GridGroupPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DragTarget<GridColumnDragData>(
+    return DragTarget<OmGridColumnDragData>(
       onWillAcceptWithDetails: (details) =>
           !groupedColumns.contains(details.data.column.key),
       onAcceptWithDetails: (details) => onGroupAdded(details.data.column.key),
@@ -102,7 +102,7 @@ class GridGroupPanel extends StatelessWidget {
                       );
                       final isPanelHovered = candidateData.isNotEmpty;
 
-                      return DragTarget<GridColumnDragData>(
+                      return DragTarget<OmGridColumnDragData>(
                         onWillAcceptWithDetails: (details) =>
                             details.data.source == 'group_chip' &&
                             groupedColumns.contains(details.data.column.key) &&
@@ -132,8 +132,8 @@ class GridGroupPanel extends StatelessWidget {
                                     horizontal: 4,
                                   ),
                                 ),
-                              Draggable<GridColumnDragData>(
-                                data: GridColumnDragData(
+                              Draggable<OmGridColumnDragData>(
+                                data: OmGridColumnDragData(
                                   column: col,
                                   source: 'group_chip',
                                 ),
@@ -291,7 +291,7 @@ class GridGroupPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildGroupItemChip(GridColumnModel col, bool isPanelHovered) {
+  Widget _buildGroupItemChip(OmGridColumnModel col, bool isPanelHovered) {
     return Center(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

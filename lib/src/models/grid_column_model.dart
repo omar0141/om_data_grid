@@ -7,7 +7,7 @@ import 'package:om_data_grid/src/models/grid_combo_box_item.dart';
 import 'package:flutter/material.dart';
 
 /// Defines the style for a state configuration.
-enum StateStyle {
+enum OmStateStyle {
   /// Tinted background style.
   tinted,
 
@@ -22,9 +22,9 @@ enum StateStyle {
 }
 
 /// Configuration for a specific state, used for styling cells based on state.
-class StateConfig {
+class OmStateConfig {
   /// The style of the state indicator.
-  final StateStyle style;
+  final OmStateStyle style;
 
   /// The color associated with this state.
   final Color color;
@@ -35,8 +35,8 @@ class StateConfig {
   /// Label text for the state.
   final String label;
 
-  /// Creates a [StateConfig].
-  const StateConfig({
+  /// Creates a [OmStateConfig].
+  const OmStateConfig({
     required this.style,
     required this.color,
     this.icon,
@@ -45,9 +45,9 @@ class StateConfig {
 }
 
 /// Settings for a combo box column type.
-class GridComboBoxSettings {
+class OmGridComboBoxSettings {
   /// List of items to display in the combo box.
-  final List<GridComboBoxItem> items;
+  final List<OmGridComboBoxItem> items;
 
   /// Whether multiple selection is allowed.
   final bool multipleSelect;
@@ -61,8 +61,8 @@ class GridComboBoxSettings {
   /// The key in the item map to use for the underlying value.
   final String? valueKey;
 
-  /// Creates a [GridComboBoxSettings].
-  const GridComboBoxSettings({
+  /// Creates a [OmGridComboBoxSettings].
+  const OmGridComboBoxSettings({
     required this.items,
     this.multipleSelect = false,
     this.showInput = false,
@@ -72,7 +72,7 @@ class GridComboBoxSettings {
 }
 
 /// Represents an item in a row context menu.
-class RowContextMenuItem {
+class OmRowContextMenuItem {
   /// The label to display for the menu item.
   final String label;
 
@@ -85,8 +85,8 @@ class RowContextMenuItem {
   /// Callback when this item is tapped.
   final void Function(dynamic row)? onTap;
 
-  /// Creates a [RowContextMenuItem].
-  const RowContextMenuItem({
+  /// Creates a [OmRowContextMenuItem].
+  const OmRowContextMenuItem({
     required this.label,
     this.icon,
     required this.value,
@@ -96,7 +96,7 @@ class RowContextMenuItem {
 }
 
 /// Defines the configuration for a grid column.
-class GridColumn {
+class OmGridColumn {
   /// Unique key for the column.
   final String key;
 
@@ -119,10 +119,10 @@ class GridColumn {
   bool allowSorting;
 
   /// The type of data presented in the column.
-  GridRowTypeEnum type;
+  OmGridRowTypeEnum type;
 
-  /// Settings if the column type is [GridRowTypeEnum.comboBox].
-  final GridComboBoxSettings? comboBoxSettings;
+  /// Settings if the column type is [OmGridRowTypeEnum.comboBox].
+  final OmGridComboBoxSettings? comboBoxSettings;
 
   /// Specific number type formatting (if applicable).
   final String? numberType;
@@ -170,16 +170,16 @@ class GridColumn {
   final Future<void> Function(dynamic)? onDelete;
 
   /// Configuration for state-based styling.
-  final Map<dynamic, StateConfig>? stateConfig;
+  final Map<dynamic, OmStateConfig>? stateConfig;
 
   /// Options for the row context menu.
-  final List<RowContextMenuItem>? contextMenuOptions;
+  final List<OmRowContextMenuItem>? contextMenuOptions;
 
   /// Whether to show a placeholder while scrolling.
   final bool showPlaceholderWhileScrolling;
 
-  /// Creates a [GridColumn] configuration.
-  GridColumn({
+  /// Creates a [OmGridColumn] configuration.
+  OmGridColumn({
     required this.key,
     required this.title,
     this.width,
@@ -187,7 +187,7 @@ class GridColumn {
     this.resizable = true,
     this.allowFiltering = true,
     this.allowSorting = true,
-    this.type = GridRowTypeEnum.text,
+    this.type = OmGridRowTypeEnum.text,
     this.comboBoxSettings,
     this.numberType,
     this.showInChart = true,
@@ -209,7 +209,7 @@ class GridColumn {
     this.showPlaceholderWhileScrolling = true,
   });
 
-  GridColumn copyWith({
+  OmGridColumn copyWith({
     String? key,
     String? title,
     double? width,
@@ -217,8 +217,8 @@ class GridColumn {
     bool? resizable,
     bool? allowFiltering,
     bool? allowSorting,
-    GridRowTypeEnum? type,
-    GridComboBoxSettings? comboBoxSettings,
+    OmGridRowTypeEnum? type,
+    OmGridComboBoxSettings? comboBoxSettings,
     String? numberType,
     bool? showInChart,
     bool? canBeXAxis,
@@ -234,11 +234,11 @@ class GridColumn {
     String? valueKey,
     bool? readonlyInView,
     Future<void> Function(dynamic)? onDelete,
-    Map<dynamic, StateConfig>? stateConfig,
-    List<RowContextMenuItem>? contextMenuOptions,
+    Map<dynamic, OmStateConfig>? stateConfig,
+    List<OmRowContextMenuItem>? contextMenuOptions,
     bool? showPlaceholderWhileScrolling,
   }) {
-    return GridColumn(
+    return OmGridColumn(
       key: key ?? this.key,
       title: title ?? this.title,
       width: width ?? this.width,
@@ -271,10 +271,10 @@ class GridColumn {
   }
 }
 
-/// Model combining the static configuration [GridColumn] and runtime state.
-class GridColumnModel {
+/// Model combining the static configuration [OmGridColumn] and runtime state.
+class OmGridColumnModel {
   /// The static configuration of the column.
-  GridColumn column;
+  OmGridColumn column;
 
   /// Current width of the column.
   double? width;
@@ -292,10 +292,10 @@ class GridColumnModel {
   String? quickFilterText;
 
   /// Advanced filter configuration.
-  AdvancedFilterModel? advancedFilter;
+  OmAdvancedFilterModel? advancedFilter;
 
   /// Advanced filter UI state.
-  AdvancedFilterModel?
+  OmAdvancedFilterModel?
   advancedFilterUI; // For UI persistence in popups (keeping condition type)
 
   /// Whether the column is visible.
@@ -305,16 +305,16 @@ class GridColumnModel {
   double? savedWidth;
 
   /// Current aggregation type applied to the column.
-  AggregationType aggregation; // Current aggregation type
+  OmAggregationType aggregation; // Current aggregation type
 
   /// Current pinning state of the column.
-  ColumnPinning pinning;
+  OmColumnPinning pinning;
 
   /// The original index of the column before reordering.
   int originalIndex;
 
-  /// Creates a [GridColumnModel].
-  GridColumnModel({
+  /// Creates a [OmGridColumnModel].
+  OmGridColumnModel({
     required this.column,
     this.width,
     this.filter = false,
@@ -325,22 +325,22 @@ class GridColumnModel {
     this.advancedFilterUI,
     this.isVisible = true,
     this.savedWidth,
-    this.aggregation = AggregationType.none,
-    this.pinning = ColumnPinning.none,
+    this.aggregation = OmAggregationType.none,
+    this.pinning = OmColumnPinning.none,
     this.originalIndex = 0,
   });
 
-  /// The Unique key from [GridColumn].
+  /// The Unique key from [OmGridColumn].
   String get key => column.key;
 
-  /// The title from [GridColumn].
+  /// The title from [OmGridColumn].
   String get title => column.title;
   bool get isResizable => column.resizable;
   bool get isAllowSorting => column.allowSorting;
   bool get isAllowFiltering => column.allowFiltering;
   TextAlign get textAlign => column.textAlign ?? TextAlign.center;
-  GridRowTypeEnum get type => column.type;
-  GridComboBoxSettings? get comboBoxSettings => column.comboBoxSettings;
+  OmGridRowTypeEnum get type => column.type;
+  OmGridComboBoxSettings? get comboBoxSettings => column.comboBoxSettings;
   String? get numberType => column.numberType;
   bool get showInChart => column.showInChart;
   bool get canBeXAxis => column.canBeXAxis;
@@ -356,8 +356,8 @@ class GridColumnModel {
   String? get valueKey => column.valueKey;
   bool? get readonlyInView => column.readonlyInView;
   Future<void> Function(dynamic)? get onDelete => column.onDelete;
-  Map<dynamic, StateConfig>? get stateConfig => column.stateConfig;
-  List<RowContextMenuItem>? get contextMenuOptions => column.contextMenuOptions;
+  Map<dynamic, OmStateConfig>? get stateConfig => column.stateConfig;
+  List<OmRowContextMenuItem>? get contextMenuOptions => column.contextMenuOptions;
 
   bool get isFiltered =>
       filter ||
@@ -369,13 +369,13 @@ class GridColumnModel {
 }
 
 /// Data used during column dragging operations.
-class GridColumnDragData {
+class OmGridColumnDragData {
   /// The column being dragged.
-  final GridColumnModel column;
+  final OmGridColumnModel column;
 
   /// The source layout identifier.
   final String source;
 
-  /// Creates a [GridColumnDragData].
-  GridColumnDragData({required this.column, required this.source});
+  /// Creates a [OmGridColumnDragData].
+  OmGridColumnDragData({required this.column, required this.source});
 }

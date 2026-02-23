@@ -90,28 +90,28 @@ final List<Map<String, dynamic>> myData = [
 ### 2. Configure Your Columns
 
 ```dart
-final List<GridColumn> columns = [
-  GridColumn(key: 'id', title: 'ID', width: 80, type: GridRowTypeEnum.number),
-  GridColumn(key: 'name', title: 'Name', width: 150, type: GridRowTypeEnum.text),
-  GridColumn(key: 'role', title: 'Role', width: 120, type: GridRowTypeEnum.comboBox),
-  GridColumn(key: 'salary', title: 'Salary', width: 130, type: GridRowTypeEnum.double),
+final List<OmGridColumn> columns = [
+  OmGridColumn(key: 'id', title: 'ID', width: 80, type: OmGridRowTypeEnum.number),
+  OmGridColumn(key: 'name', title: 'Name', width: 150, type: OmGridRowTypeEnum.text),
+  OmGridColumn(key: 'role', title: 'Role', width: 120, type: OmGridRowTypeEnum.comboBox),
+  OmGridColumn(key: 'salary', title: 'Salary', width: 130, type: OmGridRowTypeEnum.double),
 ];
 ```
 
 ### 3. Initialize Controller & Widget
 
 ```dart
-final controller = DatagridController(
+final controller = OmDataGridController(
   data: myData,
-  columnModels: columns.map((c) => GridColumnModel(column: c)).toList(),
-  configuration: DatagridConfiguration(
+  columnModels: columns.map((c) => OmGridColumnModel(column: c)).toList(),
+  configuration: OmDataGridConfiguration(
     primaryColor: Colors.teal,
     allowPagination: true,
   ),
 );
 
 // In your build method
-Datagrid(controller: controller)
+OmDataGrid(controller: controller)
 ```
 
 ---
@@ -122,23 +122,23 @@ Datagrid(controller: controller)
 
 `om_data_grid` handles much more than just text:
 
-- `GridRowTypeEnum.image`: URL/Asset image display.
-- `GridRowTypeEnum.multiImage`: Carousel for multiple images.
-- `GridRowTypeEnum.iosSwitch`: Interactive boolean toggle.
-- `GridRowTypeEnum.date`: Date picker integration with customizable formatting.
-- `GridRowTypeEnum.state`: Conditional status indicators with icons.
+- `OmGridRowTypeEnum.image`: URL/Asset image display.
+- `OmGridRowTypeEnum.multiImage`: Carousel for multiple images.
+- `OmGridRowTypeEnum.iosSwitch`: Interactive boolean toggle.
+- `OmGridRowTypeEnum.date`: Date picker integration with customizable formatting.
+- `OmGridRowTypeEnum.state`: Conditional status indicators with icons.
 
 ### Calculated Columns (Formulas)
 
 Create columns that perform live calculations:
 
 ```dart
-GridColumn(
+OmGridColumn(
   key: 'total_comp',
   title: 'Total Comp',
   // Formula using other column keys
   formula: 'salary + bonus',
-  type: GridRowTypeEnum.number,
+  type: OmGridRowTypeEnum.number,
 )
 ```
 
@@ -147,11 +147,11 @@ GridColumn(
 Show summaries at the grid or group level:
 
 ```dart
-GridColumn(
+OmGridColumn(
   key: 'salary',
   title: 'Salary',
   // Options: sum, avg, count, min, max, first, last
-  aggregationType: AggregationType.avg,
+  aggregationType: OmAggregationType.avg,
 )
 ```
 
@@ -160,14 +160,14 @@ GridColumn(
 Customize every pixel of the grid's appearance:
 
 ```dart
-DatagridConfiguration(
+OmDataGridConfiguration(
   headerBackgroundColor: Color(0xFF1A1A1A),
   headerForegroundColor: Colors.white,
   rowHoverColor: Colors.blue.withOpacity(0.05),
   gridBorderColor: Colors.grey.shade300,
   rowHeight: 45.0,
   headerHeight: 55.0,
-  columnWidthMode: ColumnWidthMode.fitByCellValue,
+  columnWidthMode: OmColumnWidthMode.fitByCellValue,
 )
 ```
 
@@ -176,11 +176,11 @@ DatagridConfiguration(
 Add custom actions to rows or columns:
 
 ```dart
-GridColumn(
+OmGridColumn(
   key: 'name',
   title: 'Name',
   contextMenuOptions: [
-    RowContextMenuItem(
+    OmRowContextMenuItem(
       label: 'Send Email',
       icon: Icons.email,
       onTap: (row) => print('Emailing ${row['name']}'),
@@ -194,9 +194,9 @@ GridColumn(
 Add your own tools to the grid's side panel:
 
 ```dart
-DatagridController(
+OmDataGridController(
   additionalSidePanelTabs: [
-    GridSidePanelTab(
+    OmGridSidePanelTab(
       id: 'custom_reports',
       icon: Icons.analytics,
       label: 'Reports',
@@ -232,16 +232,16 @@ When `isEditing` is true, cells become interactive:
 
 ## 🛠 API Reference
 
-### `Datagrid` Props
+### `OmDataGrid` Props
 
 | Property             | Type                  | Description                                            |
 | :------------------- | :-------------------- | :----------------------------------------------------- |
-| `controller`         | `DatagridController`  | **Required**. Manages data, state, and event handling. |
+| `controller`         | `OmDataGridController`  | **Required**. Manages data, state, and event handling. |
 | `onRowTap`           | `Function(Map)`       | Callback when a row is clicked.                        |
 | `isEditing`          | `bool`                | Toggles cell editability globally.                     |
 | `onSelectionChanged` | `Function(List<Map>)` | Triggered when row selection changes.                  |
 
-### `GridColumn` Configuration
+### `OmGridColumn` Configuration
 
 | Property                        | Type                              | Default                | Description                                                                    |
 | :------------------------------ | :-------------------------------- | :--------------------- | :----------------------------------------------------------------------------- |
@@ -252,8 +252,8 @@ When `isEditing` is true, cells become interactive:
 | `resizable`                     | `bool`                            | `true`                 | Whether the column width can be adjusted by the user.                          |
 | `allowFiltering`                | `bool`                            | `true`                 | Enables filtering for this column.                                             |
 | `allowSorting`                  | `bool`                            | `true`                 | Enables sorting for this column.                                               |
-| `type`                          | `GridRowTypeEnum`                 | `GridRowTypeEnum.text` | The type of data in the column (e.g., text, number, date, image).              |
-| `comboBoxSettings`              | `GridComboBoxSettings?`           | `null`                 | Configuration for `comboBox` column types.                                     |
+| `type`                          | `OmGridRowTypeEnum`                 | `OmGridRowTypeEnum.text` | The type of data in the column (e.g., text, number, date, image).              |
+| `comboBoxSettings`              | `OmGridComboBoxSettings?`           | `null`                 | Configuration for `comboBox` column types.                                     |
 | `numberType`                    | `String?`                         | `null`                 | Specific number formatting type.                                               |
 | `showInChart`                   | `bool`                            | `true`                 | Whether this column represents data in charts.                                 |
 | `canBeXAxis`                    | `bool`                            | `true`                 | Whether this column can be used as the X-axis in charts.                       |
@@ -269,11 +269,11 @@ When `isEditing` is true, cells become interactive:
 | `valueKey`                      | `String?`                         | `null`                 | Key for the underlying value (for object-based values).                        |
 | `readonlyInView`                | `bool?`                           | `null`                 | If true, the column cannot be edited in the grid view.                         |
 | `onDelete`                      | `Future<void> Function(dynamic)?` | `null`                 | Callback triggered when a specialized item (like a file) is deleted.           |
-| `stateConfig`                   | `Map<dynamic, StateConfig>?`      | `null`                 | Configuration for state-based styling (background/text colors based on value). |
-| `contextMenuOptions`            | `List<RowContextMenuItem>?`       | `null`                 | Custom context menu options for this column.                                   |
+| `stateConfig`                   | `Map<dynamic, OmStateConfig>?`      | `null`                 | Configuration for state-based styling (background/text colors based on value). |
+| `contextMenuOptions`            | `List<OmRowContextMenuItem>?`       | `null`                 | Custom context menu options for this column.                                   |
 | `showPlaceholderWhileScrolling` | `bool`                            | `true`                 | Shows a placeholder for performance optimization during scrolling.             |
 
-### `DatagridConfiguration`
+### `OmDataGridConfiguration`
 
 Defines the global appearance and behavior of the DataGrid.
 
@@ -290,8 +290,8 @@ Defines the global appearance and behavior of the DataGrid.
 | `headerBorderWidth`                   | `double`                   | `0.5`                | Width of the header borders.                 |
 | `rowBorderColor`                      | `Color`                    | `Color(0xFFE5E5E5)`  | Color of the row borders.                    |
 | `rowBorderWidth`                      | `double`                   | `0.5`                | Width of the row borders.                    |
-| `headerBorderVisibility`              | `GridBorderVisibility`     | `both`               | Visibility of header borders.                |
-| `rowBorderVisibility`                 | `GridBorderVisibility`     | `both`               | Visibility of row borders.                   |
+| `headerBorderVisibility`              | `OmGridBorderVisibility`     | `both`               | Visibility of header borders.                |
+| `rowBorderVisibility`                 | `OmGridBorderVisibility`     | `both`               | Visibility of row borders.                   |
 | `headerTextStyle`                     | `TextStyle?`               | `null`               | Custom text style for the header.            |
 | `rowTextStyle`                        | `TextStyle?`               | `null`               | Custom text style for rows.                  |
 | `selectedRowTextStyle`                | `TextStyle?`               | `null`               | Custom text style for selected rows.         |
@@ -321,16 +321,16 @@ Defines the global appearance and behavior of the DataGrid.
 | `rowHeight`                           | `double`                   | `40.0`               | Height of each data row.                     |
 | `headerHeight`                        | `double`                   | `50.0`               | Height of the header row.                    |
 | `cacheExtent`                         | `double`                   | `250.0`              | Cache extent for scrolling performance.      |
-| `columnWidthMode`                     | `ColumnWidthMode`          | `fill`               | Strategy for calculating column widths.      |
+| `columnWidthMode`                     | `OmColumnWidthMode`          | `fill`               | Strategy for calculating column widths.      |
 | `allowPagination`                     | `bool`                     | `true`               | Enables pagination footer.                   |
 | `rowsPerPage`                         | `int`                      | `250`                | Default number of rows per page.             |
-| `paginationMode`                      | `PaginationMode`           | `pages`              | Style of pagination (pages vs simple).       |
+| `paginationMode`                      | `OmPaginationMode`           | `pages`              | Style of pagination (pages vs simple).       |
 | `allowSorting`                        | `bool`                     | `true`               | Globally enables sorting.                    |
 | `allowColumnReordering`               | `bool`                     | `true`               | Allows dragging to reorder columns.          |
 | `allowRowReordering`                  | `bool`                     | `false`              | Allows dragging to reorder rows.             |
-| `selectionMode`                       | `SelectionMode`            | `none`               | Row selection mode.                          |
+| `selectionMode`                       | `OmSelectionMode`            | `none`               | Row selection mode.                          |
 | `rowsPerPageOptions`                  | `List<int>?`               | `null`               | Options for rows per page dropdown.          |
-| `quickFilters`                        | `List<QuickFilterConfig>?` | `null`               | Configuration for quick filter buttons.      |
+| `quickFilters`                        | `List<OmQuickFilterConfig>?` | `null`               | Configuration for quick filter buttons.      |
 | `showSettingsButton`                  | `bool`                     | `true`               | Shows settings button in toolbar.            |
 | `showClearFiltersButton`              | `bool`                     | `true`               | Shows clear filters button.                  |
 | `showAddButton`                       | `bool`                     | `false`              | Shows 'Add' button in toolbar.               |
@@ -388,7 +388,7 @@ Defines the global appearance and behavior of the DataGrid.
 | `showSortMenuItem`                    | `bool`                     | `true`               | Show 'Sort' in context menu.                 |
 | `showFilterBySelectionMenuItem`       | `bool`                     | `true`               | Show 'Filter by Selection'.                  |
 | `showChartsMenuItem`                  | `bool`                     | `true`               | Show 'Visualize' in context menu.            |
-| `sidePanelConfiguration`              | `SidePanelConfiguration`   | `const...`           | Side panel configuration.                    |
+| `sidePanelConfiguration`              | `OmSidePanelConfiguration`   | `const...`           | Side panel configuration.                    |
 | `showColumnsTab`                      | `bool`                     | `true`               | Show 'Columns' tab in side panel.            |
 | `showFiltersTab`                      | `bool`                     | `true`               | Show 'Filters' tab in side panel.            |
 | `showQuickSearch`                     | `bool`                     | `false`              | Show quick search toolbar.                   |
@@ -402,7 +402,7 @@ Defines the global appearance and behavior of the DataGrid.
 | `shrinkWrapColumns`                   | `bool`                     | `false`              | Shrink wrap horizontal sizing.               |
 | `frozenPaneElevation`                 | `double`                   | `0.0`                | Elevation shadow for frozen panes.           |
 | `frozenPaneBorderSide`                | `BorderSide?`              | `Color(0xFFE5E5E5)`  | Border for frozen panes.                     |
-| `frozenPaneScrollMode`                | `FrozenPaneScrollMode`     | `sticky`             | Scroll behavior (sticky vs fixed).           |
+| `frozenPaneScrollMode`                | `OmFrozenPaneScrollMode`     | `sticky`             | Scroll behavior (sticky vs fixed).           |
 | `filterTabItemBackgroundColor`        | `Color?`                   | `0xFFFFFFFF`         | Background of filter items.                  |
 | `filterTabItemBorderColor`            | `Color?`                   | `0xFFEEEEEE`         | Border of filter items.                      |
 | `filterTabItemParamsColor`            | `Color?`                   | `0xDD000000`         | Text color of filter params.                 |
@@ -431,9 +431,9 @@ Defines the global appearance and behavior of the DataGrid.
 | `contextMenuAggregationIconColor`     | `Color?`                   | `null`               | Specific icon color for aggregation.         |
 | `contextMenuLayoutIconColor`          | `Color?`                   | `null`               | Specific icon color for layout.              |
 
-_(Note: `DatagridConfiguration` contains many more color and style properties for fine-grained customization of menus, dialogs, and inputs not listed above.)_
+_(Note: `OmDataGridConfiguration` contains many more color and style properties for fine-grained customization of menus, dialogs, and inputs not listed above.)_
 
-### `SidePanelConfiguration`
+### `OmSidePanelConfiguration`
 
 Controls the look and feel of the expandable side panel.
 

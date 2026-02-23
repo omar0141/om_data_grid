@@ -10,7 +10,7 @@ import 'package:universal_html/html.dart' as html;
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-class StringUtils {
+class OmStringUtils {
   static List<int> getNumberIndices(String input) {
     List<int> indices = [];
     for (int i = 0; i < input.length; i++) {
@@ -22,7 +22,7 @@ class StringUtils {
   }
 }
 
-class GridDateTimeUtils {
+class OmGridDateTimeUtils {
   static DateTime? tryParse(
     dynamic value, {
     bool isTime = false,
@@ -64,11 +64,11 @@ class GridDateTimeUtils {
   }
 }
 
-class TimeRange {
+class OmTimeRange {
   final TimeOfDay start;
   final TimeOfDay end;
 
-  TimeRange({required this.start, required this.end});
+  OmTimeRange({required this.start, required this.end});
 }
 
 extension StringExtensions on String? {
@@ -110,7 +110,7 @@ extension ColorOpacity on Color? {
 class GridDatePickerUtils {
   static Future<DateTimeRange?> showModernDateRangePicker({
     required BuildContext context,
-    required DatagridConfiguration configuration,
+    required OmDataGridConfiguration configuration,
     DateTimeRange? initialDateRange,
   }) async {
     DateTimeRange? tempResult = initialDateRange;
@@ -278,7 +278,7 @@ class GridDatePickerUtils {
 
   static Future<DateTime?> showModernDatePicker({
     required BuildContext context,
-    required DatagridConfiguration configuration,
+    required OmDataGridConfiguration configuration,
     DateTime? initialDate,
   }) async {
     return await showDatePicker(
@@ -297,7 +297,7 @@ class GridDatePickerUtils {
 
   static Future<TimeOfDay?> showModernTimePicker({
     required BuildContext context,
-    required DatagridConfiguration configuration,
+    required OmDataGridConfiguration configuration,
     TimeOfDay? initialTime,
   }) async {
     return await showTimePicker(
@@ -344,17 +344,17 @@ class GridDatePickerUtils {
     );
   }
 
-  static Future<TimeRange?> showModernTimeRangePicker({
+  static Future<OmTimeRange?> showModernTimeRangePicker({
     required BuildContext context,
-    required DatagridConfiguration configuration,
-    TimeRange? initialTimeRange,
+    required OmDataGridConfiguration configuration,
+    OmTimeRange? initialTimeRange,
   }) async {
     TimeOfDay start =
         initialTimeRange?.start ?? const TimeOfDay(hour: 9, minute: 0);
     TimeOfDay end =
         initialTimeRange?.end ?? const TimeOfDay(hour: 17, minute: 0);
 
-    return await showDialog<TimeRange>(
+    return await showDialog<OmTimeRange>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -443,7 +443,7 @@ class GridDatePickerUtils {
                                 ),
                                 onPressed: () => Navigator.pop(
                                   context,
-                                  TimeRange(start: start, end: end),
+                                  OmTimeRange(start: start, end: end),
                                 ),
                                 child: const Text("Apply"),
                               ),
@@ -466,7 +466,7 @@ class GridDatePickerUtils {
     BuildContext context,
     String label,
     TimeOfDay time,
-    DatagridConfiguration configuration,
+    OmDataGridConfiguration configuration,
     void Function(TimeOfDay) onChanged,
   ) {
     return Column(
@@ -511,7 +511,7 @@ class GridDatePickerUtils {
 
   static ThemeData _getPickerTheme(
     BuildContext context,
-    DatagridConfiguration configuration,
+    OmDataGridConfiguration configuration,
   ) {
     final Color primary = configuration.primaryColor;
     final Color surface = configuration.menuBackgroundColor ?? Colors.white;
@@ -552,7 +552,7 @@ class GridFileViewerUtils {
     required BuildContext context,
     required String url,
     required String title,
-    required DatagridConfiguration configuration,
+    required OmDataGridConfiguration configuration,
     bool isImage = false,
   }) async {
     await showDialog(

@@ -4,8 +4,8 @@ import 'package:om_data_grid/src/utils/datagrid_controller.dart';
 import 'package:flutter/material.dart';
 
 class GridAggregationRow extends StatelessWidget {
-  final DatagridController controller;
-  final List<GridColumnModel> columns;
+  final OmDataGridController controller;
+  final List<OmGridColumnModel> columns;
   final List<double?> columnWidths;
   final List<int> visibleIndices;
 
@@ -36,7 +36,7 @@ class GridAggregationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!columns.any((c) => c.aggregation != AggregationType.none)) {
+    if (!columns.any((c) => c.aggregation != OmAggregationType.none)) {
       return const SizedBox.shrink();
     }
 

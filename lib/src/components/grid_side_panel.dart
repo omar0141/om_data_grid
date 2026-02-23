@@ -4,13 +4,13 @@ import 'package:om_data_grid/src/models/side_panel_config.dart';
 import 'package:om_data_grid/src/utils/datagrid_controller.dart';
 import 'package:flutter/material.dart';
 
-class GridSidePanel extends StatefulWidget {
-  final DatagridController controller;
+class OmGridSidePanel extends StatefulWidget {
+  final OmDataGridController controller;
   final VoidCallback onClose;
   final bool isExpanded;
   final ValueChanged<bool> onExpansionChanged;
 
-  const GridSidePanel({
+  const OmGridSidePanel({
     super.key,
     required this.controller,
     required this.onClose,
@@ -19,10 +19,10 @@ class GridSidePanel extends StatefulWidget {
   });
 
   @override
-  State<GridSidePanel> createState() => _GridSidePanelState();
+  State<OmGridSidePanel> createState() => _GridSidePanelState();
 }
 
-class _GridSidePanelState extends State<GridSidePanel> {
+class _GridSidePanelState extends State<OmGridSidePanel> {
   int _selectedIndex = 0;
 
   @override
@@ -54,14 +54,14 @@ class _GridSidePanelState extends State<GridSidePanel> {
     }
   }
 
-  List<GridSidePanelTab> _getVisibleTabs() {
+  List<OmGridSidePanelTab> _getVisibleTabs() {
     final config = widget.controller.configuration;
-    final List<GridSidePanelTab> tabs = [];
+    final List<OmGridSidePanelTab> tabs = [];
 
     // Add default tabs if enabled in config
     if (config.showColumnsTab) {
       tabs.add(
-        GridSidePanelTab(
+        OmGridSidePanelTab(
           id: 'columns',
           icon: Icons.view_headline,
           label: 'Columns',
@@ -72,7 +72,7 @@ class _GridSidePanelState extends State<GridSidePanel> {
 
     if (config.showFiltersTab) {
       tabs.add(
-        GridSidePanelTab(
+        OmGridSidePanelTab(
           id: 'filters',
           icon: Icons.filter_alt,
           label: 'Filters',
@@ -136,8 +136,8 @@ class _GridSidePanelState extends State<GridSidePanel> {
   }
 
   Widget _buildVerticalTabs(
-    List<GridSidePanelTab> tabs,
-    SidePanelConfiguration config,
+    List<OmGridSidePanelTab> tabs,
+    OmSidePanelConfiguration config,
   ) {
     return Container(
       width: config.collapsedWidth,
@@ -158,8 +158,8 @@ class _GridSidePanelState extends State<GridSidePanel> {
 
   Widget _buildVerticalTab(
     int index,
-    GridSidePanelTab tab,
-    SidePanelConfiguration config,
+    OmGridSidePanelTab tab,
+    OmSidePanelConfiguration config,
   ) {
     final isSelected = _selectedIndex == index && widget.isExpanded;
 

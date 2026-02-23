@@ -4,7 +4,7 @@ import '../models/datagrid_configuration.dart';
 
 class GridGroupHeader extends StatelessWidget {
   final Map<String, dynamic> group;
-  final DatagridConfiguration config;
+  final OmDataGridConfiguration config;
   final bool isExpanded;
   final bool isHovered;
   final VoidCallback onTap;

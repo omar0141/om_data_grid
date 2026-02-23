@@ -9,7 +9,7 @@ class HomeScreen2 extends StatefulWidget {
 }
 
 class _HomeScreen2State extends State<HomeScreen2> {
-  late DatagridController _controller;
+  late OmDataGridController _controller;
   List<Map<String, dynamic>> data = [];
 
   @override
@@ -47,33 +47,33 @@ class _HomeScreen2State extends State<HomeScreen2> {
     });
 
     final columnModels = [
-      GridColumn(
+      OmGridColumn(
         key: "ID",
         title: "ID",
         width: 80,
-        type: GridRowTypeEnum.integer,
+        type: OmGridRowTypeEnum.integer,
         thousandsSeparator: ',',
         showPlaceholderWhileScrolling: false,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Name",
         title: "Full Name",
         width: 180,
         showPlaceholderWhileScrolling: false,
         canBeXAxis: true,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Job",
         title: "Department",
         width: 150,
-        type: GridRowTypeEnum.comboBox,
-        comboBoxSettings: GridComboBoxSettings(
+        type: OmGridRowTypeEnum.comboBox,
+        comboBoxSettings: OmGridComboBoxSettings(
           items: [
-            GridComboBoxItem(value: '1', text: 'Development'),
-            GridComboBoxItem(value: '2', text: 'Design'),
-            GridComboBoxItem(value: '3', text: 'Marketing'),
-            GridComboBoxItem(value: '4', text: 'Sales'),
-            GridComboBoxItem(value: '5', text: 'HR'),
+            OmGridComboBoxItem(value: '1', text: 'Development'),
+            OmGridComboBoxItem(value: '2', text: 'Design'),
+            OmGridComboBoxItem(value: '3', text: 'Marketing'),
+            OmGridComboBoxItem(value: '4', text: 'Sales'),
+            OmGridComboBoxItem(value: '5', text: 'HR'),
           ],
         ),
         displayKey: "label",
@@ -81,95 +81,95 @@ class _HomeScreen2State extends State<HomeScreen2> {
         showPlaceholderWhileScrolling: false,
         canBeXAxis: true,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Experience",
         title: "Years Exp",
         width: 120,
-        type: GridRowTypeEnum.integer,
+        type: OmGridRowTypeEnum.integer,
         canBeYAxis: true,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Rating",
         title: "Performance",
         width: 120,
-        type: GridRowTypeEnum.double,
+        type: OmGridRowTypeEnum.double,
         decimalSeparator: '.',
         thousandsSeparator: ',',
         decimalDigits: 1,
         canBeYAxis: true,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Date",
         title: "Join Date",
-        type: GridRowTypeEnum.date,
+        type: OmGridRowTypeEnum.date,
         customDateFormat: "yyyy-MM-dd",
         width: 140,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Time",
         title: "Shift",
-        type: GridRowTypeEnum.time,
+        type: OmGridRowTypeEnum.time,
         customDateFormat: "HH:mm",
         width: 100,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "LastLogin",
         title: "Last Seen",
-        type: GridRowTypeEnum.dateTime,
+        type: OmGridRowTypeEnum.dateTime,
         customDateFormat: "dd/MM/yyyy HH:mm",
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Status",
         title: "Status",
-        type: GridRowTypeEnum.state,
+        type: OmGridRowTypeEnum.state,
         stateConfig: {
-          'Active': const StateConfig(
-            style: StateStyle.tinted,
+          'Active': const OmStateConfig(
+            style: OmStateStyle.tinted,
             color: Colors.green,
             label: "Active",
           ),
-          'Pending': const StateConfig(
-            style: StateStyle.tinted,
+          'Pending': const OmStateConfig(
+            style: OmStateStyle.tinted,
             color: Colors.orange,
             label: "Pending",
           ),
-          'Inactive': const StateConfig(
-            style: StateStyle.tinted,
+          'Inactive': const OmStateConfig(
+            style: OmStateStyle.tinted,
             color: Colors.red,
             label: "Inactive",
           ),
         },
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Avatar",
         title: "Avatar",
-        type: GridRowTypeEnum.image,
+        type: OmGridRowTypeEnum.image,
         width: 100,
         imageBorderRadius: 100,
       ),
-      GridColumn(
+      OmGridColumn(
         key: "Salary",
         title: "Annual Salary",
         width: 180,
-        type: GridRowTypeEnum.double,
+        type: OmGridRowTypeEnum.double,
         thousandsSeparator: ',',
         decimalSeparator: '.',
       ),
-      GridColumn(
+      OmGridColumn(
         key: "delete",
         title: "Delete",
         width: 80,
-        type: GridRowTypeEnum.delete,
+        type: OmGridRowTypeEnum.delete,
         onDelete: (row) async {
           // print("Deleting row: ${row['ID']}");
         },
       ),
-    ].map((col) => GridColumnModel(column: col, width: col.width)).toList();
+    ].map((col) => OmGridColumnModel(column: col, width: col.width)).toList();
 
-    _controller = DatagridController(
+    _controller = OmDataGridController(
       data: data,
       columnModels: columnModels,
-      configuration: DatagridConfiguration(
+      configuration: OmDataGridConfiguration(
         primaryColor: Color(0xFF1E293B),
         paginationSelectedBackgroundColor: Color(0xFF1E293B),
         headerBackgroundColor: Color.fromRGBO(250, 250, 250, 1),
@@ -180,18 +180,18 @@ class _HomeScreen2State extends State<HomeScreen2> {
         filterIconColor: Colors.black87,
         sortIconColor: Colors.black87,
         minColumnWidth: 100,
-        columnWidthMode: ColumnWidthMode.fill,
-        selectionMode: SelectionMode.cell,
+        columnWidthMode: OmColumnWidthMode.fill,
+        selectionMode: OmSelectionMode.cell,
         allowPagination: true,
         rowsPerPage: 5000,
         rowHeight: 45,
-        quickFilters: [QuickFilterConfig(columnKey: "Job")],
+        quickFilters: [OmQuickFilterConfig(columnKey: "Job")],
         showSettingsButton: true,
         showClearFiltersButton: true,
         enableGrouping: true,
         showGroupingPanel: true,
-        rowBorderVisibility: GridBorderVisibility.horizontal,
-        headerBorderVisibility: GridBorderVisibility.horizontal,
+        rowBorderVisibility: OmGridBorderVisibility.horizontal,
+        headerBorderVisibility: OmGridBorderVisibility.horizontal,
         showQuickSearch: false,
         showGlobalSearch: true,
         footerFrozenColumnCount: 1,
@@ -225,8 +225,8 @@ class _HomeScreen2State extends State<HomeScreen2> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Standalone QuickFilterBar taking only the controller
-            QuickFilterBar(
+            // Standalone OmQuickFilterBar taking only the controller
+            OmQuickFilterBar(
               controller: _controller,
               onAddPressed: () {
                 data.add({
@@ -270,7 +270,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
                 child: ClipRRect(
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   borderRadius: BorderRadius.circular(12),
-                  child: Datagrid(controller: _controller, isEditing: false),
+                  child: OmDataGrid(controller: _controller, isEditing: false),
                 ),
               ),
             ),

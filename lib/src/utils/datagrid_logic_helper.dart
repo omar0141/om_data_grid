@@ -2,10 +2,10 @@ import 'package:flutter/services.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:om_data_grid/src/models/cell_position.dart';
 
-class DatagridLogicHelper {
+class OmDatagridLogicHelper {
   static List<Map<String, dynamic>> getSelectedData({
-    required CellPosition? start,
-    required CellPosition? end,
+    required OmCellPosition? start,
+    required OmCellPosition? end,
     required List<dynamic> flattenedItems,
   }) {
     if (start == null || end == null) return [];
@@ -27,13 +27,13 @@ class DatagridLogicHelper {
     return selectedData;
   }
 
-  static List<GridColumnModel> getSelectedColumns({
-    required CellPosition? start,
-    required CellPosition? end,
-    required List<GridColumnModel> internalColumns,
+  static List<OmGridColumnModel> getSelectedColumns({
+    required OmCellPosition? start,
+    required OmCellPosition? end,
+    required List<OmGridColumnModel> internalColumns,
   }) {
     if (start == null || end == null) return [];
-    List<GridColumnModel> selectedColumns = [];
+    List<OmGridColumnModel> selectedColumns = [];
     final minCol = start.columnIndex < end.columnIndex
         ? start.columnIndex
         : end.columnIndex;
@@ -48,7 +48,7 @@ class DatagridLogicHelper {
 
   static void copyToClipboard({
     required List<Map<String, dynamic>> rows,
-    required List<GridColumnModel> cols,
+    required List<OmGridColumnModel> cols,
     required bool includeHeader,
   }) {
     if (rows.isEmpty || cols.isEmpty) return;

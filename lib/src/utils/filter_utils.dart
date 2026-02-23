@@ -4,10 +4,10 @@ import 'package:om_data_grid/src/models/advanced_filter_model.dart';
 import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:intl/intl.dart';
 
-class FilterUtils {
+class OmFilterUtils {
   static List<dynamic> performFiltering({
     required List<dynamic> data,
-    required List<GridColumnModel> allColumns,
+    required List<OmGridColumnModel> allColumns,
     String? globalSearch,
   }) {
     List<dynamic> filteredData = [];
@@ -42,21 +42,21 @@ class FilterUtils {
       for (var col in allColumns) {
         // Check Quick Filter (Contains)
         if (col.quickFilterText != null && col.quickFilterText!.isNotEmpty) {
-          if (col.type == GridRowTypeEnum.date ||
-              col.type == GridRowTypeEnum.dateTime ||
-              col.type == GridRowTypeEnum.time) {
-            final bool isTimeType = col.type == GridRowTypeEnum.time;
+          if (col.type == OmGridRowTypeEnum.date ||
+              col.type == OmGridRowTypeEnum.dateTime ||
+              col.type == OmGridRowTypeEnum.time) {
+            final bool isTimeType = col.type == OmGridRowTypeEnum.time;
 
             // Handle range if it has a separator |
             if (col.quickFilterText!.contains('|')) {
               final parts = col.quickFilterText!.split('|');
-              final start = GridDateTimeUtils.tryParse(
+              final start = OmGridDateTimeUtils.tryParse(
                 parts[0],
                 isTime: isTimeType,
                 pattern: col.customDateFormat,
               );
               final end = parts.length > 1
-                  ? GridDateTimeUtils.tryParse(
+                  ? OmGridDateTimeUtils.tryParse(
                       parts[1],
                       isTime: isTimeType,
                       pattern: col.customDateFormat,
@@ -64,7 +64,7 @@ class FilterUtils {
                   : null;
               final cellValue = item[col.key];
 
-              final DateTime? dateValue = GridDateTimeUtils.tryParse(
+              final DateTime? dateValue = OmGridDateTimeUtils.tryParse(
                 cellValue,
                 isTime: isTimeType,
                 pattern: col.customDateFormat,
@@ -116,12 +116,12 @@ class FilterUtils {
             col.notSelectedFilterData!.isNotEmpty) {
           dynamic cellValue = item[col.key];
 
-          if (col.type == GridRowTypeEnum.comboBox &&
+          if (col.type == OmGridRowTypeEnum.comboBox &&
               col.comboBoxSettings?.multipleSelect == true) {
             List<String> currentValues = [];
             if (cellValue is List) {
               for (var val in cellValue) {
-                if (val is GridComboBoxItem) {
+                if (val is OmGridComboBoxItem) {
                   currentValues.add(val.value.toString());
                 } else if (val is Map) {
                   String keyTwo = col.comboBoxSettings?.valueKey ?? "";
@@ -177,11 +177,11 @@ class FilterUtils {
     return filteredData;
   }
 
-  static String getDisplayValue(dynamic value, GridColumnModel col) {
+  static String getDisplayValue(dynamic value, OmGridColumnModel col) {
     if (value == null) return "None";
 
     switch (col.type) {
-      case GridRowTypeEnum.comboBox:
+      case OmGridRowTypeEnum.comboBox:
         final options = col.comboBoxSettings?.items;
         if (options != null) {
           if (col.multiSelect == true && value is List) {
@@ -189,7 +189,7 @@ class FilterUtils {
                 .map((v) {
                   final option = options.firstWhere(
                     (o) => o.value == v.toString(),
-                    orElse: () => GridComboBoxItem(
+                    orElse: () => OmGridComboBoxItem(
                       value: v.toString(),
                       text: v.toString(),
                     ),
@@ -200,7 +200,7 @@ class FilterUtils {
           } else {
             final option = options.firstWhere(
               (o) => o.value == value.toString(),
-              orElse: () => GridComboBoxItem(
+              orElse: () => OmGridComboBoxItem(
                 value: value.toString(),
                 text: value.toString(),
               ),
@@ -210,7 +210,7 @@ class FilterUtils {
         }
         return value.toString();
 
-      case GridRowTypeEnum.iosSwitch:
+      case OmGridRowTypeEnum.iosSwitch:
         bool isTrue = false;
         if (value is bool) {
           isTrue = value;
@@ -221,11 +221,11 @@ class FilterUtils {
         }
         return isTrue ? "true" : "false";
 
-      case GridRowTypeEnum.date:
-      case GridRowTypeEnum.dateTime:
-      case GridRowTypeEnum.time:
-        final bool isTimeType = col.type == GridRowTypeEnum.time;
-        final date = GridDateTimeUtils.tryParse(value, isTime: isTimeType);
+      case OmGridRowTypeEnum.date:
+      case OmGridRowTypeEnum.dateTime:
+      case OmGridRowTypeEnum.time:
+        final bool isTimeType = col.type == OmGridRowTypeEnum.time;
+        final date = OmGridDateTimeUtils.tryParse(value, isTime: isTimeType);
         if (date != null) {
           if (col.customDateFormat != null) {
             try {
@@ -238,15 +238,15 @@ class FilterUtils {
         }
         return value.toString();
 
-      case GridRowTypeEnum.double:
-      case GridRowTypeEnum.integer:
+      case OmGridRowTypeEnum.double:
+      case OmGridRowTypeEnum.integer:
         if (value is num ||
             (value is String && double.tryParse(value) != null)) {
           final double val = value is num
               ? value.toDouble()
               : double.parse(value);
           final int digits =
-              col.decimalDigits ?? (col.type == GridRowTypeEnum.double ? 2 : 0);
+              col.decimalDigits ?? (col.type == OmGridRowTypeEnum.double ? 2 : 0);
           final String decimalSeparator = col.decimalSeparator ?? '.';
           final String thousandsSeparator = col.thousandsSeparator ?? '';
 
@@ -278,8 +278,8 @@ class FilterUtils {
 
   static bool evaluateAdvancedFilter(
     dynamic cellValue,
-    AdvancedFilterModel filter,
-    GridColumnModel col,
+    OmAdvancedFilterModel filter,
+    OmGridColumnModel col,
   ) {
     if (filter.conditions.isEmpty) return true;
 
@@ -295,75 +295,75 @@ class FilterUtils {
       numValue = num.tryParse(cellValue);
     }
 
-    final bool isTimeType = col.type == GridRowTypeEnum.time;
-    dateValue = GridDateTimeUtils.tryParse(
+    final bool isTimeType = col.type == OmGridRowTypeEnum.time;
+    dateValue = OmGridDateTimeUtils.tryParse(
       cellValue,
       isTime: isTimeType,
       pattern: col.customDateFormat,
     );
 
-    bool checkCondition(FilterCondition condition) {
+    bool checkCondition(OmFilterCondition condition) {
       String condValue = condition.value.toLowerCase();
       num? condNum = num.tryParse(condition.value);
-      DateTime? condDate = GridDateTimeUtils.tryParse(
+      DateTime? condDate = OmGridDateTimeUtils.tryParse(
         condition.value,
         isTime: isTimeType,
         pattern: col.customDateFormat,
       );
 
       switch (condition.type) {
-        case FilterConditionType.equals:
+        case OmFilterConditionType.equals:
           if (dateValue != null && condDate != null) {
             return dateValue.isAtSameMomentAs(condDate);
           }
           return strValue == condValue;
-        case FilterConditionType.notEqual:
+        case OmFilterConditionType.notEqual:
           if (dateValue != null && condDate != null) {
             return !dateValue.isAtSameMomentAs(condDate);
           }
           return strValue != condValue;
-        case FilterConditionType.contains:
+        case OmFilterConditionType.contains:
           return strValue.contains(condValue);
-        case FilterConditionType.notContains:
+        case OmFilterConditionType.notContains:
           return !strValue.contains(condValue);
-        case FilterConditionType.startsWith:
+        case OmFilterConditionType.startsWith:
           return strValue.startsWith(condValue);
-        case FilterConditionType.endsWith:
+        case OmFilterConditionType.endsWith:
           return strValue.endsWith(condValue);
-        case FilterConditionType.greaterThan:
+        case OmFilterConditionType.greaterThan:
           if (dateValue != null && condDate != null) {
             return dateValue.isAfter(condDate);
           }
           if (numValue != null && condNum != null) return numValue > condNum;
           return strValue.compareTo(condValue) > 0;
-        case FilterConditionType.lessThan:
+        case OmFilterConditionType.lessThan:
           if (dateValue != null && condDate != null) {
             return dateValue.isBefore(condDate);
           }
           if (numValue != null && condNum != null) return numValue < condNum;
           return strValue.compareTo(condValue) < 0;
-        case FilterConditionType.greaterThanOrEqual:
+        case OmFilterConditionType.greaterThanOrEqual:
           if (dateValue != null && condDate != null) {
             return dateValue.isAfter(condDate) ||
                 dateValue.isAtSameMomentAs(condDate);
           }
           if (numValue != null && condNum != null) return numValue >= condNum;
           return strValue.compareTo(condValue) >= 0;
-        case FilterConditionType.lessThanOrEqual:
+        case OmFilterConditionType.lessThanOrEqual:
           if (dateValue != null && condDate != null) {
             return dateValue.isBefore(condDate) ||
                 dateValue.isAtSameMomentAs(condDate);
           }
           if (numValue != null && condNum != null) return numValue <= condNum;
           return strValue.compareTo(condValue) <= 0;
-        case FilterConditionType.empty:
+        case OmFilterConditionType.empty:
           return strValue.isEmpty || cellValue == null;
-        case FilterConditionType.notEmpty:
+        case OmFilterConditionType.notEmpty:
           return strValue.isNotEmpty && cellValue != null;
-        case FilterConditionType.between:
+        case OmFilterConditionType.between:
           String condValueTo = condition.valueTo.toLowerCase();
           num? condNumTo = num.tryParse(condition.valueTo);
-          DateTime? condDateTo = GridDateTimeUtils.tryParse(
+          DateTime? condDateTo = OmGridDateTimeUtils.tryParse(
             condition.valueTo,
             isTime: isTimeType,
             pattern: col.customDateFormat,
@@ -384,11 +384,11 @@ class FilterUtils {
     }
 
     final activeConditions = filter.conditions.where((c) {
-      if (c.type == FilterConditionType.empty ||
-          c.type == FilterConditionType.notEmpty) {
+      if (c.type == OmFilterConditionType.empty ||
+          c.type == OmFilterConditionType.notEmpty) {
         return true;
       }
-      if (c.type == FilterConditionType.between) {
+      if (c.type == OmFilterConditionType.between) {
         return c.value.trim().isNotEmpty && c.valueTo.trim().isNotEmpty;
       }
       return c.value.trim().isNotEmpty;
@@ -396,7 +396,7 @@ class FilterUtils {
 
     if (activeConditions.isEmpty) return true;
 
-    if (filter.operator == FilterOperator.and) {
+    if (filter.operator == OmFilterOperator.and) {
       return activeConditions.every(checkCondition);
     } else {
       return activeConditions.any(checkCondition);

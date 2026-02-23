@@ -8,21 +8,21 @@ import 'package:om_data_grid/src/utils/filter_utils.dart';
 import 'package:expressions/expressions.dart';
 
 /// Controller for the Data Grid, managing state, data, and configuration.
-class DatagridController extends ChangeNotifier {
+class OmDataGridController extends ChangeNotifier {
   List<Map<String, dynamic>> _data;
   List<Map<String, dynamic>> _filteredData;
-  List<GridColumnModel> _columnModels;
-  late final List<GridColumnModel> _initialColumnModels;
-  DatagridConfiguration _configuration;
+  List<OmGridColumnModel> _columnModels;
+  late final List<OmGridColumnModel> _initialColumnModels;
+  OmDataGridConfiguration _configuration;
   final List<String> _groupedColumns = [];
-  List<GridSidePanelTab> _additionalSidePanelTabs = [];
+  List<OmGridSidePanelTab> _additionalSidePanelTabs = [];
   String _globalSearchText = "";
   bool _isDraggingColumnOutside = false;
   GlobalKey? _gridKey;
 
   /// Callback to trigger visualization (charts).
-  /// This is usually provided by the [Datagrid] widget when it attaches.
-  void Function(List<Map<String, dynamic>> data, List<GridColumnModel> columns)?
+  /// This is usually provided by the [OmDataGrid] widget when it attaches.
+  void Function(List<Map<String, dynamic>> data, List<OmGridColumnModel> columns)?
   onVisualize;
 
   /// Callback when the add button is pressed.
@@ -44,31 +44,31 @@ class DatagridController extends ChangeNotifier {
   /// Callback when a column is reordered.
   void Function(int oldIndex, int newIndex)? onColumnReorder;
 
-  /// Creates a [DatagridController].
+  /// Creates a [OmDataGridController].
   ///
   /// [data] - The initial list of data rows.
   /// [columnModels] - Configuration for the grid columns.
   /// [configuration] - General configuration settings for the grid.
   /// [additionalSidePanelTabs] - Custom tabs to add to the side panel.
-  DatagridController({
+  OmDataGridController({
     required List<Map<String, dynamic>> data,
-    required List<GridColumnModel> columnModels,
-    DatagridConfiguration? configuration,
-    List<GridSidePanelTab> additionalSidePanelTabs = const [],
+    required List<OmGridColumnModel> columnModels,
+    OmDataGridConfiguration? configuration,
+    List<OmGridSidePanelTab> additionalSidePanelTabs = const [],
     this.onRowReorder,
     this.onBeforeRowReorder,
     this.onColumnReorder,
   }) : _data = data,
        _filteredData = List.from(data),
        _columnModels = columnModels,
-       _configuration = configuration ?? DatagridConfiguration(),
+       _configuration = configuration ?? OmDataGridConfiguration(),
        _additionalSidePanelTabs = additionalSidePanelTabs {
     // Initialize original indexes and clones for initial state
     _initialColumnModels = [];
     for (int i = 0; i < columnModels.length; i++) {
       columnModels[i].originalIndex = i;
       _initialColumnModels.add(
-        GridColumnModel(
+        OmGridColumnModel(
           column: columnModels[i].column.copyWith(),
           width: columnModels[i].width,
           isVisible: columnModels[i].isVisible,
@@ -82,10 +82,10 @@ class DatagridController extends ChangeNotifier {
 
   List<Map<String, dynamic>> get data => _data;
   List<Map<String, dynamic>> get filteredData => _filteredData;
-  List<GridColumnModel> get columnModels => _columnModels;
-  DatagridConfiguration get configuration => _configuration;
+  List<OmGridColumnModel> get columnModels => _columnModels;
+  OmDataGridConfiguration get configuration => _configuration;
   List<String> get groupedColumns => List.unmodifiable(_groupedColumns);
-  List<GridSidePanelTab> get additionalSidePanelTabs =>
+  List<OmGridSidePanelTab> get additionalSidePanelTabs =>
       _additionalSidePanelTabs;
   String get globalSearchText => _globalSearchText;
   bool get isDraggingColumnOutside => _isDraggingColumnOutside;
@@ -108,7 +108,7 @@ class DatagridController extends ChangeNotifier {
   }
 
   void _applyFilters() {
-    final filtered = FilterUtils.performFiltering(
+    final filtered = OmFilterUtils.performFiltering(
       data: _data,
       allColumns: _columnModels,
       globalSearch: _globalSearchText,
@@ -121,7 +121,7 @@ class DatagridController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateColumnModels(List<GridColumnModel> newModels) {
+  void updateColumnModels(List<OmGridColumnModel> newModels) {
     _columnModels = newModels;
     // Maintain stable logic indices after a bulk update to the column list
     for (int i = 0; i < _columnModels.length; i++) {
@@ -131,7 +131,7 @@ class DatagridController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateColumnAggregation(String columnKey, AggregationType type) {
+  void updateColumnAggregation(String columnKey, OmAggregationType type) {
     final index = _columnModels.indexWhere((c) => c.key == columnKey);
     if (index != -1) {
       _columnModels[index].aggregation = type;
@@ -141,8 +141,8 @@ class DatagridController extends ChangeNotifier {
 
   void addCalculatedColumn(String title, String formula) {
     final key = "calculated_${DateTime.now().millisecondsSinceEpoch}";
-    final newCol = GridColumn(key: key, title: title, formula: formula);
-    final model = GridColumnModel(
+    final newCol = OmGridColumn(key: key, title: title, formula: formula);
+    final model = OmGridColumnModel(
       column: newCol,
       originalIndex: _columnModels.length,
     );
@@ -208,7 +208,7 @@ class DatagridController extends ChangeNotifier {
 
       // Replace column titles with their keys to support titles with spaces/special chars
       // Sort by length descending to match longest titles first (e.g., "Total Salary" before "Salary")
-      final sortedCols = List<GridColumnModel>.from(
+      final sortedCols = List<OmGridColumnModel>.from(
         _columnModels,
       )..sort((a, b) => b.column.title.length.compareTo(a.column.title.length));
 
@@ -237,7 +237,7 @@ class DatagridController extends ChangeNotifier {
     }
   }
 
-  void updateConfiguration(DatagridConfiguration newConfig) {
+  void updateConfiguration(OmDataGridConfiguration newConfig) {
     _configuration = newConfig;
     notifyListeners();
   }
@@ -249,7 +249,7 @@ class DatagridController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAdditionalSidePanelTabs(List<GridSidePanelTab> newTabs) {
+  void updateAdditionalSidePanelTabs(List<OmGridSidePanelTab> newTabs) {
     _additionalSidePanelTabs = newTabs;
     notifyListeners();
   }
@@ -276,7 +276,7 @@ class DatagridController extends ChangeNotifier {
 
   void visualize(
     List<Map<String, dynamic>> data,
-    List<GridColumnModel> columns,
+    List<OmGridColumnModel> columns,
   ) {
     if (onVisualize != null) {
       onVisualize!(data, columns);
@@ -312,7 +312,7 @@ class DatagridController extends ChangeNotifier {
     }
   }
 
-  void updateColumnPinning(String columnKey, ColumnPinning pinning) {
+  void updateColumnPinning(String columnKey, OmColumnPinning pinning) {
     final index = _columnModels.indexWhere((c) => c.key == columnKey);
     if (index != -1) {
       final column = _columnModels[index];
@@ -322,22 +322,22 @@ class DatagridController extends ChangeNotifier {
       _columnModels.removeAt(index);
 
       int insertIdx = 0;
-      if (pinning == ColumnPinning.left) {
+      if (pinning == OmColumnPinning.left) {
         // Move to appropriate position within left group based on original sequence
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning == ColumnPinning.left &&
+            _columnModels[insertIdx].pinning == OmColumnPinning.left &&
             _columnModels[insertIdx].originalIndex < column.originalIndex) {
           insertIdx++;
         }
-      } else if (pinning == ColumnPinning.right) {
+      } else if (pinning == OmColumnPinning.right) {
         // Find start of right pinned group
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning != ColumnPinning.right) {
+            _columnModels[insertIdx].pinning != OmColumnPinning.right) {
           insertIdx++;
         }
         // Place correctly within right group
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning == ColumnPinning.right &&
+            _columnModels[insertIdx].pinning == OmColumnPinning.right &&
             _columnModels[insertIdx].originalIndex < column.originalIndex) {
           insertIdx++;
         }
@@ -345,12 +345,12 @@ class DatagridController extends ChangeNotifier {
         // Return to natural order among unpinned columns
         // Skip all left-pinned columns
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning == ColumnPinning.left) {
+            _columnModels[insertIdx].pinning == OmColumnPinning.left) {
           insertIdx++;
         }
         // Find position among unpinned columns
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning == ColumnPinning.none &&
+            _columnModels[insertIdx].pinning == OmColumnPinning.none &&
             _columnModels[insertIdx].originalIndex < column.originalIndex) {
           insertIdx++;
         }
@@ -372,7 +372,7 @@ class DatagridController extends ChangeNotifier {
   void resetColumns() {
     _columnModels = _initialColumnModels
         .map(
-          (m) => GridColumnModel(
+          (m) => OmGridColumnModel(
             column: m.column.copyWith(),
             width: m.width,
             isVisible: m.isVisible,
@@ -415,8 +415,8 @@ class DatagridController extends ChangeNotifier {
     onRowReorder?.call(oldIndex, newIndex);
   }
 
-  dynamic getAggregationValue(GridColumnModel col) {
-    if (col.aggregation == AggregationType.none) return null;
+  dynamic getAggregationValue(OmGridColumnModel col) {
+    if (col.aggregation == OmAggregationType.none) return null;
     if (_filteredData.isEmpty) return null;
 
     final values = _filteredData
@@ -427,30 +427,30 @@ class DatagridController extends ChangeNotifier {
     if (values.isEmpty) return null;
 
     switch (col.aggregation) {
-      case AggregationType.count:
+      case OmAggregationType.count:
         return values.length;
-      case AggregationType.sum:
+      case OmAggregationType.sum:
         return values.fold<double>(
           0.0,
           (sum, val) => sum + (double.tryParse(val.toString()) ?? 0.0),
         );
-      case AggregationType.avg:
+      case OmAggregationType.avg:
         final sum = values.fold<double>(
           0.0,
           (sum, val) => sum + (double.tryParse(val.toString()) ?? 0.0),
         );
         return sum / values.length;
-      case AggregationType.min:
+      case OmAggregationType.min:
         return values
             .map((val) => double.tryParse(val.toString()) ?? 0.0)
             .reduce((min, val) => val < min ? val : min);
-      case AggregationType.max:
+      case OmAggregationType.max:
         return values
             .map((val) => double.tryParse(val.toString()) ?? 0.0)
             .reduce((max, val) => val > max ? val : max);
-      case AggregationType.first:
+      case OmAggregationType.first:
         return values.first;
-      case AggregationType.last:
+      case OmAggregationType.last:
         return values.last;
       default:
         return null;

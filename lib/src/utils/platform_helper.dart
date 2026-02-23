@@ -3,7 +3,7 @@ import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:flutter/foundation.dart';
 
 String printPlatformDetails() {
-  final platformDetails = PlatformHelper();
+  final platformDetails = OmPlatformHelper();
   if (platformDetails.isWeb) {
     log("Running on Web");
     return "web";
@@ -29,14 +29,14 @@ String printPlatformDetails() {
   return "Unknown";
 }
 
-class PlatformHelper {
-  static final PlatformHelper _singleton = PlatformHelper._internal();
+class OmPlatformHelper {
+  static final OmPlatformHelper _singleton = OmPlatformHelper._internal();
 
-  factory PlatformHelper() {
+  factory OmPlatformHelper() {
     return _singleton;
   }
 
-  PlatformHelper._internal();
+  OmPlatformHelper._internal();
 
   bool get isWeb => kIsWeb;
 

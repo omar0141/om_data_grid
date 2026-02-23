@@ -1,4 +1,4 @@
-enum ChartType {
+enum OmChartType {
   column,
   stackedColumn,
   bar,
@@ -16,8 +16,8 @@ enum ChartType {
   histogram,
 }
 
-class ChartSampleData {
+class OmChartSampleData {
   final String x;
   final double y;
-  ChartSampleData({required this.x, required this.y});
+  OmChartSampleData({required this.x, required this.y});
 }

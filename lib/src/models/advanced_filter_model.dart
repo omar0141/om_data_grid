@@ -1,5 +1,5 @@
 /// Defines the logical operator for combining filter conditions.
-enum FilterOperator {
+enum OmFilterOperator {
   /// All conditions must be met.
   and,
 
@@ -8,7 +8,7 @@ enum FilterOperator {
 }
 
 /// Defines the type of condition for filtering.
-enum FilterConditionType {
+enum OmFilterConditionType {
   /// The value equals the filter criteria.
   equals,
 
@@ -50,9 +50,9 @@ enum FilterConditionType {
 }
 
 /// Represents a single condition within an advanced filter.
-class FilterCondition {
+class OmFilterCondition {
   /// The type of comparison to perform.
-  FilterConditionType type;
+  OmFilterConditionType type;
 
   /// The primary value for comparison.
   String value;
@@ -60,26 +60,26 @@ class FilterCondition {
   /// The secondary value for comparison (used for 'between' type).
   String valueTo;
 
-  /// Creates a new [FilterCondition].
-  FilterCondition({
-    this.type = FilterConditionType.contains,
+  /// Creates a new [OmFilterCondition].
+  OmFilterCondition({
+    this.type = OmFilterConditionType.contains,
     this.value = '',
     this.valueTo = '',
   });
 
-  /// Converts this [FilterCondition] to a JSON map.
+  /// Converts this [OmFilterCondition] to a JSON map.
   Map<String, dynamic> toJson() => {
     'type': type.toString(),
     'value': value,
     'valueTo': valueTo,
   };
 
-  /// Creates a [FilterCondition] from a JSON map.
-  factory FilterCondition.fromJson(Map<String, dynamic> json) {
-    return FilterCondition(
-      type: FilterConditionType.values.firstWhere(
+  /// Creates a [OmFilterCondition] from a JSON map.
+  factory OmFilterCondition.fromJson(Map<String, dynamic> json) {
+    return OmFilterCondition(
+      type: OmFilterConditionType.values.firstWhere(
         (e) => e.toString() == json['type'],
-        orElse: () => FilterConditionType.contains,
+        orElse: () => OmFilterConditionType.contains,
       ),
       value: json['value'] ?? '',
       valueTo: json['valueTo'] ?? '',
@@ -90,35 +90,35 @@ class FilterCondition {
 /// Model representing an advanced filter configuration.
 ///
 /// Wraps multiple conditions and an operator to combine them.
-class AdvancedFilterModel {
+class OmAdvancedFilterModel {
   /// The operator used to combine the conditions (AND/OR).
-  FilterOperator operator;
+  OmFilterOperator operator;
 
   /// The list of conditions to evaluate.
-  List<FilterCondition> conditions;
+  List<OmFilterCondition> conditions;
 
-  /// Creates a new [AdvancedFilterModel].
-  AdvancedFilterModel({
-    this.operator = FilterOperator.and,
-    List<FilterCondition>? conditions,
+  /// Creates a new [OmAdvancedFilterModel].
+  OmAdvancedFilterModel({
+    this.operator = OmFilterOperator.and,
+    List<OmFilterCondition>? conditions,
   }) : conditions = conditions ?? [];
 
-  /// Converts this [AdvancedFilterModel] to a JSON map.
+  /// Converts this [OmAdvancedFilterModel] to a JSON map.
   Map<String, dynamic> toJson() => {
     'operator': operator.toString(),
     'conditions': conditions.map((e) => e.toJson()).toList(),
   };
 
-  /// Creates an [AdvancedFilterModel] from a JSON map.
-  factory AdvancedFilterModel.fromJson(Map<String, dynamic> json) {
-    return AdvancedFilterModel(
-      operator: FilterOperator.values.firstWhere(
+  /// Creates an [OmAdvancedFilterModel] from a JSON map.
+  factory OmAdvancedFilterModel.fromJson(Map<String, dynamic> json) {
+    return OmAdvancedFilterModel(
+      operator: OmFilterOperator.values.firstWhere(
         (e) => e.toString() == json['operator'],
-        orElse: () => FilterOperator.and,
+        orElse: () => OmFilterOperator.and,
       ),
       conditions:
           (json['conditions'] as List?)
-              ?.map((e) => FilterCondition.fromJson(e))
+              ?.map((e) => OmFilterCondition.fromJson(e))
               .toList() ??
           [],
     );

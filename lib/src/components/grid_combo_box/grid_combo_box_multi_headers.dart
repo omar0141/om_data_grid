@@ -14,14 +14,14 @@ class GridComboxBoxMultiColumnsHeaders extends StatelessWidget {
     required this.configuration,
   });
 
-  final List<ComboBoxHeaderModel> headers;
+  final List<OmComboBoxHeaderModel> headers;
   final bool multi;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
 
   @override
   Widget build(BuildContext context) {
-    List<ComboBoxHeaderModel> myheaders = headers;
-    if (PlatformHelper.isDesktop == false) {
+    List<OmComboBoxHeaderModel> myheaders = headers;
+    if (OmPlatformHelper.isDesktop == false) {
       myheaders.removeWhere((e) => e.isMobile != 1);
     }
     return Container(
@@ -71,11 +71,11 @@ class ComboxBoxMultiColumnsRows extends StatelessWidget {
     required this.configuration,
   });
 
-  final GridComboBoxItem item;
-  final List<ComboBoxHeaderModel> headers;
+  final OmGridComboBoxItem item;
+  final List<OmComboBoxHeaderModel> headers;
   final TextEditingController searchController;
   final bool selected;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
 
   @override
   Widget build(BuildContext context) {
@@ -85,10 +85,10 @@ class ComboxBoxMultiColumnsRows extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildRowCells(GridComboBoxItem item) {
+  List<Widget> _buildRowCells(OmGridComboBoxItem item) {
     final Map<String, dynamic> itemData = item.extraData;
-    List<ComboBoxHeaderModel> myheaders = headers;
-    if (PlatformHelper.isDesktop == false) {
+    List<OmComboBoxHeaderModel> myheaders = headers;
+    if (OmPlatformHelper.isDesktop == false) {
       myheaders.removeWhere((e) => e.isMobile != 1);
     }
     return myheaders.map((header) {

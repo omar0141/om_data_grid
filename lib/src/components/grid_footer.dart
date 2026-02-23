@@ -4,8 +4,8 @@ import '../models/datagrid_configuration.dart';
 import 'grid_combo_box/grid_combo_box.dart';
 import '../models/grid_combo_box_item.dart';
 
-class GridFooter extends StatelessWidget {
-  const GridFooter({
+class OmGridFooter extends StatelessWidget {
+  const OmGridFooter({
     super.key,
     required this.totalRows,
     required this.configuration,
@@ -16,7 +16,7 @@ class GridFooter extends StatelessWidget {
   });
 
   final int totalRows;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
   final int currentPage;
   final Function(int) onPageChanged;
   final int? rowsPerPage;
@@ -37,16 +37,16 @@ class GridFooter extends StatelessWidget {
         : (currentPage + 1) * actualRowsPerPage;
 
     final int baseRowsPerPage = configuration.rowsPerPage;
-    final List<GridComboBoxItem> rowsPerPageOptions = [
-      GridComboBoxItem(
+    final List<OmGridComboBoxItem> rowsPerPageOptions = [
+      OmGridComboBoxItem(
         value: baseRowsPerPage.toString(),
         text: '$baseRowsPerPage',
       ),
-      GridComboBoxItem(
+      OmGridComboBoxItem(
         value: (baseRowsPerPage * 2).toString(),
         text: '${baseRowsPerPage * 2}',
       ),
-      GridComboBoxItem(
+      OmGridComboBoxItem(
         value: (baseRowsPerPage * 3).toString(),
         text: '${baseRowsPerPage * 3}',
       ),
@@ -108,7 +108,7 @@ class GridFooter extends StatelessWidget {
                     items:
                         configuration.rowsPerPageOptions
                             ?.map(
-                              (option) => GridComboBoxItem(
+                              (option) => OmGridComboBoxItem(
                                 value: option.toString(),
                                 text: option.toString(),
                               ),
@@ -149,7 +149,7 @@ class GridFooter extends StatelessWidget {
                 configuration: configuration,
               ),
               const SizedBox(width: 8),
-              if (mode == PaginationMode.simple)
+              if (mode == OmPaginationMode.simple)
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -257,7 +257,7 @@ class _PageNavButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
   final String tooltip;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
 
   const _PageNavButton({
     required this.icon,
@@ -302,7 +302,7 @@ class _PageNumberButton extends StatelessWidget {
   final int page;
   final bool isCurrent;
   final VoidCallback onTap;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
 
   const _PageNumberButton({
     required this.page,

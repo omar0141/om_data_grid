@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ScrollHelper {
-  ScrollHelper._();
-  static final ScrollHelper _instance = ScrollHelper._();
-  factory ScrollHelper() => _instance;
+class OmScrollHelper {
+  OmScrollHelper._();
+  static final OmScrollHelper _instance = OmScrollHelper._();
+  factory OmScrollHelper() => _instance;
 
   void scrollToSelectedItem({
     required ScrollController scrollController,

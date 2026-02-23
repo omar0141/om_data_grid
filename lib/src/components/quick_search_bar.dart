@@ -7,9 +7,9 @@ import 'package:intl/intl.dart';
 import '../enums/grid_border_visibility_enum.dart';
 
 class QuickSearchBar extends StatefulWidget {
-  final List<GridColumnModel> columns;
+  final List<OmGridColumnModel> columns;
   final List<double?> columnWidths;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
   final Function(String key, String value) onSearchChanged;
   final ScrollController? horizontalScrollController;
 
@@ -66,16 +66,16 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
 
       // Sync if externally changed
       String displayValue = column.quickFilterText ?? '';
-      if ((column.type == GridRowTypeEnum.date ||
-              column.type == GridRowTypeEnum.dateTime ||
-              column.type == GridRowTypeEnum.time) &&
+      if ((column.type == OmGridRowTypeEnum.date ||
+              column.type == OmGridRowTypeEnum.dateTime ||
+              column.type == OmGridRowTypeEnum.time) &&
           displayValue.contains('|')) {
         try {
           final parts = displayValue.split('|');
-          final isTime = column.type == GridRowTypeEnum.time;
-          final start = GridDateTimeUtils.tryParse(parts[0], isTime: isTime);
+          final isTime = column.type == OmGridRowTypeEnum.time;
+          final start = OmGridDateTimeUtils.tryParse(parts[0], isTime: isTime);
           final end = parts.length > 1
-              ? GridDateTimeUtils.tryParse(parts[1], isTime: isTime)
+              ? OmGridDateTimeUtils.tryParse(parts[1], isTime: isTime)
               : null;
 
           if (start != null && end != null) {
@@ -104,9 +104,9 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
           border: BorderDirectional(
             bottom:
                 (widget.configuration.rowBorderVisibility ==
-                        GridBorderVisibility.horizontal ||
+                        OmGridBorderVisibility.horizontal ||
                     widget.configuration.rowBorderVisibility ==
-                        GridBorderVisibility.both)
+                        OmGridBorderVisibility.both)
                 ? BorderSide(
                     width: widget.configuration.rowBorderWidth,
                     color: widget.configuration.rowBorderColor,
@@ -115,9 +115,9 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
             start:
                 !isFirstVisible &&
                     (widget.configuration.rowBorderVisibility ==
-                            GridBorderVisibility.vertical ||
+                            OmGridBorderVisibility.vertical ||
                         widget.configuration.rowBorderVisibility ==
-                            GridBorderVisibility.both)
+                            OmGridBorderVisibility.both)
                 ? BorderSide(
                     width: widget.configuration.rowBorderWidth,
                     color: widget.configuration.rowBorderColor,
@@ -139,13 +139,13 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
           child: TextField(
             controller: controller,
             readOnly: [
-              GridRowTypeEnum.date,
-              GridRowTypeEnum.dateTime,
-              GridRowTypeEnum.time,
+              OmGridRowTypeEnum.date,
+              OmGridRowTypeEnum.dateTime,
+              OmGridRowTypeEnum.time,
             ].contains(column.type),
             onTap: () async {
-              if (column.type == GridRowTypeEnum.date ||
-                  column.type == GridRowTypeEnum.dateTime) {
+              if (column.type == OmGridRowTypeEnum.date ||
+                  column.type == OmGridRowTypeEnum.dateTime) {
                 DateTimeRange? picked =
                     await GridDatePickerUtils.showModernDateRangePicker(
                       context: context,
@@ -162,8 +162,8 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
                   controller.text = displayVal;
                   widget.onSearchChanged(column.key, filterVal);
                 }
-              } else if (column.type == GridRowTypeEnum.time) {
-                TimeRange? picked =
+              } else if (column.type == OmGridRowTypeEnum.time) {
+                OmTimeRange? picked =
                     await GridDatePickerUtils.showModernTimeRangePicker(
                       context: context,
                       configuration: widget.configuration,
@@ -235,9 +235,9 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
             border: BorderDirectional(
               bottom:
                   (widget.configuration.rowBorderVisibility ==
-                          GridBorderVisibility.horizontal ||
+                          OmGridBorderVisibility.horizontal ||
                       widget.configuration.rowBorderVisibility ==
-                          GridBorderVisibility.both)
+                          OmGridBorderVisibility.both)
                   ? BorderSide(
                       width: widget.configuration.rowBorderWidth,
                       color: widget.configuration.rowBorderColor,
@@ -246,9 +246,9 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
               start:
                   !isFirstVisible &&
                       (widget.configuration.rowBorderVisibility ==
-                              GridBorderVisibility.vertical ||
+                              OmGridBorderVisibility.vertical ||
                           widget.configuration.rowBorderVisibility ==
-                              GridBorderVisibility.both)
+                              OmGridBorderVisibility.both)
                   ? BorderSide(
                       width: widget.configuration.rowBorderWidth,
                       color: widget.configuration.rowBorderColor,

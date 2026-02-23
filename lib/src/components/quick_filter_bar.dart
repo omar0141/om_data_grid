@@ -8,18 +8,18 @@ import '../utils/datagrid_controller.dart';
 import 'chart_popup.dart';
 import 'default_button.dart';
 
-class QuickFilterBar extends StatefulWidget {
-  final List<GridColumnModel>? columns;
-  final List<QuickFilterConfig>? configs;
+class OmQuickFilterBar extends StatefulWidget {
+  final List<OmGridColumnModel>? columns;
+  final List<OmQuickFilterConfig>? configs;
   final List<Map<String, dynamic>>? data;
-  final DatagridConfiguration? configuration;
+  final OmDataGridConfiguration? configuration;
   final void Function(List<dynamic>)? onSearch;
-  final void Function(List<Map<String, dynamic>>, List<GridColumnModel>)?
+  final void Function(List<Map<String, dynamic>>, List<OmGridColumnModel>)?
   onVisualize;
   final void Function()? onAddPressed;
-  final DatagridController? controller;
+  final OmDataGridController? controller;
 
-  const QuickFilterBar({
+  const OmQuickFilterBar({
     super.key,
     this.columns,
     this.configs,
@@ -32,13 +32,13 @@ class QuickFilterBar extends StatefulWidget {
   });
 
   @override
-  State<QuickFilterBar> createState() => _QuickFilterBarState();
+  State<OmQuickFilterBar> createState() => _QuickFilterBarState();
 }
 
-class _QuickFilterBarState extends State<QuickFilterBar> {
-  late List<GridColumnModel> _internalColumns;
-  late DatagridConfiguration _effectiveConfig;
-  late List<QuickFilterConfig> _configs;
+class _QuickFilterBarState extends State<OmQuickFilterBar> {
+  late List<OmGridColumnModel> _internalColumns;
+  late OmDataGridConfiguration _effectiveConfig;
+  late List<OmQuickFilterConfig> _configs;
   bool _isSettingsHovered = false;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _horizontalScrollController = ScrollController();
@@ -75,7 +75,7 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
   }
 
   @override
-  void didUpdateWidget(QuickFilterBar oldWidget) {
+  void didUpdateWidget(OmQuickFilterBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.columns != oldWidget.columns ||
         widget.configs != oldWidget.configs ||
@@ -97,13 +97,13 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
       _internalColumns = widget.controller!.columnModels;
       _configs = widget.controller!.configuration.quickFilters ?? [];
     } else {
-      _effectiveConfig = widget.configuration ?? DatagridConfiguration();
+      _effectiveConfig = widget.configuration ?? OmDataGridConfiguration();
       if (widget.columns != null) {
         _internalColumns = widget.columns!;
       } else if (widget.configs != null) {
         _internalColumns = widget.configs!.map((config) {
-          return GridColumnModel(
-            column: GridColumn(key: config.columnKey, title: config.columnKey),
+          return OmGridColumnModel(
+            column: OmGridColumn(key: config.columnKey, title: config.columnKey),
           );
         }).toList();
       } else {
@@ -140,8 +140,8 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
                   children: _configs.map((config) {
                     final column = _internalColumns.firstWhere(
                       (c) => c.key == config.columnKey,
-                      orElse: () => GridColumnModel(
-                        column: GridColumn(
+                      orElse: () => OmGridColumnModel(
+                        column: OmGridColumn(
                           key: config.columnKey,
                           title: config.columnKey,
                         ),
@@ -180,7 +180,7 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
                   SizedBox(
                     height: 38,
                     child: IntrinsicWidth(
-                      child: DefaultButton(
+                      child: OmDefaultButton(
                         text: _effectiveConfig.addButtonText,
                         leadingIcon: _effectiveConfig.addButtonIcon,
                         backcolor: _effectiveConfig.addButtonBackgroundColor,
@@ -224,7 +224,7 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
       onSelected: (value) async {
         final List<Map<String, dynamic>> sourceData =
             widget.controller?.data ?? widget.data ?? [];
-        final filteredData = FilterUtils.performFiltering(
+        final filteredData = OmFilterUtils.performFiltering(
           data: sourceData
               .map((item) => Map<String, dynamic>.from(item))
               .toList(),
@@ -233,13 +233,13 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
         ).cast<Map<String, dynamic>>();
 
         if (value == 'excel') {
-          await GridExportHandler.exportToExcel(
+          await OmGridExportHandler.exportToExcel(
             data: filteredData,
             columns: _internalColumns,
             configuration: _effectiveConfig,
           );
         } else if (value == 'pdf') {
-          await GridExportHandler.exportToPDF(
+          await OmGridExportHandler.exportToPDF(
             data: filteredData,
             columns: _internalColumns,
             configuration: _effectiveConfig,
@@ -261,7 +261,7 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
                       child: Container(color: Colors.black26),
                     ),
                   ),
-                  ChartPopup(
+                  OmChartPopup(
                     data: filteredData,
                     columns: _internalColumns,
                     onClose: () => Navigator.of(context).pop(),
@@ -458,7 +458,7 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
     });
   }
 
-  Widget _buildFilterRow(GridColumnModel column, QuickFilterConfig config) {
+  Widget _buildFilterRow(OmGridColumnModel column, OmQuickFilterConfig config) {
     // Get unique values from the original (unfiltered) data
     final sourceData = widget.controller?.data ?? widget.data ?? [];
     final List<String> uniqueValues = sourceData
@@ -535,7 +535,7 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
     );
   }
 
-  void _handleTap(GridColumnModel column, String value, bool isMultiSelect) {
+  void _handleTap(OmGridColumnModel column, String value, bool isMultiSelect) {
     setState(() {
       final sourceData = widget.controller?.data ?? widget.data ?? [];
       final Set<String> allValues = sourceData
@@ -607,7 +607,7 @@ class _QuickFilterBarState extends State<QuickFilterBar> {
 
     final List<Map<String, dynamic>> sourceData =
         widget.controller?.data ?? widget.data ?? [];
-    final filteredData = FilterUtils.performFiltering(
+    final filteredData = OmFilterUtils.performFiltering(
       data: sourceData,
       allColumns: _internalColumns,
       globalSearch: _searchController.text,

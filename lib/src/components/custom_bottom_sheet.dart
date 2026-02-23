@@ -2,11 +2,11 @@ import 'package:om_data_grid/src/components/hide_keyboard_widget.dart';
 import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:flutter/material.dart';
 
-class CustomBottomSheet extends StatelessWidget {
+class OmCustomBottomSheet extends StatelessWidget {
   final Widget child;
-  final DatagridConfiguration? configuration;
+  final OmDataGridConfiguration? configuration;
 
-  const CustomBottomSheet({super.key, required this.child, this.configuration});
+  const OmCustomBottomSheet({super.key, required this.child, this.configuration});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,9 @@ class CustomBottomSheet extends StatelessWidget {
     return AnimatedPadding(
       padding: EdgeInsets.only(bottom: keyboardHeight),
       duration: const Duration(milliseconds: 200),
-      child: Hidekeyboardwidget(
+      child: OmHideKeyboardWidget(
         additionHeight: 88,
-        configuration: configuration ?? DatagridConfiguration(),
+        configuration: configuration ?? OmDataGridConfiguration(),
         child: Container(
           constraints: BoxConstraints(maxHeight: availableHeight * 0.9),
           child: DraggableScrollableSheet(

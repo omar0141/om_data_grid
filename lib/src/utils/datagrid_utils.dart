@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 export 'package:om_data_grid/src/models/datagrid_configuration.dart'
-    show ColumnWidthMode;
+    show OmColumnWidthMode;
 
-class DatagridUtils {
+class OmDatagridUtils {
   static double measureText(String text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
@@ -15,9 +15,9 @@ class DatagridUtils {
   }
 
   static List<double?> calculateColumnWidths({
-    required List<GridColumnModel> columns,
+    required List<OmGridColumnModel> columns,
     required List<Map<String, dynamic>> data,
-    required DatagridConfiguration configuration,
+    required OmDataGridConfiguration configuration,
     required BoxConstraints constraints,
     List<double?>? previousWidths,
   }) {
@@ -44,9 +44,9 @@ class DatagridUtils {
         continue;
       }
 
-      if (widthMode == ColumnWidthMode.none) {
+      if (widthMode == OmColumnWidthMode.none) {
         columnWidths[i] = col.width ?? minColumnWidth;
-      } else if (widthMode == ColumnWidthMode.fitByColumnName) {
+      } else if (widthMode == OmColumnWidthMode.fitByColumnName) {
         columnWidths[i] = measureText(
           col.title,
           configuration.headerTextStyle ??
@@ -56,7 +56,7 @@ class DatagridUtils {
                 fontSize: 16,
               ),
         );
-      } else if (widthMode == ColumnWidthMode.fitByCellValue) {
+      } else if (widthMode == OmColumnWidthMode.fitByCellValue) {
         double maxCellWidth = 0;
         for (var row in data) {
           double w = measureText(
@@ -70,8 +70,8 @@ class DatagridUtils {
           if (w > maxCellWidth) maxCellWidth = w;
         }
         columnWidths[i] = maxCellWidth;
-      } else if (widthMode == ColumnWidthMode.auto ||
-          widthMode == ColumnWidthMode.lastColumnFill) {
+      } else if (widthMode == OmColumnWidthMode.auto ||
+          widthMode == OmColumnWidthMode.lastColumnFill) {
         double titleWidth = measureText(
           col.title,
           configuration.headerTextStyle ??
@@ -97,7 +97,7 @@ class DatagridUtils {
       }
 
       // Handle Fill and LastColumnFill detection
-      if (widthMode == ColumnWidthMode.fill) {
+      if (widthMode == OmColumnWidthMode.fill) {
         fillIndices.add(i);
       } else {
         // Ensure min width for the calculated values
@@ -123,7 +123,7 @@ class DatagridUtils {
     }
 
     // Third pass: Handle LastColumnFill
-    if (columns.isNotEmpty && widthMode == ColumnWidthMode.lastColumnFill) {
+    if (columns.isNotEmpty && widthMode == OmColumnWidthMode.lastColumnFill) {
       // Find the last visible column index
       int lastVisibleIndex = -1;
       for (int i = columns.length - 1; i >= 0; i--) {

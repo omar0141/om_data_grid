@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../utils/datagrid_controller.dart';
 
-class ColumnChooserPopup extends StatefulWidget {
-  final DatagridController controller;
+class OmColumnChooserPopup extends StatefulWidget {
+  final OmDataGridController controller;
   final VoidCallback onClose;
   final Offset initialPosition;
 
-  const ColumnChooserPopup({
+  const OmColumnChooserPopup({
     super.key,
     required this.controller,
     required this.onClose,
@@ -14,10 +14,10 @@ class ColumnChooserPopup extends StatefulWidget {
   });
 
   @override
-  State<ColumnChooserPopup> createState() => _ColumnChooserPopupState();
+  State<OmColumnChooserPopup> createState() => _ColumnChooserPopupState();
 }
 
-class _ColumnChooserPopupState extends State<ColumnChooserPopup> {
+class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
   late Offset _position;
   final double _width = 300;
   final double _height = 400;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Represents an item in a combo box grid column.
-class GridComboBoxItem {
+class OmGridComboBoxItem {
   /// The underlying value of the item.
   String? value;
 
@@ -17,8 +17,8 @@ class GridComboBoxItem {
   /// Additional data associated with the item.
   Map<String, dynamic> extraData;
 
-  /// Creates a [GridComboBoxItem].
-  GridComboBoxItem({
+  /// Creates a [OmGridComboBoxItem].
+  OmGridComboBoxItem({
     required this.value,
     required this.text,
     this.color,

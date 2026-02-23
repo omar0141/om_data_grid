@@ -7,8 +7,8 @@ import 'package:om_data_grid/src/enums/grid_border_visibility_enum.dart';
 import 'package:flutter/material.dart';
 import '../models/datagrid_configuration.dart';
 
-class GridHeader extends StatelessWidget {
-  const GridHeader({
+class OmGridHeader extends StatelessWidget {
+  const OmGridHeader({
     super.key,
     required this.controller,
     required this.columns,
@@ -27,9 +27,9 @@ class GridHeader extends StatelessWidget {
     this.visibleIndicesToRender,
   });
 
-  final DatagridController controller;
-  final List<GridColumnModel> columns;
-  final DatagridConfiguration configuration;
+  final OmDataGridController controller;
+  final List<OmGridColumnModel> columns;
+  final OmDataGridConfiguration configuration;
   final List<double?> columnWidths;
   final Function(int, double) onColumnResize;
   final List<Map<String, dynamic>> orgData;
@@ -69,9 +69,9 @@ class GridHeader extends StatelessWidget {
           border: BorderDirectional(
             bottom:
                 (configuration.headerBorderVisibility ==
-                        GridBorderVisibility.horizontal ||
+                        OmGridBorderVisibility.horizontal ||
                     configuration.headerBorderVisibility ==
-                        GridBorderVisibility.both)
+                        OmGridBorderVisibility.both)
                 ? BorderSide(
                     width: configuration.headerBorderWidth,
                     color: configuration.headerBorderColor,
@@ -98,9 +98,9 @@ class GridHeader extends StatelessWidget {
               border: BorderDirectional(
                 bottom:
                     (configuration.headerBorderVisibility ==
-                            GridBorderVisibility.horizontal ||
+                            OmGridBorderVisibility.horizontal ||
                         configuration.headerBorderVisibility ==
-                            GridBorderVisibility.both)
+                            OmGridBorderVisibility.both)
                     ? BorderSide(
                         width: configuration.headerBorderWidth,
                         color: configuration.headerBorderColor,
@@ -128,9 +128,9 @@ class GridHeader extends StatelessWidget {
               border: BorderDirectional(
                 bottom:
                     (configuration.headerBorderVisibility ==
-                            GridBorderVisibility.horizontal ||
+                            OmGridBorderVisibility.horizontal ||
                         configuration.headerBorderVisibility ==
-                            GridBorderVisibility.both)
+                            OmGridBorderVisibility.both)
                     ? BorderSide(
                         width: configuration.headerBorderWidth,
                         color: configuration.headerBorderColor,
@@ -152,9 +152,9 @@ class GridHeader extends StatelessWidget {
               border: BorderDirectional(
                 bottom:
                     (configuration.headerBorderVisibility ==
-                            GridBorderVisibility.horizontal ||
+                            OmGridBorderVisibility.horizontal ||
                         configuration.headerBorderVisibility ==
-                            GridBorderVisibility.both)
+                            OmGridBorderVisibility.both)
                     ? BorderSide(
                         width: configuration.headerBorderWidth,
                         color: configuration.headerBorderColor,
@@ -206,7 +206,7 @@ class GridHeader extends StatelessWidget {
       if (configuration.allowColumnReordering &&
           onReorder != null &&
           !isFused) {
-        return DragTarget<GridColumnDragData>(
+        return DragTarget<OmGridColumnDragData>(
           onWillAcceptWithDetails: (details) {
             if (details.data.source == 'header' &&
                 details.data.column.key != column.key &&
@@ -295,7 +295,7 @@ class GridHeader extends StatelessWidget {
             onReorder != null &&
             !isFused) {
           cells.add(
-            DragTarget<GridColumnDragData>(
+            DragTarget<OmGridColumnDragData>(
               onWillAcceptWithDetails: (details) {
                 if (details.data.source == 'header' &&
                     details.data.column.key != column.key &&
@@ -329,11 +329,11 @@ class GridHeader extends StatelessWidget {
 }
 
 class _GridHeaderCell extends StatefulWidget {
-  final DatagridController controller;
-  final GridColumnModel column;
+  final OmDataGridController controller;
+  final OmGridColumnModel column;
   final int index;
-  final List<GridColumnModel> columns;
-  final DatagridConfiguration configuration;
+  final List<OmGridColumnModel> columns;
+  final OmDataGridConfiguration configuration;
   final List<double?> columnWidths;
   final Function(int, double) onColumnResize;
   final List<Map<String, dynamic>> orgData;
@@ -394,7 +394,7 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
         padding: WidgetStatePropertyAll(EdgeInsets.zero),
       ),
       menuChildren: [
-        GridColumnMenu(
+        OmGridColumnMenu(
           controller: widget.controller,
           column: widget.column,
           sortColumnKey: widget.sortColumnKey,
@@ -431,9 +431,9 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
                 start:
                     !widget.isFirstVisible &&
                         (configuration.headerBorderVisibility ==
-                                GridBorderVisibility.vertical ||
+                                OmGridBorderVisibility.vertical ||
                             configuration.headerBorderVisibility ==
-                                GridBorderVisibility.both)
+                                OmGridBorderVisibility.both)
                     ? BorderSide(
                         width: configuration.headerBorderWidth,
                         color: configuration.headerBorderColor,
@@ -556,8 +556,8 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
     if ((configuration.allowColumnReordering ||
             (configuration.enableGrouping && configuration.allowGrouping)) &&
         !isFused) {
-      cellContent = Draggable<GridColumnDragData>(
-        data: GridColumnDragData(column: column, source: 'header'),
+      cellContent = Draggable<OmGridColumnDragData>(
+        data: OmGridColumnDragData(column: column, source: 'header'),
         dragAnchorStrategy: pointerDragAnchorStrategy,
         onDragStarted: () {
           widget.controller.setIsDraggingColumnOutside(false);
@@ -659,8 +659,8 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
 
     final showSmallDivider =
         !widget.isFirstVisible &&
-        configuration.headerBorderVisibility != GridBorderVisibility.vertical &&
-        configuration.headerBorderVisibility != GridBorderVisibility.both;
+        configuration.headerBorderVisibility != OmGridBorderVisibility.vertical &&
+        configuration.headerBorderVisibility != OmGridBorderVisibility.both;
 
     if (!column.isResizable && !showSmallDivider) {
       return content;

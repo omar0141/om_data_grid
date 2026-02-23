@@ -4,14 +4,14 @@ import '../enums/column_pinning_enum.dart';
 import '../models/grid_column_model.dart';
 import '../utils/datagrid_controller.dart';
 
-class GridColumnMenu extends StatelessWidget {
-  final DatagridController controller;
-  final GridColumnModel column;
+class OmGridColumnMenu extends StatelessWidget {
+  final OmDataGridController controller;
+  final OmGridColumnModel column;
   final String? sortColumnKey;
   final bool? sortAscending;
   final Function(String, {bool? ascending})? onSort;
 
-  const GridColumnMenu({
+  const OmGridColumnMenu({
     super.key,
     required this.controller,
     required this.column,
@@ -134,14 +134,14 @@ class GridColumnMenu extends StatelessWidget {
                     ),
                   ),
                   menuChildren: [
-                    _buildPinningItem(ColumnPinning.none, 'Unpin', Icons.block),
+                    _buildPinningItem(OmColumnPinning.none, 'Unpin', Icons.block),
                     _buildPinningItem(
-                      ColumnPinning.left,
+                      OmColumnPinning.left,
                       'Pin to Left',
                       Icons.keyboard_double_arrow_left_rounded,
                     ),
                     _buildPinningItem(
-                      ColumnPinning.right,
+                      OmColumnPinning.right,
                       'Pin to Right',
                       Icons.keyboard_double_arrow_right_rounded,
                     ),
@@ -192,42 +192,42 @@ class GridColumnMenu extends StatelessWidget {
                   ),
                   menuChildren: [
                     _buildAggregationItem(
-                      AggregationType.none,
+                      OmAggregationType.none,
                       'No Aggregation',
                       Icons.block_rounded,
                     ),
                     _buildAggregationItem(
-                      AggregationType.sum,
+                      OmAggregationType.sum,
                       'Sum (∑)',
                       Icons.add_circle_outline_rounded,
                     ),
                     _buildAggregationItem(
-                      AggregationType.avg,
+                      OmAggregationType.avg,
                       'Average (μ)',
                       Icons.show_chart_rounded,
                     ),
                     _buildAggregationItem(
-                      AggregationType.min,
+                      OmAggregationType.min,
                       'Minimum',
                       Icons.vertical_align_bottom_rounded,
                     ),
                     _buildAggregationItem(
-                      AggregationType.max,
+                      OmAggregationType.max,
                       'Maximum',
                       Icons.vertical_align_top_rounded,
                     ),
                     _buildAggregationItem(
-                      AggregationType.count,
+                      OmAggregationType.count,
                       'Count (n)',
                       Icons.numbers_rounded,
                     ),
                     _buildAggregationItem(
-                      AggregationType.first,
+                      OmAggregationType.first,
                       'First',
                       Icons.skip_previous_rounded,
                     ),
                     _buildAggregationItem(
-                      AggregationType.last,
+                      OmAggregationType.last,
                       'Last',
                       Icons.skip_next_rounded,
                     ),
@@ -345,7 +345,7 @@ class GridColumnMenu extends StatelessWidget {
     );
   }
 
-  Widget _buildPinningItem(ColumnPinning value, String text, IconData icon) {
+  Widget _buildPinningItem(OmColumnPinning value, String text, IconData icon) {
     final isSelected = column.pinning == value;
 
     return _buildMenuItem(
@@ -357,7 +357,7 @@ class GridColumnMenu extends StatelessWidget {
   }
 
   Widget _buildAggregationItem(
-    AggregationType value,
+    OmAggregationType value,
     String text,
     IconData icon,
   ) {

@@ -12,14 +12,14 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:ui' as ui;
 
 class GridCell extends StatefulWidget {
-  final GridColumnModel column;
+  final OmGridColumnModel column;
   final dynamic value;
   final List<String> searchTerms;
   final TextStyle style;
   final Map<String, dynamic> row;
   final void Function(String key, dynamic value)? onValueChange;
   final bool isEditing;
-  final DatagridConfiguration configuration;
+  final OmDataGridConfiguration configuration;
 
   const GridCell({
     super.key,
@@ -49,43 +49,43 @@ class _GridCellState extends State<GridCell> {
     }
 
     switch (widget.column.type) {
-      case GridRowTypeEnum.integer:
+      case OmGridRowTypeEnum.integer:
         return _buildInt();
 
-      case GridRowTypeEnum.double:
+      case OmGridRowTypeEnum.double:
         return _buildDouble();
 
-      case GridRowTypeEnum.date:
-      case GridRowTypeEnum.dateTime:
-      case GridRowTypeEnum.time:
+      case OmGridRowTypeEnum.date:
+      case OmGridRowTypeEnum.dateTime:
+      case OmGridRowTypeEnum.time:
         return _buildDate();
 
-      case GridRowTypeEnum.comboBox:
+      case OmGridRowTypeEnum.comboBox:
         return widget.isEditing ? _buildComboBoxEditor() : _buildComboBoxView();
 
-      case GridRowTypeEnum.iosSwitch:
+      case OmGridRowTypeEnum.iosSwitch:
         return _buildSwitch();
 
-      case GridRowTypeEnum.image:
+      case OmGridRowTypeEnum.image:
         return _buildImage(isFile: false);
 
-      case GridRowTypeEnum.file:
+      case OmGridRowTypeEnum.file:
         return _buildImage(isFile: true);
 
-      case GridRowTypeEnum.multiImage:
-      case GridRowTypeEnum.multiFile:
+      case OmGridRowTypeEnum.multiImage:
+      case OmGridRowTypeEnum.multiFile:
         return _buildMultiImageOrFile();
 
-      case GridRowTypeEnum.delete:
+      case OmGridRowTypeEnum.delete:
         return _buildDelete(context);
 
-      case GridRowTypeEnum.contextMenu:
+      case OmGridRowTypeEnum.contextMenu:
         return _buildContextMenu(context);
 
-      case GridRowTypeEnum.state:
+      case OmGridRowTypeEnum.state:
         return _buildState();
 
-      case GridRowTypeEnum.text:
+      case OmGridRowTypeEnum.text:
       default:
         return _buildText(widget.value?.toString() ?? '');
     }
@@ -128,7 +128,7 @@ class _GridCellState extends State<GridCell> {
         : double.parse(widget.value);
 
     return _buildText(
-      GridCellFormatters.formatNumber(
+      OmGridCellFormatters.formatNumber(
         value: val,
         digits: widget.column.decimalDigits,
         decimalSeparator: widget.column.decimalSeparator,
@@ -140,8 +140,8 @@ class _GridCellState extends State<GridCell> {
   Widget _buildDate() {
     if (widget.value == null) return _buildText('');
 
-    final bool isTimeType = widget.column.type == GridRowTypeEnum.time;
-    final DateTime? date = GridDateTimeUtils.tryParse(
+    final bool isTimeType = widget.column.type == OmGridRowTypeEnum.time;
+    final DateTime? date = OmGridDateTimeUtils.tryParse(
       widget.value,
       isTime: isTimeType,
     );
@@ -151,7 +151,7 @@ class _GridCellState extends State<GridCell> {
     if (widget.column.customDateFormat != null) {
       try {
         return _buildText(
-          GridCellFormatters.getDateFormat(
+          OmGridCellFormatters.getDateFormat(
             widget.column.customDateFormat!,
           ).format(date),
         );
@@ -159,7 +159,7 @@ class _GridCellState extends State<GridCell> {
         return _buildText(date.toString());
       }
     }
-    return _buildText(GridCellConstants.defaultDateFormatter.format(date));
+    return _buildText(OmGridCellConstants.defaultDateFormatter.format(date));
   }
 
   Widget _buildComboBoxView() {
@@ -175,7 +175,7 @@ class _GridCellState extends State<GridCell> {
           final option = options.firstWhere(
             (o) => o.value == val.toString(),
             orElse: () =>
-                GridComboBoxItem(value: val.toString(), text: val.toString()),
+                OmGridComboBoxItem(value: val.toString(), text: val.toString()),
           );
           selectedLabels.add(option.text);
         }
@@ -183,7 +183,7 @@ class _GridCellState extends State<GridCell> {
       } else {
         final option = options.firstWhere(
           (o) => o.value == widget.value.toString(),
-          orElse: () => GridComboBoxItem(
+          orElse: () => OmGridComboBoxItem(
             value: widget.value.toString(),
             text: widget.value.toString(),
           ),
@@ -526,7 +526,7 @@ class _GridCellState extends State<GridCell> {
     if (config == null) return _buildText(widget.value?.toString() ?? '');
 
     final Color baseColor = config.color;
-    final bool isPrimary = config.style == StateStyle.primary;
+    final bool isPrimary = config.style == OmStateStyle.primary;
     final Color foregroundColor = isPrimary ? Colors.white : baseColor;
 
     final label = Text(
@@ -539,7 +539,7 @@ class _GridCellState extends State<GridCell> {
         : null;
 
     switch (config.style) {
-      case StateStyle.tinted:
+      case OmStateStyle.tinted:
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
@@ -555,7 +555,7 @@ class _GridCellState extends State<GridCell> {
             ],
           ),
         );
-      case StateStyle.primary:
+      case OmStateStyle.primary:
         return Chip(
           label: label,
           backgroundColor: baseColor,
@@ -563,7 +563,7 @@ class _GridCellState extends State<GridCell> {
           padding: EdgeInsets.zero,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         );
-      case StateStyle.outlined:
+      case OmStateStyle.outlined:
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
@@ -579,7 +579,7 @@ class _GridCellState extends State<GridCell> {
             ],
           ),
         );
-      case StateStyle.text:
+      case OmStateStyle.text:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -607,7 +607,7 @@ class _GridCellState extends State<GridCell> {
         : double.parse(widget.value);
 
     return _buildText(
-      GridCellFormatters.formatNumber(
+      OmGridCellFormatters.formatNumber(
         value: val,
         digits: widget.column.decimalDigits ?? 0,
         decimalSeparator: widget.column.decimalSeparator,

@@ -10,7 +10,7 @@ import 'dart:io' show File;
 import 'dart:convert' show base64Encode;
 import 'chart_types.dart';
 
-class ChartExportHandler {
+class OmChartExportHandler {
   static Future<void> exportToPDF({
     required Uint8List chartImageBytes,
     required String title,
@@ -56,7 +56,7 @@ class ChartExportHandler {
     required List<Map<String, dynamic>> data,
     required String xAxisColumn,
     required List<String> yAxisColumns,
-    required ChartType chartType,
+    required OmChartType chartType,
     Uint8List? chartImageBytes,
   }) async {
     try {

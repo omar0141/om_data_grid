@@ -4,10 +4,10 @@ import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:flutter/material.dart';
 
-class GridBody extends StatelessWidget {
+class OmGridBody extends StatelessWidget {
   final List<dynamic> flattenedItems;
-  final DatagridConfiguration configuration;
-  final List<GridColumnModel> internalColumns;
+  final OmDataGridConfiguration configuration;
+  final List<OmGridColumnModel> internalColumns;
   final List<double?> columnWidths;
   final Set<String> expandedGroups;
   final Set<Map<String, dynamic>> selectedRows;
@@ -39,7 +39,7 @@ class GridBody extends StatelessWidget {
   final void Function(int? index) onHoverChanged;
   final void Function(int oldIndex, int newIndex)? onRowReorder;
 
-  const GridBody({
+  const OmGridBody({
     super.key,
     required this.flattenedItems,
     required this.configuration,
@@ -80,7 +80,7 @@ class GridBody extends StatelessWidget {
     }
 
     final bool isSticky =
-        configuration.frozenPaneScrollMode == FrozenPaneScrollMode.sticky;
+        configuration.frozenPaneScrollMode == OmFrozenPaneScrollMode.sticky;
 
     // Use Iterable instead of toList() to avoid eager copying if possible
     final Iterable<dynamic> topRows = flattenedItems.take(frozenTopCount);
@@ -356,7 +356,7 @@ class GridBody extends StatelessWidget {
       onExit: (_) {
         onHoverChanged(null);
       },
-      child: GridRow(
+      child: OmGridRow(
         key: ValueKey(row),
         rowIndex: index,
         columns: internalColumns,

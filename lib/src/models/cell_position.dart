@@ -1,18 +1,18 @@
 /// Represents the position of a cell within the grid.
-class CellPosition {
+class OmCellPosition {
   /// The row index of the cell.
   final int rowIndex;
 
   /// The column index of the cell.
   final int columnIndex;
 
-  /// Creates a [CellPosition].
-  const CellPosition({required this.rowIndex, required this.columnIndex});
+  /// Creates a [OmCellPosition].
+  const OmCellPosition({required this.rowIndex, required this.columnIndex});
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CellPosition &&
+      other is OmCellPosition &&
           runtimeType == other.runtimeType &&
           rowIndex == other.rowIndex &&
           columnIndex == other.columnIndex;
@@ -21,7 +21,7 @@ class CellPosition {
   int get hashCode => rowIndex.hashCode ^ columnIndex.hashCode;
 
   /// Checks if this position is within a rectangular range defined by [start] and [end].
-  bool isWithin(CellPosition start, CellPosition end) {
+  bool isWithin(OmCellPosition start, OmCellPosition end) {
     final minRow = start.rowIndex < end.rowIndex
         ? start.rowIndex
         : end.rowIndex;

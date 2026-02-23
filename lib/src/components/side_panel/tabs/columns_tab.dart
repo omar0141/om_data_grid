@@ -7,7 +7,7 @@ import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:flutter/material.dart';
 
 class ColumnsTab extends StatefulWidget {
-  final DatagridController controller;
+  final OmDataGridController controller;
 
   const ColumnsTab({super.key, required this.controller});
 
@@ -39,7 +39,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
     }
   }
 
-  void _showAddCalculatedColumnDialog({GridColumnModel? existing}) {
+  void _showAddCalculatedColumnDialog({OmGridColumnModel? existing}) {
     showDialog(
       context: context,
       builder: (context) => FormulaBuilderDialog(
@@ -126,7 +126,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                       colModel.notSelectedFilterData != null &&
                       colModel.notSelectedFilterData!.isNotEmpty);
 
-              return DragTarget<GridColumnDragData>(
+              return DragTarget<OmGridColumnDragData>(
                 onWillAcceptWithDetails: (details) =>
                     details.data.source == 'columns_tab' &&
                     details.data.column.key != colModel.key,
@@ -144,8 +144,8 @@ class _ColumnsTabState extends State<ColumnsTab> {
                           width: double.infinity,
                           color: widget.controller.configuration.primaryColor,
                         ),
-                      Draggable<GridColumnDragData>(
-                        data: GridColumnDragData(
+                      Draggable<OmGridColumnDragData>(
+                        data: OmGridColumnDragData(
                           column: colModel,
                           source: 'columns_tab',
                         ),
@@ -274,7 +274,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
             },
           ),
         ),
-        DragTarget<GridColumnDragData>(
+        DragTarget<OmGridColumnDragData>(
           onWillAcceptWithDetails: (details) =>
               details.data.source == 'columns_tab' &&
               _columnSearchText.isEmpty &&
@@ -309,7 +309,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
     );
   }
 
-  Widget _buildColumnItem(GridColumnModel colModel, bool hasFilter, int index) {
+  Widget _buildColumnItem(OmGridColumnModel colModel, bool hasFilter, int index) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -395,7 +395,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                     ),
                   ],
                 ),
-              if (colModel.aggregation != AggregationType.none)
+              if (colModel.aggregation != OmAggregationType.none)
                 Padding(
                   padding: const EdgeInsets.only(left: 4),
                   child: Container(
@@ -455,11 +455,11 @@ class _ColumnsTabState extends State<ColumnsTab> {
         final List<String> activeKeys = title == "Row Groups"
             ? widget.controller.groupedColumns
             : widget.controller.columnModels
-                  .where((c) => c.aggregation != AggregationType.none)
+                  .where((c) => c.aggregation != OmAggregationType.none)
                   .map((c) => c.key)
                   .toList();
 
-        return DragTarget<GridColumnDragData>(
+        return DragTarget<OmGridColumnDragData>(
           onWillAcceptWithDetails: (details) => true,
           onAcceptWithDetails: (details) {
             if (title == "Row Groups") {
@@ -467,7 +467,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
             } else if (title == "Aggregations") {
               widget.controller.updateColumnAggregation(
                 details.data.column.key,
-                AggregationType.sum,
+                OmAggregationType.sum,
               );
             }
           },
@@ -506,10 +506,10 @@ class _ColumnsTabState extends State<ColumnsTab> {
                               widget.controller.clearGroupedColumns();
                             } else {
                               for (var col in widget.controller.columnModels) {
-                                if (col.aggregation != AggregationType.none) {
+                                if (col.aggregation != OmAggregationType.none) {
                                   widget.controller.updateColumnAggregation(
                                     col.key,
-                                    AggregationType.none,
+                                    OmAggregationType.none,
                                   );
                                 }
                               }
@@ -650,10 +650,10 @@ class _ColumnsTabState extends State<ColumnsTab> {
           child: GridComboBox(
             value: col.aggregation.name,
             configuration: widget.controller.configuration,
-            items: AggregationType.values
-                .where((e) => e != AggregationType.none)
+            items: OmAggregationType.values
+                .where((e) => e != OmAggregationType.none)
                 .map(
-                  (e) => GridComboBoxItem(
+                  (e) => OmGridComboBoxItem(
                     value: e.name,
                     text: "${col.column.title}: ${e.name.toUpperCase()}",
                   ),
@@ -661,14 +661,14 @@ class _ColumnsTabState extends State<ColumnsTab> {
                 .toList(),
             onChange: (val) {
               if (val != null && val.toString().isNotEmpty) {
-                final type = AggregationType.values.firstWhere(
+                final type = OmAggregationType.values.firstWhere(
                   (e) => e.name == val,
                 );
                 widget.controller.updateColumnAggregation(key, type);
               } else {
                 widget.controller.updateColumnAggregation(
                   key,
-                  AggregationType.none,
+                  OmAggregationType.none,
                 );
               }
             },
@@ -706,7 +706,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
   }
 
   Widget _buildPanelItemRow({
-    required GridColumnModel col,
+    required OmGridColumnModel col,
     required VoidCallback onRemove,
   }) {
     return Material(

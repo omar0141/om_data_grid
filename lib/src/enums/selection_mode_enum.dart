@@ -1,5 +1,5 @@
 /// Defines the selection mode for the grid.
-enum SelectionMode {
+enum OmSelectionMode {
   /// Selection is disabled.
   none,
 

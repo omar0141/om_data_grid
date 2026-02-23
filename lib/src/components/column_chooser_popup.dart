@@ -1,0 +1,157 @@
+import 'package:flutter/material.dart';
+import '../utils/datagrid_controller.dart';
+
+class ColumnChooserPopup extends StatefulWidget {
+  final DatagridController controller;
+  final VoidCallback onClose;
+  final Offset initialPosition;
+
+  const ColumnChooserPopup({
+    super.key,
+    required this.controller,
+    required this.onClose,
+    this.initialPosition = const Offset(200, 200),
+  });
+
+  @override
+  State<ColumnChooserPopup> createState() => _ColumnChooserPopupState();
+}
+
+class _ColumnChooserPopupState extends State<ColumnChooserPopup> {
+  late Offset _position;
+  final double _width = 300;
+  final double _height = 400;
+
+  @override
+  void initState() {
+    super.initState();
+    _position = widget.initialPosition;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final configuration = widget.controller.configuration;
+
+    return Positioned(
+      left: _position.dx,
+      top: _position.dy,
+      child: Material(
+        elevation: 8,
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        child: Container(
+          width: _width,
+          height: _height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Column(
+            children: [
+              // Header / Drag Handle
+              GestureDetector(
+                onPanUpdate: (details) {
+                  setState(() {
+                    _position += details.delta;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: configuration.primaryColor.withOpacity(0.05),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.view_column,
+                        size: 20,
+                        color: configuration.primaryColor,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        "Choose Columns",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 20),
+                        onPressed: widget.onClose,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Search or Filter can be added here
+              Expanded(
+                child: ListenableBuilder(
+                  listenable: widget.controller,
+                  builder: (context, child) {
+                    final columns = widget.controller.columnModels;
+                    return ReorderableListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: columns.length,
+                      onReorder: (oldIndex, newIndex) {
+                        widget.controller.reorderColumns(oldIndex, newIndex);
+                      },
+                      itemBuilder: (context, index) {
+                        final column = columns[index];
+                        return ListTile(
+                          key: ValueKey(column.key),
+                          dense: true,
+                          leading: Checkbox(
+                            activeColor:
+                                widget.controller.configuration.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            value: column.isVisible,
+                            onChanged: (val) {
+                              widget.controller.toggleColumnVisibility(
+                                column.key,
+                                val ?? false,
+                              );
+                            },
+                          ),
+                          title: Text(column.title),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => widget.controller.resetColumns(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: configuration.primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("Reset Columns"),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

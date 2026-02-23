@@ -1,0 +1,24 @@
+name: example
+description: "Example application showing how to use the om_data_grid package."
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  om_data_grid:
+    path: ../ # This links to the parent package
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  # In an example, you might need to register assets if they are referenced from the example app
+  # But if they are package assets, the package's pubspec handles them.

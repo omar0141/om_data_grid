@@ -32,9 +32,9 @@ dependencies:
   open_file_plus: ^3.4.1+1
   universal_html: ^2.2.4
   expressions: ^0.2.5+2
-  intl:
-  image_picker:
-  file_picker:
+  intl: ^0.19.0
+  image_picker: ^1.2.1
+  file_picker: ^10.3.10
   syncfusion_flutter_datepicker: ^27.2.5
 
 dev_dependencies:

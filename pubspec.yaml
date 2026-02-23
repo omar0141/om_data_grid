@@ -1,6 +1,6 @@
 name: om_data_grid
 description: "A powerful, customizable, and high-performance data grid for Flutter apps, with support for advanced filtering, sorting, grouping, and charting."
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/omar0141/om_data_grid
 repository: https://github.com/omar0141/om_data_grid
 issue_tracker: https://github.com/omar0141/om_data_grid/issues
@@ -10,7 +10,7 @@ issue_tracker: https://github.com/omar0141/om_data_grid/issues
 # publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ^3.9.2
+  sdk: ">=2.19.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions

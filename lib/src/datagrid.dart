@@ -208,9 +208,8 @@ class _DatagridState extends State<Datagrid> {
     columnWidths = internalColumns.map((col) => col.width).toList();
 
     final sourceData = widget.controller.filteredData;
-    filterDatasource = sourceData
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
+    filterDatasource =
+        sourceData.map((e) => Map<String, dynamic>.from(e)).toList();
 
     _filteredUnsortedData = List.from(filterDatasource);
     if (resetSort) {
@@ -311,9 +310,8 @@ class _DatagridState extends State<Datagrid> {
       columnWidths = newWidths;
 
       _isInternalUpdate = true;
-      final userColumns = internalColumns
-          .where((c) => c.key != '__reorder_column__')
-          .toList();
+      final userColumns =
+          internalColumns.where((c) => c.key != '__reorder_column__').toList();
       widget.controller.updateColumnModels(userColumns);
       _isInternalUpdate = false;
     });
@@ -516,15 +514,13 @@ class _DatagridState extends State<Datagrid> {
     // Prevent selection start on reorder column
     if (internalColumns[colIndex].key == '__reorder_column__') return;
 
-    final isControlPressed =
-        RawKeyboard.instance.keysPressed.contains(
+    final isControlPressed = RawKeyboard.instance.keysPressed.contains(
           LogicalKeyboardKey.controlLeft,
         ) ||
         RawKeyboard.instance.keysPressed.contains(
           LogicalKeyboardKey.controlRight,
         );
-    final isShiftPressed =
-        RawKeyboard.instance.keysPressed.contains(
+    final isShiftPressed = RawKeyboard.instance.keysPressed.contains(
           LogicalKeyboardKey.shiftLeft,
         ) ||
         RawKeyboard.instance.keysPressed.contains(
@@ -735,9 +731,11 @@ class _DatagridState extends State<Datagrid> {
 
     if (result == null) return;
 
-    final customItem = config.contextMenuItems
-        ?.where((i) => i.value == result)
-        .firstOrNull;
+    final customItems =
+        config.contextMenuItems?.where((i) => i.value == result).toList();
+    final customItem = (customItems != null && customItems.isNotEmpty)
+        ? customItems.first
+        : null;
     if (customItem?.onPressed != null) {
       customItem!.onPressed!(_getSelectedData(), _getSelectedColumns());
       return;
@@ -824,9 +822,8 @@ class _DatagridState extends State<Datagrid> {
       );
     }
 
-    final Set<int> colIndices = _selectedCells
-        .map((c) => c.columnIndex)
-        .toSet();
+    final Set<int> colIndices =
+        _selectedCells.map((c) => c.columnIndex).toSet();
     final List<GridColumnModel> selected = [];
     for (var idx in colIndices) {
       if (idx >= 0 && idx < internalColumns.length) {
@@ -888,9 +885,8 @@ class _DatagridState extends State<Datagrid> {
   }) {
     final destructiveColor =
         widget.controller.configuration.contextMenuDestructiveColor ??
-        Colors.red;
-    final iconColor =
-        widget.controller.configuration.contextMenuIconColor ??
+            Colors.red;
+    final iconColor = widget.controller.configuration.contextMenuIconColor ??
         Colors.grey[700];
     final textColor =
         widget.controller.configuration.contextMenuTextColor ?? Colors.black87;
@@ -998,9 +994,8 @@ class _DatagridState extends State<Datagrid> {
   }
 
   void _handleSearch(dynamic newData) {
-    final List<Map<String, dynamic>> mappedData = (newData as List)
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
+    final List<Map<String, dynamic>> mappedData =
+        (newData as List).map((e) => Map<String, dynamic>.from(e)).toList();
     _filteredUnsortedData = mappedData;
     _applySort();
     _currentPage = 0;
@@ -1126,9 +1121,8 @@ class _DatagridState extends State<Datagrid> {
           LayoutBuilder(
             builder: (context, constraints) {
               return Column(
-                mainAxisSize: config.shrinkWrapRows
-                    ? MainAxisSize.min
-                    : MainAxisSize.max,
+                mainAxisSize:
+                    config.shrinkWrapRows ? MainAxisSize.min : MainAxisSize.max,
                 children: [
                   if (config.showGroupingPanel && config.enableGrouping)
                     GridGroupPanel(

@@ -1,9 +1,9 @@
 name: om_data_grid
 description: "A powerful, customizable, and high-performance data grid for Flutter apps, with support for advanced filtering, sorting, grouping, and charting."
 version: 0.0.1
-# homepage: https://github.com/yourusername/om_data_grid # TODO: Add your repository URL
-# repository: https://github.com/yourusername/om_data_grid # TODO: Add your repository URL
-# issue_tracker: https://github.com/yourusername/om_data_grid/issues # TODO: Add your issue tracker URL
+homepage: https://github.com/omar0141/om_data_grid
+repository: https://github.com/omar0141/om_data_grid
+issue_tracker: https://github.com/omar0141/om_data_grid/issues
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

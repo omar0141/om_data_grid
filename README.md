@@ -7,7 +7,7 @@ A high-performance, feature-rich, and fully customizable DataGrid for Flutter. D
 
 <p align="center">
   <a href="https://omar0141.github.io/om_data_grid_release/">
-    <img src="screenshot.png" alt="Live Demo" width="100%">
+    <img src="https://raw.githubusercontent.com/omar0141/om_data_grid/main/screenshot.png" alt="Live Demo" width="100%">
   </a>
 </p>
 

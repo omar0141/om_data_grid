@@ -1,10 +1,10 @@
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 
 class FilePickerWrapper {
   static Future<String?> pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      return result.files.single.path;
+    final XFile? file = await openFile();
+    if (file != null) {
+      return file.path;
     }
     return null;
   }

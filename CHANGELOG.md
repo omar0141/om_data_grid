@@ -1,3 +1,10 @@
+## 0.0.10
+
+- Replace `open_file_plus` with `url_launcher` for better desktop support.
+- Replace `file_picker` with `file_selector` for improved cross-platform compatibility.
+- Fix Wasm compatibility by abstracting `dart:isolate` usage.
+- Improve platform-specific code isolation.
+
 ## 0.0.8
 
 - Fix platform support issues for Android, iOS, Windows, Linux, macOS, and Web.

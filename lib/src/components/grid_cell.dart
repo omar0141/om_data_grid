@@ -8,7 +8,7 @@ import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:om_data_grid/src/utils/file_picker_wrapper/file_picker_wrapper.dart';
 import 'dart:ui' as ui;
 
 class GridCell extends StatefulWidget {
@@ -115,17 +115,15 @@ class _GridCellState extends State<GridCell> {
   Widget _buildDouble() {
     if (widget.value == null) return _buildText('');
     final bool isNum = widget.value is num;
-    final bool isNumericString =
-        !isNum &&
+    final bool isNumericString = !isNum &&
         (widget.value is String && double.tryParse(widget.value) != null);
 
     if (!isNum && !isNumericString) {
       return _buildText(widget.value.toString());
     }
 
-    final double val = isNum
-        ? widget.value.toDouble()
-        : double.parse(widget.value);
+    final double val =
+        isNum ? widget.value.toDouble() : double.parse(widget.value);
 
     return _buildText(
       OmGridCellFormatters.formatNumber(
@@ -320,9 +318,9 @@ class _GridCellState extends State<GridCell> {
   }
 
   Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      widget.onValueChange?.call(widget.column.key, result.files.single.path);
+    final String? path = await FilePickerWrapper.pickFile();
+    if (path != null) {
+      widget.onValueChange?.call(widget.column.key, path);
     }
   }
 
@@ -334,22 +332,22 @@ class _GridCellState extends State<GridCell> {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children:
-          list.take(3).map<Widget>((item) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: CircleAvatar(
-                radius: 12,
-                backgroundImage: NetworkImage(item.toString()),
-                onBackgroundImageError: (_, __) {},
-                child: const Icon(Icons.error, size: 10),
-              ),
-            );
-          }).toList()..add(
-            list.length > 3
-                ? Text('+${list.length - 3}', style: widget.style)
-                : const SizedBox(),
+      children: list.take(3).map<Widget>((item) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: CircleAvatar(
+            radius: 12,
+            backgroundImage: NetworkImage(item.toString()),
+            onBackgroundImageError: (_, __) {},
+            child: const Icon(Icons.error, size: 10),
           ),
+        );
+      }).toList()
+        ..add(
+          list.length > 3
+              ? Text('+${list.length - 3}', style: widget.style)
+              : const SizedBox(),
+        ),
     );
   }
 
@@ -376,8 +374,7 @@ class _GridCellState extends State<GridCell> {
                 final screenHeight = MediaQuery.of(context).size.height;
                 // If space below is less than 250px, open above
                 setState(() {
-                  _menuOpenedAbove =
-                      (screenHeight - position.dy <
+                  _menuOpenedAbove = (screenHeight - position.dy <
                       widget.configuration.rowHeight * 4);
                 });
               }
@@ -395,9 +392,8 @@ class _GridCellState extends State<GridCell> {
           builder: (context, value, child) {
             return Transform.scale(
               scale: value,
-              alignment: _menuOpenedAbove
-                  ? Alignment.bottomRight
-                  : Alignment.topRight,
+              alignment:
+                  _menuOpenedAbove ? Alignment.bottomRight : Alignment.topRight,
               child: Opacity(opacity: value, child: child),
             );
           },
@@ -594,17 +590,15 @@ class _GridCellState extends State<GridCell> {
   Widget _buildInt() {
     if (widget.value == null) return _buildText('');
     final bool isNum = widget.value is num;
-    final bool isNumericString =
-        !isNum &&
+    final bool isNumericString = !isNum &&
         (widget.value is String && int.tryParse(widget.value) != null);
 
     if (!isNum && !isNumericString) {
       return _buildText(widget.value.toString());
     }
 
-    final double val = isNum
-        ? widget.value.toDouble()
-        : double.parse(widget.value);
+    final double val =
+        isNum ? widget.value.toDouble() : double.parse(widget.value);
 
     return _buildText(
       OmGridCellFormatters.formatNumber(

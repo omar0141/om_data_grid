@@ -3,11 +3,7 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
-import 'package:path_provider/path_provider.dart';
-import 'package:open_file_plus/open_file_plus.dart';
-import 'package:universal_html/html.dart' as html;
-import 'dart:io' show File;
-import 'dart:convert' show base64Encode;
+import 'package:om_data_grid/src/utils/file_viewer/file_viewer.dart';
 import 'chart_types.dart';
 
 class OmChartExportHandler {
@@ -138,18 +134,6 @@ class OmChartExportHandler {
     String fileName,
     String mimeType,
   ) async {
-    if (kIsWeb) {
-      final base64 = base64Encode(bytes);
-      html.AnchorElement(href: 'data:$mimeType;base64,$base64')
-        ..setAttribute('download', fileName)
-        ..click();
-      return;
-    }
-
-    final directory = await getTemporaryDirectory();
-    final path = '${directory.path}/$fileName';
-    final file = File(path);
-    await file.writeAsBytes(bytes, flush: true);
-    await OpenFile.open(path);
+    await FileViewer.saveAndOpen(bytes, fileName, mimeType);
   }
 }

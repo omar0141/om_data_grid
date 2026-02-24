@@ -3,12 +3,7 @@ import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:open_file_plus/open_file_plus.dart';
-import 'package:universal_html/html.dart' as html;
-import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:om_data_grid/src/utils/file_viewer/file_viewer.dart';
 
 class OmStringUtils {
   static List<int> getNumberIndices(String input) {
@@ -152,16 +147,16 @@ class GridDatePickerUtils {
                         child: SfDateRangePicker(
                           onSelectionChanged:
                               (DateRangePickerSelectionChangedArgs args) {
-                                if (args.value is PickerDateRange) {
-                                  if (args.value.startDate != null &&
-                                      args.value.endDate != null) {
-                                    tempResult = DateTimeRange(
-                                      start: args.value.startDate,
-                                      end: args.value.endDate,
-                                    );
-                                  }
-                                }
-                              },
+                            if (args.value is PickerDateRange) {
+                              if (args.value.startDate != null &&
+                                  args.value.endDate != null) {
+                                tempResult = DateTimeRange(
+                                  start: args.value.startDate,
+                                  end: args.value.endDate,
+                                );
+                              }
+                            }
+                          },
                           selectionMode: DateRangePickerSelectionMode.range,
                           enableMultiView: true,
                           navigationDirection:
@@ -185,23 +180,22 @@ class GridDatePickerUtils {
                           ),
                           monthViewSettings:
                               const DateRangePickerMonthViewSettings(
-                                firstDayOfWeek: 1,
-                                dayFormat: 'EEE',
-                                viewHeaderStyle: DateRangePickerViewHeaderStyle(
-                                  textStyle: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                            firstDayOfWeek: 1,
+                            dayFormat: 'EEE',
+                            viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                              textStyle: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
                               ),
-
+                            ),
+                          ),
                           backgroundColor: configuration.menuBackgroundColor,
                           selectionColor: configuration.primaryColor,
                           startRangeSelectionColor: configuration.primaryColor,
                           endRangeSelectionColor: configuration.primaryColor,
-                          rangeSelectionColor: configuration.primaryColor
-                              .withOpacity(0.12),
+                          rangeSelectionColor:
+                              configuration.primaryColor.withOpacity(0.12),
                           todayHighlightColor: configuration.primaryColor,
                           selectionTextStyle: TextStyle(
                             color: configuration.primaryForegroundColor,
@@ -588,12 +582,12 @@ class GridFileViewerUtils {
                           },
                           errorBuilder: (context, error, stackTrace) =>
                               const Center(
-                                child: Icon(
-                                  Icons.broken_image,
-                                  size: 64,
-                                  color: Colors.white,
-                                ),
-                              ),
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 64,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -741,36 +735,11 @@ class GridFileViewerUtils {
   }
 
   static Future<void> _downloadFile(String url, String fileName) async {
-    try {
-      if (kIsWeb) {
-        html.AnchorElement(href: url)
-          ..setAttribute("download", fileName)
-          ..click();
-      } else {
-        final response = await http.get(Uri.parse(url));
-        if (response.statusCode == 200) {
-          final directory = await getApplicationDocumentsDirectory();
-          final filePath = '${directory.path}/$fileName';
-          final file = File(filePath);
-          await file.writeAsBytes(response.bodyBytes);
-          await OpenFile.open(filePath);
-        }
-      }
-    } catch (e) {
-      debugPrint("Download error: $e");
-    }
+    await FileViewer.downloadAndOpen(url, fileName);
   }
 
   static Future<void> _openSystemFile(String url) async {
-    try {
-      if (kIsWeb) {
-        html.window.open(url, '_blank');
-      } else {
-        await OpenFile.open(url);
-      }
-    } catch (e) {
-      debugPrint("Open file error: $e");
-    }
+    await FileViewer.open(url);
   }
 }
 

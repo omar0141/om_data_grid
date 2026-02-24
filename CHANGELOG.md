@@ -1,3 +1,9 @@
+## 0.0.8
+
+- Fix platform support issues for Android, iOS, Windows, Linux, macOS, and Web.
+- Improve Web compatibility by isolating `dart:io` and `open_file_plus` logic.
+- Isolate `file_picker` usage to resolve analyzer warnings on some platforms.
+
 ## 0.0.7
 
 - update class names

@@ -4,6 +4,7 @@ import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/enums/grid_border_visibility_enum.dart';
 import 'package:om_data_grid/src/models/advanced_filter_model.dart';
+import 'package:om_data_grid/src/enums/selection_mode_enum.dart';
 
 class OmGridRow extends StatefulWidget {
   const OmGridRow({
@@ -80,16 +81,15 @@ class _GridRowState extends State<OmGridRow> {
         color: widget.isSelected
             ? widget.configuration.selectedRowColor
             : (widget.isHovered
-                  ? widget.configuration.rowHoverColor
-                  : widget.configuration.rowBackgroundColor),
+                ? widget.configuration.rowHoverColor
+                : widget.configuration.rowBackgroundColor),
         child: InkWell(
           onTap: widget.onTap,
           child: Container(
             height: widget.configuration.rowHeight,
             decoration: BoxDecoration(
               border: BorderDirectional(
-                bottom:
-                    (widget.configuration.rowBorderVisibility ==
+                bottom: (widget.configuration.rowBorderVisibility ==
                             OmGridBorderVisibility.horizontal ||
                         widget.configuration.rowBorderVisibility ==
                             OmGridBorderVisibility.both)
@@ -227,6 +227,9 @@ class _GridRowState extends State<OmGridRow> {
         }
       },
       child: GestureDetector(
+        onTap: widget.configuration.selectionMode == OmSelectionMode.cell
+            ? widget.onTap
+            : null,
         onTapDown: (_) => widget.onCellTapDown?.call(index),
         onSecondaryTapDown: (details) {
           widget.onSecondaryTapDown?.call(index, details);
@@ -269,9 +272,8 @@ class _GridRowState extends State<OmGridRow> {
       );
     }
 
-    final double leftPadding = isFirstVisible
-        ? 12.0 + (widget.level * 20.0)
-        : 12.0;
+    final double leftPadding =
+        isFirstVisible ? 12.0 + (widget.level * 20.0) : 12.0;
 
     return Container(
       height: widget.configuration.rowHeight,
@@ -279,8 +281,7 @@ class _GridRowState extends State<OmGridRow> {
       decoration: BoxDecoration(
         color: cellSelected ? widget.configuration.selectedRowColor : null,
         border: BorderDirectional(
-          start:
-              !isFirstVisible &&
+          start: !isFirstVisible &&
                   (widget.configuration.rowBorderVisibility ==
                           OmGridBorderVisibility.vertical ||
                       widget.configuration.rowBorderVisibility ==
@@ -315,16 +316,16 @@ class _GridRowState extends State<OmGridRow> {
 
             final TextStyle textStyle = (widget.isSelected || cellSelected)
                 ? (widget.configuration.selectedRowTextStyle ??
-                      widget.configuration.rowTextStyle ??
-                      TextStyle(
-                        color: widget.configuration.selectedRowForegroundColor,
-                        fontSize: 14,
-                      ))
+                    widget.configuration.rowTextStyle ??
+                    TextStyle(
+                      color: widget.configuration.selectedRowForegroundColor,
+                      fontSize: 14,
+                    ))
                 : (widget.configuration.rowTextStyle ??
-                      TextStyle(
-                        color: widget.configuration.rowForegroundColor,
-                        fontSize: 14,
-                      ));
+                    TextStyle(
+                      color: widget.configuration.rowForegroundColor,
+                      fontSize: 14,
+                    ));
 
             if (widget.isScrolling &&
                 !_renderedOnce &&

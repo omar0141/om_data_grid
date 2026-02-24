@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:om_data_grid/om_data_grid.dart';
+import 'employee_dialog.dart';
 
 class HomeScreen2 extends StatefulWidget {
   const HomeScreen2({super.key});
@@ -161,7 +162,8 @@ class _HomeScreen2State extends State<HomeScreen2> {
         width: 80,
         type: OmGridRowTypeEnum.delete,
         onDelete: (row) async {
-          // print("Deleting row: ${row['ID']}");
+          data.removeWhere((e) => e['ID'] == row['ID']);
+          _controller.updateData(data);
         },
       ),
     ].map((col) => OmGridColumnModel(column: col, width: col.width)).toList();
@@ -216,6 +218,29 @@ class _HomeScreen2State extends State<HomeScreen2> {
     );
   }
 
+  void _editEmployee(Map<String, dynamic> row) async {
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => EmployeeDialog(
+        employee: row,
+        primaryColor: _controller.configuration.primaryColor,
+      ),
+    );
+
+    if (result != null) {
+      final index = data.indexWhere((e) => e['ID'] == row['ID']);
+      if (index != -1) {
+        data[index] = result;
+        _controller.updateData(data);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Employee updated successfully')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,24 +253,27 @@ class _HomeScreen2State extends State<HomeScreen2> {
             // Standalone OmQuickFilterBar taking only the controller
             OmQuickFilterBar(
               controller: _controller,
-              onAddPressed: () {
-                data.add({
-                  "ID": _controller.data.length + 1,
-                  "Name": "New Employee",
-                  "Job": "Development",
-                  "Salary": 50000,
-                  "Experience": 1,
-                  "Rating": 3.5,
-                  "Bonus": 5,
-                  "Date": "2024-01-01",
-                  "Time": "09:00",
-                  "LastLogin": DateTime.now(),
-                  "IsActive": true,
-                  "Avatar":
-                      "https://api.dicebear.com/7.x/avataaars/png?seed=${_controller.data.length + 1}",
-                  "Status": 'Active',
-                });
-                _controller.updateData(data);
+              onAddPressed: () async {
+                final result = await showDialog<Map<String, dynamic>>(
+                  context: context,
+                  builder: (context) => EmployeeDialog(
+                    primaryColor: _controller.configuration.primaryColor,
+                  ),
+                );
+
+                if (result != null) {
+                  setState(() {
+                    final nextId = data.isEmpty
+                        ? 1
+                        : (data
+                                  .map((e) => e['ID'] as int)
+                                  .reduce((a, b) => a > b ? a : b) +
+                              1);
+                    result['ID'] = nextId;
+                    data.insert(0, result);
+                    _controller.updateData(data);
+                  });
+                }
               },
             ),
             const SizedBox(height: 16),
@@ -270,7 +298,10 @@ class _HomeScreen2State extends State<HomeScreen2> {
                 child: ClipRRect(
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   borderRadius: BorderRadius.circular(12),
-                  child: OmDataGrid(controller: _controller, isEditing: false),
+                  child: OmDataGrid(
+                    controller: _controller,
+                    onRowTap: _editEmployee,
+                  ),
                 ),
               ),
             ),

@@ -153,13 +153,13 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
             ),
           if (widget.title != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsetsDirectional.only(end: 12),
               child: Text(
                 widget.title!,
                 style: TextStyle(
                   color: _effectiveConfig.rowForegroundColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),

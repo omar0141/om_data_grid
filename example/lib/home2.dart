@@ -187,7 +187,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         allowPagination: true,
         rowsPerPage: 5000,
         rowHeight: 45,
-        quickFilters: [OmQuickFilterConfig(columnKey: "Job")],
+        // quickFilters: [OmQuickFilterConfig(columnKey: "Job")],
         showSettingsButton: true,
         showClearFiltersButton: true,
         enableGrouping: true,
@@ -252,6 +252,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
           children: [
             // Standalone OmQuickFilterBar taking only the controller
             OmQuickFilterBar(
+              title: "Employees",
               controller: _controller,
               onAddPressed: () async {
                 final result = await showDialog<Map<String, dynamic>>(

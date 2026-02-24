@@ -1,3 +1,7 @@
+## 0.0.13
+
+- change style of the title in quick filter bar
+
 ## 0.0.12
 
 - Replaced `open_file_plus` with `url_launcher` to improve platform support.

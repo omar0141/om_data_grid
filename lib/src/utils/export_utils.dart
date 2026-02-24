@@ -1,4 +1,3 @@
-import 'dart:isolate';
 import 'dart:ui' hide Color;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Color;
@@ -137,14 +136,9 @@ class OmGridExportHandler {
     String fileName = 'Grid_Export.pdf',
   }) async {
     try {
-      final List<int> bytes;
-      if (kIsWeb) {
-        bytes = _generatePdfBytes(data, columns, configuration, title);
-      } else {
-        bytes = await Isolate.run(
-          () => _generatePdfBytes(data, columns, configuration, title),
-        );
-      }
+      final List<int> bytes = await IsolateHelper.run(
+        () => _generatePdfBytes(data, columns, configuration, title),
+      );
       await _saveAndOpenFile(bytes, fileName, 'application/pdf');
     } catch (e) {
       debugPrint('PDF Export failed: $e');

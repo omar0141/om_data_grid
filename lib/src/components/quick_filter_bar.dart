@@ -15,9 +15,13 @@ class OmQuickFilterBar extends StatefulWidget {
   final OmDataGridConfiguration? configuration;
   final void Function(List<dynamic>)? onSearch;
   final void Function(List<Map<String, dynamic>>, List<OmGridColumnModel>)?
-  onVisualize;
+      onVisualize;
   final void Function()? onAddPressed;
   final OmDataGridController? controller;
+  final String? title;
+  final bool showBackButton;
+  final VoidCallback? onBackPress;
+  final Widget? leading;
 
   const OmQuickFilterBar({
     super.key,
@@ -29,6 +33,10 @@ class OmQuickFilterBar extends StatefulWidget {
     this.onVisualize,
     this.onAddPressed,
     this.controller,
+    this.title,
+    this.showBackButton = false,
+    this.onBackPress,
+    this.leading,
   });
 
   @override
@@ -103,7 +111,8 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
       } else if (widget.configs != null) {
         _internalColumns = widget.configs!.map((config) {
           return OmGridColumnModel(
-            column: OmGridColumn(key: config.columnKey, title: config.columnKey),
+            column:
+                OmGridColumn(key: config.columnKey, title: config.columnKey),
           );
         }).toList();
       } else {
@@ -115,8 +124,7 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasActiveFilters =
-        _internalColumns.any(
+    final bool hasActiveFilters = _internalColumns.any(
           (c) =>
               c.filter ||
               (c.advancedFilter != null &&
@@ -124,86 +132,137 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
               (c.quickFilterText != null && c.quickFilterText!.isNotEmpty),
         ) ||
         _searchController.text.isNotEmpty;
-    return Container(
-      decoration: BoxDecoration(color: _effectiveConfig.gridBackgroundColor),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+
+    Widget? leadingWidget;
+    if (widget.leading != null) {
+      leadingWidget = widget.leading;
+    } else if (widget.showBackButton || widget.title != null) {
+      leadingWidget = Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Scrollbar(
-              controller: _horizontalScrollController,
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                controller: _horizontalScrollController,
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: _configs.map((config) {
-                    final column = _internalColumns.firstWhere(
-                      (c) => c.key == config.columnKey,
-                      orElse: () => OmGridColumnModel(
-                        column: OmGridColumn(
-                          key: config.columnKey,
-                          title: config.columnKey,
-                        ),
-                      ),
-                    );
-                    return Padding(
-                      padding: const EdgeInsetsDirectional.only(end: 12),
-                      child: _buildFilterRow(column, config),
-                    );
-                  }).toList(),
+          if (widget.showBackButton)
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                size: 22,
+                color: _effectiveConfig.rowForegroundColor,
+              ),
+              onPressed:
+                  widget.onBackPress ?? () => Navigator.of(context).maybePop(),
+              splashRadius: 20,
+            ),
+          if (widget.title != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                widget.title!,
+                style: TextStyle(
+                  color: _effectiveConfig.rowForegroundColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_effectiveConfig.showClearFiltersButton &&
-                    hasActiveFilters) ...[
-                  _buildClearFiltersButton(),
-                  const SizedBox(width: 8),
-                ],
-
-                if (_effectiveConfig.showGlobalSearch) ...[
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 350),
-                    child: _buildGlobalSearchField(),
-                  ),
-                  const SizedBox(width: 8),
-                ],
-                if (_effectiveConfig.showAddButton) ...[
-                  SizedBox(
-                    height: 38,
-                    child: IntrinsicWidth(
-                      child: OmDefaultButton(
-                        text: _effectiveConfig.addButtonText,
-                        leadingIcon: _effectiveConfig.addButtonIcon,
-                        backcolor: _effectiveConfig.addButtonBackgroundColor,
-                        forecolor: _effectiveConfig.addButtonForegroundColor,
-                        borderColor: _effectiveConfig.addButtonBorderColor,
-                        fontsize: _effectiveConfig.addButtonFontSize,
-                        fontWeight: _effectiveConfig.addButtonFontWeight,
-                        padding: _effectiveConfig.addButtonPadding,
-                        borderRadius: _effectiveConfig.addButtonBorderRadius,
-                        height: 38,
-                        width: null,
-                        press:
-                            widget.onAddPressed ??
-                            widget.controller?.onAddPressed,
-                        configuration: _effectiveConfig,
-                      ),
+        ],
+      );
+    }
+    return Container(
+      decoration: BoxDecoration(color: _effectiveConfig.gridBackgroundColor),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (leadingWidget != null && _configs.isNotEmpty) ...[
+            const SizedBox(width: 8),
+            leadingWidget,
+            const SizedBox(width: 8),
+          ],
+          Row(
+            children: [
+              if (leadingWidget != null && _configs.isEmpty) ...[
+                const SizedBox(width: 8),
+                leadingWidget,
+                const SizedBox(width: 8),
+              ],
+              Expanded(
+                child: Scrollbar(
+                  controller: _horizontalScrollController,
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    controller: _horizontalScrollController,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: _configs.map((config) {
+                        final column = _internalColumns.firstWhere(
+                          (c) => c.key == config.columnKey,
+                          orElse: () => OmGridColumnModel(
+                            column: OmGridColumn(
+                              key: config.columnKey,
+                              title: config.columnKey,
+                            ),
+                          ),
+                        );
+                        return Padding(
+                          padding: const EdgeInsetsDirectional.only(end: 12),
+                          child: _buildFilterRow(column, config),
+                        );
+                      }).toList(),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                ],
-                if (_effectiveConfig.showSettingsButton) _buildSettingsButton(),
-              ],
-            ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_effectiveConfig.showClearFiltersButton &&
+                        hasActiveFilters) ...[
+                      _buildClearFiltersButton(),
+                      const SizedBox(width: 8),
+                    ],
+                    if (_effectiveConfig.showGlobalSearch) ...[
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 350),
+                        child: _buildGlobalSearchField(),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    if (_effectiveConfig.showAddButton) ...[
+                      SizedBox(
+                        height: 38,
+                        child: IntrinsicWidth(
+                          child: OmDefaultButton(
+                            text: _effectiveConfig.addButtonText,
+                            leadingIcon: _effectiveConfig.addButtonIcon,
+                            backcolor:
+                                _effectiveConfig.addButtonBackgroundColor,
+                            forecolor:
+                                _effectiveConfig.addButtonForegroundColor,
+                            borderColor: _effectiveConfig.addButtonBorderColor,
+                            fontsize: _effectiveConfig.addButtonFontSize,
+                            fontWeight: _effectiveConfig.addButtonFontWeight,
+                            padding: _effectiveConfig.addButtonPadding,
+                            borderRadius:
+                                _effectiveConfig.addButtonBorderRadius,
+                            height: 38,
+                            width: null,
+                            press: widget.onAddPressed ??
+                                widget.controller?.onAddPressed,
+                            configuration: _effectiveConfig,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    if (_effectiveConfig.showSettingsButton)
+                      _buildSettingsButton(),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -280,12 +339,12 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
       itemBuilder: (context) => [
         _buildPopupMenuItem(
           'excel',
-          Image.asset('assets/icons/excel_icon.png', package: 'om_data_grid', width: 22, height: 22),
+          Icon(Icons.table_chart, size: 20, color: Colors.green.shade700),
           'Export to Excel',
         ),
         _buildPopupMenuItem(
           'pdf',
-          Image.asset('assets/icons/pdf_icon.png', package: 'om_data_grid', width: 22, height: 22),
+          Icon(Icons.picture_as_pdf, size: 22, color: Colors.red.shade700),
           'Export to PDF',
         ),
         _buildPopupMenuItem(
@@ -406,7 +465,6 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                 )
               : null,
           border: InputBorder.none,
-
           contentPadding: const EdgeInsets.symmetric(vertical: 10),
         ),
         style: TextStyle(
@@ -421,21 +479,20 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
   Widget _buildClearFiltersButton() {
     return TextButton.icon(
       onPressed: _clearAllFilters,
-      style:
-          TextButton.styleFrom(
-            foregroundColor: _effectiveConfig.errorColor,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ).copyWith(
-            backgroundColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.hovered)) {
-                return _effectiveConfig.errorColor.withAlpha(25);
-              }
-              return Colors.transparent;
-            }),
-          ),
+      style: TextButton.styleFrom(
+        foregroundColor: _effectiveConfig.errorColor,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ).copyWith(
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.hovered)) {
+            return _effectiveConfig.errorColor.withAlpha(25);
+          }
+          return Colors.transparent;
+        }),
+      ),
       icon: const Icon(Iconsax.filter_remove, size: 18),
       label: const Text(
         "Clear Filters",
@@ -486,17 +543,15 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: uniqueValues.map((value) {
-              final bool isSelected =
-                  !(column.notSelectedFilterData?.any(
-                        (e) => e["value"] == value,
-                      ) ??
-                      false);
+              final bool isSelected = !(column.notSelectedFilterData?.any(
+                    (e) => e["value"] == value,
+                  ) ??
+                  false);
               final bool hasQuickFilter =
                   column.notSelectedFilterData != null &&
-                  column.notSelectedFilterData!.isNotEmpty;
-              final bool activeSelected = (column.filter && hasQuickFilter)
-                  ? isSelected
-                  : false;
+                      column.notSelectedFilterData!.isNotEmpty;
+              final bool activeSelected =
+                  (column.filter && hasQuickFilter) ? isSelected : false;
 
               return GestureDetector(
                 onTap: () => _handleTap(column, value, config.isMultiSelect),
@@ -538,9 +593,8 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
   void _handleTap(OmGridColumnModel column, String value, bool isMultiSelect) {
     setState(() {
       final sourceData = widget.controller?.data ?? widget.data ?? [];
-      final Set<String> allValues = sourceData
-          .map((e) => e[column.key]?.toString() ?? "None")
-          .toSet();
+      final Set<String> allValues =
+          sourceData.map((e) => e[column.key]?.toString() ?? "None").toSet();
 
       // Start filtering (if not active, or only advanced filter was active)
       if (!column.filter || (column.notSelectedFilterData?.isEmpty ?? true)) {

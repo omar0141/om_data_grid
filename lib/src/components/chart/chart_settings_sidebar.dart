@@ -109,11 +109,10 @@ class OmChartSettingsSidebar extends StatelessWidget {
                         child: OmDefaultButton(
                           text: "Export PDF",
                           press: onExportPDF,
-                          leadingIcon: Image.asset(
-                            'assets/icons/pdf_icon.png',
-                            height: 24,
-                            width: 24,
-                            fit: BoxFit.contain,
+                          leadingIcon: Icon(
+                            Icons.picture_as_pdf,
+                            size: 20,
+                            color: Colors.red,
                           ),
                           backcolor: configuration.primaryColor,
                           forecolor: configuration.primaryForegroundColor,
@@ -127,12 +126,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
                         child: OmDefaultButton(
                           text: "Export Excel",
                           press: onExportExcel,
-                          leadingIcon: Image.asset(
-                            'assets/icons/excel_icon.png',
-                            height: 24,
-                            width: 24,
-                            fit: BoxFit.contain,
-                          ),
+                          leadingIcon: Icon(Icons.table_chart,
+                              size: 20, color: Colors.green.shade700),
                           backcolor: Colors.green.shade700,
                           forecolor: Colors.white,
                           configuration: configuration,
@@ -177,7 +172,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
                 if (onExportExcel != null)
                   _buildSideExportButton(
                     onPressed: onExportExcel!,
-                    iconPath: 'packages/om_data_grid/assets/icons/excel_icon.png',
+                    iconPath:
+                        'packages/om_data_grid/assets/icons/excel_icon.png',
                     tooltip: 'Export to Excel',
                   ),
                 const SizedBox(height: 12),
@@ -267,9 +263,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
   }
 
   Widget _buildMultiMeasureSelection() {
-    final chartColumns = columns
-        .where((col) => col.showInChart && col.canBeYAxis)
-        .toList();
+    final chartColumns =
+        columns.where((col) => col.showInChart && col.canBeYAxis).toList();
     return Column(
       children: chartColumns.map((col) {
         // Only show columns that are numeric or can be numeric
@@ -546,8 +541,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
           items: columns
               .where((e) => e.showInChart && e.canBeXAxis)
               .map(
-                (e) =>
-                    OmGridComboBoxItem(value: e.column.key, text: e.column.title),
+                (e) => OmGridComboBoxItem(
+                    value: e.column.key, text: e.column.title),
               )
               .toList(),
           initialValue: value,

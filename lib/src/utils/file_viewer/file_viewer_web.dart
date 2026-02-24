@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:universal_html/html.dart' as html;
+import 'package:web/web.dart' as web;
 
 class FileViewer {
   static Future<void> open(String url) async {
     try {
-      html.window.open(url, '_blank');
+      web.window.open(url, '_blank');
     } catch (e) {
       debugPrint("Open file error: $e");
     }
@@ -13,9 +13,10 @@ class FileViewer {
 
   static Future<void> downloadAndOpen(String url, String fileName) async {
     try {
-      html.AnchorElement(href: url)
-        ..setAttribute("download", fileName)
-        ..click();
+      final anchor = web.document.createElement('a') as web.HTMLAnchorElement;
+      anchor.href = url;
+      anchor.download = fileName;
+      anchor.click();
     } catch (e) {
       debugPrint("Download error: $e");
     }
@@ -24,8 +25,9 @@ class FileViewer {
   static Future<void> saveAndOpen(
       List<int> bytes, String fileName, String mimeType) async {
     final base64 = base64Encode(bytes);
-    html.AnchorElement(href: 'data:$mimeType;base64,$base64')
-      ..setAttribute('download', fileName)
-      ..click();
+    final anchor = web.document.createElement('a') as web.HTMLAnchorElement;
+    anchor.href = 'data:$mimeType;base64,$base64';
+    anchor.download = fileName;
+    anchor.click();
   }
 }

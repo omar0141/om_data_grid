@@ -1,3 +1,10 @@
+## 0.0.12
+
+- Replaced `open_file_plus` with `url_launcher` to improve platform support.
+- Replaced `file_picker` with `file_selector` for better Wasm compatibility.
+- Migrated from `universal_html` to `package:web` for full Wasm support.
+- Improved file export and viewing logic across all platforms.
+
 ## 0.0.11
 
 - update min dart sdk to 2.19

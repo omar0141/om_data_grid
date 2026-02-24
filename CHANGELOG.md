@@ -1,3 +1,7 @@
+## 0.0.11
+
+- update min dart sdk to 2.19
+
 ## 0.0.10
 
 - Replace `open_file_plus` with `url_launcher` for better desktop support.

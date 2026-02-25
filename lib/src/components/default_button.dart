@@ -108,16 +108,7 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (widget.leadingIcon != null) ...[
-                              IconTheme(
-                                data: IconThemeData(
-                                  color: widget.forecolor ??
-                                      widget.configuration
-                                          ?.primaryForegroundColor ??
-                                      Colors.white,
-                                  size: 18,
-                                ),
-                                child: widget.leadingIcon!,
-                              ),
+                              widget.leadingIcon!,
                               const SizedBox(width: 8),
                             ],
                             if (widget.text != null)

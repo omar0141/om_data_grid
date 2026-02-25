@@ -690,12 +690,13 @@ class OmDataGridConfiguration {
     Color? contextMenuGroupIconColor,
     Color? contextMenuAggregationIconColor,
     Color? contextMenuLayoutIconColor,
+    Color? primaryForegroundColor,
   }) {
     final t = theme;
     return OmDataGridConfiguration(
       // Core colors derived from theme
       primaryColor: t.primaryColor,
-      primaryForegroundColor: t.onPrimaryColor,
+      primaryForegroundColor: primaryForegroundColor ?? t.onPrimaryColor,
       errorColor: t.errorColor,
       gridBackgroundColor: t.backgroundColor,
       gridForegroundColor: t.foregroundColor,

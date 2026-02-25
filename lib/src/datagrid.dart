@@ -739,7 +739,7 @@ class _DatagridState extends State<OmDataGrid> {
       color: config.filterPopupBackgroundColor,
       position: RelativeRect.fromRect(
         Rect.fromLTWH(position.dx, position.dy, 0, 0),
-        Offset.zero & overlay.size,
+        overlay.localToGlobal(Offset.zero) & overlay.size,
       ),
       items: items,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

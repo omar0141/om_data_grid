@@ -92,11 +92,14 @@ class OmChartSettingsSidebar extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(top: BorderSide(color: Colors.grey.shade200)),
+                  color: configuration.chartPopupBackgroundColor,
+                  border: Border(
+                    top: BorderSide(color: configuration.gridBorderColor),
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacityNew(0.05),
+                      color: configuration.gridForegroundColor
+                          .withOpacityNew(0.05),
                       offset: const Offset(0, -2),
                       blurRadius: 4,
                     ),
@@ -144,8 +147,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
     return Container(
       width: 320,
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border(right: BorderSide(color: Colors.grey.shade300)),
+        color: configuration.chartSettingsSidebarBackgroundColor,
+        border: Border(right: BorderSide(color: configuration.gridBorderColor)),
       ),
       child: Row(
         children: [
@@ -153,8 +156,14 @@ class OmChartSettingsSidebar extends StatelessWidget {
           Container(
             width: 45,
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              border: Border(right: BorderSide(color: Colors.grey.shade300)),
+              color: Color.lerp(
+                configuration.chartSettingsSidebarBackgroundColor,
+                configuration.gridForegroundColor,
+                0.03,
+              ),
+              border: Border(
+                right: BorderSide(color: configuration.gridBorderColor),
+              ),
             ),
             child: Column(
               children: [
@@ -166,14 +175,15 @@ class OmChartSettingsSidebar extends StatelessWidget {
                 if (onExportPDF != null)
                   _buildSideExportButton(
                     onPressed: onExportPDF!,
-                    iconPath: 'packages/om_data_grid/assets/icons/pdf_icon.png',
+                    icon:
+                        Icon(Icons.picture_as_pdf, size: 20, color: Colors.red),
                     tooltip: 'Export to PDF',
                   ),
                 if (onExportExcel != null)
                   _buildSideExportButton(
                     onPressed: onExportExcel!,
-                    iconPath:
-                        'packages/om_data_grid/assets/icons/excel_icon.png',
+                    icon: Icon(Icons.table_chart,
+                        size: 20, color: Colors.green.shade700),
                     tooltip: 'Export to Excel',
                   ),
                 const SizedBox(height: 12),
@@ -209,14 +219,19 @@ class OmChartSettingsSidebar extends StatelessWidget {
               color: isActive ? configuration.primaryColor : Colors.transparent,
               width: 3,
             ),
-            bottom: BorderSide(color: Colors.grey.shade300, width: 0.5),
+            bottom:
+                BorderSide(color: configuration.gridBorderColor, width: 0.5),
           ),
-          color: isActive ? Colors.white : Colors.transparent,
+          color: isActive
+              ? configuration.chartPopupBackgroundColor
+              : Colors.transparent,
         ),
         child: Icon(
           icon,
           size: 20,
-          color: isActive ? configuration.primaryColor : Colors.grey.shade600,
+          color: isActive
+              ? configuration.primaryColor
+              : configuration.secondaryTextColor,
         ),
       ),
     );
@@ -224,7 +239,7 @@ class OmChartSettingsSidebar extends StatelessWidget {
 
   Widget _buildSideExportButton({
     required VoidCallback onPressed,
-    required String iconPath,
+    required Widget icon,
     required String tooltip,
   }) {
     return Tooltip(
@@ -234,8 +249,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
         child: Container(
           height: 45,
           width: 45,
-          padding: const EdgeInsets.all(12),
-          child: Image.asset(iconPath, fit: BoxFit.contain),
+          alignment: Alignment.center,
+          child: icon,
         ),
       ),
     );
@@ -281,7 +296,7 @@ class OmChartSettingsSidebar extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? configuration.primaryColor.withOpacityNew(0.2)
-                  : Colors.grey.shade300,
+                  : configuration.gridBorderColor,
             ),
           ),
           child: CheckboxListTile(
@@ -290,7 +305,9 @@ class OmChartSettingsSidebar extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                color: isSelected ? configuration.primaryColor : Colors.black87,
+                color: isSelected
+                    ? configuration.primaryColor
+                    : configuration.rowForegroundColor,
               ),
             ),
             value: isSelected,
@@ -327,19 +344,21 @@ class OmChartSettingsSidebar extends StatelessWidget {
               _buildPropertyLabel('Chart Title'),
               TextField(
                 controller: titleController,
-                style: const TextStyle(fontSize: 13, color: Colors.black87),
+                style: TextStyle(
+                    fontSize: 13, color: configuration.rowForegroundColor),
                 decoration: InputDecoration(
                   hintText: 'Enter title...',
                   isDense: true,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: configuration.gridBackgroundColor,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 12,
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
+                    borderSide:
+                        BorderSide(color: configuration.gridBorderColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
@@ -409,11 +428,11 @@ class OmChartSettingsSidebar extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? configuration.primaryColor.withOpacityNew(0.1)
-                  : Colors.grey.shade50,
+                  : configuration.gridBackgroundColor,
               border: Border.all(
                 color: isSelected
                     ? configuration.primaryColor
-                    : Colors.grey.shade300,
+                    : configuration.gridBorderColor,
               ),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -425,7 +444,7 @@ class OmChartSettingsSidebar extends StatelessWidget {
                   size: isMobile ? 20 : 18,
                   color: isSelected
                       ? configuration.primaryColor
-                      : Colors.grey.shade700,
+                      : configuration.secondaryTextColor,
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -437,7 +456,7 @@ class OmChartSettingsSidebar extends StatelessWidget {
                     fontSize: 10,
                     color: isSelected
                         ? configuration.primaryColor
-                        : Colors.black87,
+                        : configuration.rowForegroundColor,
                   ),
                 ),
               ],
@@ -529,9 +548,9 @@ class OmChartSettingsSidebar extends StatelessWidget {
         if (label.isNotEmpty) ...[
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
-              color: Colors.black54,
+              color: configuration.secondaryTextColor,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -566,7 +585,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+            border: Border(
+                bottom: BorderSide(color: configuration.gridBorderColor)),
           ),
           child: Text(
             title.toUpperCase(),
@@ -591,9 +611,9 @@ class OmChartSettingsSidebar extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey.shade700,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: configuration.secondaryTextColor,
         ),
       ),
     );
@@ -607,7 +627,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: Colors.black87),
+            style: TextStyle(
+                fontSize: 12, color: configuration.rowForegroundColor),
           ),
           Transform.scale(
             scale: 0.7,

@@ -115,7 +115,9 @@ class _GridSidePanelState extends State<OmGridSidePanel> {
         color: config.backgroundColor,
         border: widget.isExpanded
             ? BorderDirectional(
-                end: BorderSide(color: Colors.grey.shade300, width: 1),
+                end: BorderSide(
+                    color: widget.controller.configuration.gridBorderColor,
+                    width: 1),
               )
             : null,
       ),
@@ -144,7 +146,8 @@ class _GridSidePanelState extends State<OmGridSidePanel> {
       decoration: BoxDecoration(
         color: config.backgroundColor,
         border: BorderDirectional(
-          end: BorderSide(color: Colors.grey.shade300, width: 1),
+          end: BorderSide(
+              color: widget.controller.configuration.gridBorderColor, width: 1),
         ),
       ),
       child: Column(
@@ -173,7 +176,9 @@ class _GridSidePanelState extends State<OmGridSidePanel> {
           decoration: BoxDecoration(
             color: isSelected ? config.activeTabColor : config.inactiveTabColor,
             border: Border(
-              bottom: BorderSide(color: Colors.grey.shade300, width: 0.5),
+              bottom: BorderSide(
+                  color: widget.controller.configuration.gridBorderColor,
+                  width: 0.5),
               left: BorderSide(
                 color: isSelected
                     ? widget.controller.configuration.primaryColor

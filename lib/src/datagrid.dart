@@ -494,7 +494,8 @@ class _DatagridState extends State<OmDataGrid> {
     }
 
     setState(() {
-      if (widget.controller.configuration.selectionMode != OmSelectionMode.cell) {
+      if (widget.controller.configuration.selectionMode !=
+          OmSelectionMode.cell) {
         _selectionStart = null;
         _selectionEnd = null;
       }
@@ -730,14 +731,15 @@ class _DatagridState extends State<OmDataGrid> {
       }
     }
 
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+
     final result = await showMenu<String>(
       context: context,
       color: config.filterPopupBackgroundColor,
-      position: RelativeRect.fromLTRB(
-        position.dx,
-        position.dy,
-        position.dx + 1.0,
-        position.dy + 1.0,
+      position: RelativeRect.fromRect(
+        Rect.fromLTWH(position.dx, position.dy, 0, 0),
+        Offset.zero & overlay.size,
       ),
       items: items,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

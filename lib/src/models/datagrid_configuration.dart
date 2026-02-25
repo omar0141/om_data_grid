@@ -859,7 +859,18 @@ class OmDataGridConfiguration {
       contextMenuLayoutIconColor:
           contextMenuLayoutIconColor ?? t.foregroundColor,
       // Side panel
-      sidePanelConfiguration: sidePanelConfiguration,
+      sidePanelConfiguration:
+          sidePanelConfiguration.backgroundColor == const Color(0xFFF9F9F9)
+              ? OmSidePanelConfiguration(
+                  backgroundColor: t.surfaceColor,
+                  activeTabColor: t.backgroundColor,
+                  inactiveTabColor: Colors.transparent,
+                  activeIconColor: t.primaryColor,
+                  inactiveIconColor: t.mutedIconColor,
+                  activeTextStyleColor: t.foregroundColor,
+                  inactiveTextStyleColor: t.secondaryTextColor,
+                )
+              : sidePanelConfiguration,
       showColumnsTab: showColumnsTab,
       showFiltersTab: showFiltersTab,
       showQuickSearch: showQuickSearch,
@@ -889,7 +900,7 @@ class OmDataGridConfiguration {
       chartPopupBackgroundColor: chartPopupBackgroundColor ?? t.backgroundColor,
       chartPopupBorderColor: chartPopupBorderColor ?? t.borderColor,
       chartPopupLoadingBackgroundColor:
-          chartPopupLoadingBackgroundColor ?? t.foregroundColor,
+          chartPopupLoadingBackgroundColor ?? t.backgroundColor,
       chartPopupLoadingTextColor:
           chartPopupLoadingTextColor ?? t.foregroundColor,
       chartPopupResizeHandleColor:

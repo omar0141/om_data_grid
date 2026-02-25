@@ -119,8 +119,7 @@ class _FiltersTabState extends State<FiltersTab> {
                     col.quickFilterText = null;
                     col.notSelectedFilterData = [];
                     col.advancedFilter = null;
-                    col.filter =
-                        (col.notSelectedFilterData != null &&
+                    col.filter = (col.notSelectedFilterData != null &&
                         col.notSelectedFilterData!.isNotEmpty);
                     _applyFilters();
                   });
@@ -283,7 +282,8 @@ class _FilterCardState extends State<_FilterCard> {
                     advancedFilter,
                   ),
                   const SizedBox(width: 16),
-                  _buildOperatorRadio("Or", OmFilterOperator.or, advancedFilter),
+                  _buildOperatorRadio(
+                      "Or", OmFilterOperator.or, advancedFilter),
                 ],
               ),
             ),
@@ -321,12 +321,14 @@ class _FilterCardState extends State<_FilterCard> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      side: BorderSide(color: Colors.grey.shade200, width: 1),
+                      side: BorderSide(
+                          color: widget.configuration.gridBorderColor,
+                          width: 1),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Clear",
                       style: TextStyle(
-                        color: Colors.black87,
+                        color: widget.configuration.rowForegroundColor,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -389,7 +391,7 @@ class _FilterCardState extends State<_FilterCard> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: widget.configuration.gridBorderColor),
               borderRadius: BorderRadius.circular(4),
             ),
             child: GridComboBox(
@@ -403,7 +405,7 @@ class _FilterCardState extends State<_FilterCard> {
               borderRadius: 4,
               fontSize: 13,
               showClearButton: false,
-              borderColor: Colors.grey.shade200,
+              borderColor: widget.configuration.gridBorderColor,
               onChange: (val) {
                 if (val != null) {
                   setState(() {
@@ -428,13 +430,14 @@ class _FilterCardState extends State<_FilterCard> {
                 Container(
                   height: 36,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade200),
+                    color: widget.configuration.inputFillColor,
+                    border:
+                        Border.all(color: widget.configuration.gridBorderColor),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: TextField(
                     controller: controller,
-                    readOnly:
-                        [
+                    readOnly: [
                           OmGridRowTypeEnum.date,
                           OmGridRowTypeEnum.dateTime,
                           OmGridRowTypeEnum.time,
@@ -455,35 +458,34 @@ class _FilterCardState extends State<_FilterCard> {
                         return;
                       }
                       if (widget.columnModel.type == OmGridRowTypeEnum.date ||
-                          widget.columnModel.type == OmGridRowTypeEnum.dateTime) {
+                          widget.columnModel.type ==
+                              OmGridRowTypeEnum.dateTime) {
                         if (condition.type == OmFilterConditionType.between) {
-                          DateTime start =
-                              DateTime.tryParse(condition.value) ??
+                          DateTime start = DateTime.tryParse(condition.value) ??
                               DateTime.now();
-                          DateTime end =
-                              DateTime.tryParse(condition.valueTo) ??
+                          DateTime end = DateTime.tryParse(condition.valueTo) ??
                               DateTime.now();
 
-                          DateTimeRange? pickedRange =
-                              await GridDatePickerUtils.showModernDateRangePicker(
-                                context: context,
-                                configuration: widget.configuration,
-                                initialDateRange: DateTimeRange(
-                                  start: start,
-                                  end: end,
-                                ),
-                              );
+                          DateTimeRange? pickedRange = await GridDatePickerUtils
+                              .showModernDateRangePicker(
+                            context: context,
+                            configuration: widget.configuration,
+                            initialDateRange: DateTimeRange(
+                              start: start,
+                              end: end,
+                            ),
+                          );
 
                           if (pickedRange != null) {
                             setState(() {
-                              condition.value = pickedRange.start
-                                  .toIso8601String();
-                              condition.valueTo = pickedRange.end
-                                  .toIso8601String();
+                              condition.value =
+                                  pickedRange.start.toIso8601String();
+                              condition.valueTo =
+                                  pickedRange.end.toIso8601String();
 
                               final dateFormat =
                                   widget.columnModel.customDateFormat ??
-                                  'yyyy-MM-dd';
+                                      'yyyy-MM-dd';
                               controller.text = DateFormat(
                                 dateFormat,
                               ).format(pickedRange.start);
@@ -496,19 +498,19 @@ class _FilterCardState extends State<_FilterCard> {
                         } else {
                           DateTime current =
                               DateTime.tryParse(condition.value) ??
-                              DateTime.now();
+                                  DateTime.now();
                           DateTime? picked =
                               await GridDatePickerUtils.showModernDatePicker(
-                                context: context,
-                                configuration: widget.configuration,
-                                initialDate: current,
-                              );
+                            context: context,
+                            configuration: widget.configuration,
+                            initialDate: current,
+                          );
                           if (picked != null) {
                             setState(() {
                               condition.value = picked.toIso8601String();
                               final dateFormat =
                                   widget.columnModel.customDateFormat ??
-                                  'yyyy-MM-dd';
+                                      'yyyy-MM-dd';
                               controller.text = DateFormat(
                                 dateFormat,
                               ).format(picked);
@@ -520,9 +522,9 @@ class _FilterCardState extends State<_FilterCard> {
                           OmGridRowTypeEnum.time) {
                         TimeOfDay? pickedTime =
                             await GridDatePickerUtils.showModernTimePicker(
-                              context: context,
-                              configuration: widget.configuration,
-                            );
+                          context: context,
+                          configuration: widget.configuration,
+                        );
                         if (pickedTime != null) {
                           final now = DateTime.now();
                           final dt = DateTime(
@@ -542,7 +544,9 @@ class _FilterCardState extends State<_FilterCard> {
                         }
                       }
                     },
-                    style: const TextStyle(fontSize: 13),
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: widget.configuration.rowForegroundColor),
                     onChanged: (val) {
                       condition.value = val;
                       widget.onApply();
@@ -550,13 +554,13 @@ class _FilterCardState extends State<_FilterCard> {
                     decoration: InputDecoration(
                       hintText: isBetween ? "From..." : "Filter...",
                       hintStyle: TextStyle(
-                        color: Colors.grey.shade400,
+                        color: widget.configuration.secondaryTextColor,
                         fontSize: 13,
                       ),
                       prefixIcon: Icon(
                         Icons.search,
                         size: 16,
-                        color: Colors.grey.shade400,
+                        color: widget.configuration.secondaryTextColor,
                       ),
                       contentPadding: const EdgeInsets.only(top: 4),
                       border: InputBorder.none,
@@ -567,7 +571,10 @@ class _FilterCardState extends State<_FilterCard> {
                                 condition.value = '';
                                 widget.onApply();
                               },
-                              child: const Icon(Icons.clear, size: 16),
+                              child: Icon(Icons.clear,
+                                  size: 16,
+                                  color:
+                                      widget.configuration.secondaryTextColor),
                             )
                           : null,
                     ),
@@ -578,7 +585,9 @@ class _FilterCardState extends State<_FilterCard> {
                   Container(
                     height: 36,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade200),
+                      color: widget.configuration.inputFillColor,
+                      border: Border.all(
+                          color: widget.configuration.gridBorderColor),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: TextField(
@@ -592,34 +601,32 @@ class _FilterCardState extends State<_FilterCard> {
                         if (widget.columnModel.type == OmGridRowTypeEnum.date ||
                             widget.columnModel.type ==
                                 OmGridRowTypeEnum.dateTime) {
-                          DateTime start =
-                              DateTime.tryParse(condition.value) ??
+                          DateTime start = DateTime.tryParse(condition.value) ??
                               DateTime.now();
-                          DateTime end =
-                              DateTime.tryParse(condition.valueTo) ??
+                          DateTime end = DateTime.tryParse(condition.valueTo) ??
                               DateTime.now();
 
-                          DateTimeRange? pickedRange =
-                              await GridDatePickerUtils.showModernDateRangePicker(
-                                context: context,
-                                configuration: widget.configuration,
-                                initialDateRange: DateTimeRange(
-                                  start: start,
-                                  end: end,
-                                ),
-                              );
+                          DateTimeRange? pickedRange = await GridDatePickerUtils
+                              .showModernDateRangePicker(
+                            context: context,
+                            configuration: widget.configuration,
+                            initialDateRange: DateTimeRange(
+                              start: start,
+                              end: end,
+                            ),
+                          );
 
                           if (pickedRange != null) {
                             setState(() {
                               condition.type = OmFilterConditionType.between;
-                              condition.value = pickedRange.start
-                                  .toIso8601String();
-                              condition.valueTo = pickedRange.end
-                                  .toIso8601String();
+                              condition.value =
+                                  pickedRange.start.toIso8601String();
+                              condition.valueTo =
+                                  pickedRange.end.toIso8601String();
 
                               final dateFormat =
                                   widget.columnModel.customDateFormat ??
-                                  'yyyy-MM-dd';
+                                      'yyyy-MM-dd';
                               controller.text = DateFormat(
                                 dateFormat,
                               ).format(pickedRange.start);
@@ -633,9 +640,9 @@ class _FilterCardState extends State<_FilterCard> {
                             OmGridRowTypeEnum.time) {
                           TimeOfDay? pickedTime =
                               await GridDatePickerUtils.showModernTimePicker(
-                                context: context,
-                                configuration: widget.configuration,
-                              );
+                            context: context,
+                            configuration: widget.configuration,
+                          );
                           if (pickedTime != null) {
                             final now = DateTime.now();
                             final dt = DateTime(
@@ -655,7 +662,9 @@ class _FilterCardState extends State<_FilterCard> {
                           }
                         }
                       },
-                      style: const TextStyle(fontSize: 13),
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: widget.configuration.rowForegroundColor),
                       onChanged: (val) {
                         condition.valueTo = val;
                         widget.onApply();
@@ -663,13 +672,13 @@ class _FilterCardState extends State<_FilterCard> {
                       decoration: InputDecoration(
                         hintText: "To...",
                         hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
+                          color: widget.configuration.secondaryTextColor,
                           fontSize: 13,
                         ),
                         prefixIcon: Icon(
                           Icons.search,
                           size: 16,
-                          color: Colors.grey.shade400,
+                          color: widget.configuration.secondaryTextColor,
                         ),
                         contentPadding: const EdgeInsets.only(top: 4),
                         border: InputBorder.none,
@@ -680,7 +689,10 @@ class _FilterCardState extends State<_FilterCard> {
                                   condition.valueTo = '';
                                   widget.onApply();
                                 },
-                                child: const Icon(Icons.clear, size: 16),
+                                child: Icon(Icons.clear,
+                                    size: 16,
+                                    color: widget
+                                        .configuration.secondaryTextColor),
                               )
                             : null,
                       ),

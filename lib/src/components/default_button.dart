@@ -64,23 +64,19 @@ class _DefaultButtonState extends State<OmDefaultButton> {
               color: widget.borderColor ?? Colors.transparent,
               width: 0.5,
             ),
-            borderRadius:
-                widget.borderRadius ??
+            borderRadius: widget.borderRadius ??
                 const BorderRadius.all(Radius.circular(6)),
           ),
           child: ClipRRect(
             clipBehavior: Clip.antiAlias,
-            borderRadius:
-                widget.borderRadius ??
+            borderRadius: widget.borderRadius ??
                 const BorderRadius.all(Radius.circular(6)),
             child: CupertinoButton(
               borderRadius: const BorderRadius.all(Radius.circular(0)),
-              color:
-                  widget.backcolor ??
+              color: widget.backcolor ??
                   widget.configuration?.primaryColor ??
                   const Color(0xFF2196F3),
-              disabledColor:
-                  widget.backcolor ??
+              disabledColor: widget.backcolor ??
                   widget.configuration?.primaryColor ??
                   const Color(0xFF2196F3),
               padding: widget.padding ?? EdgeInsets.zero,
@@ -102,8 +98,7 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                           width: 20,
                           height: 20,
                           child: CupertinoActivityIndicator(
-                            color:
-                                widget.forecolor ??
+                            color: widget.forecolor ??
                                 widget.configuration?.primaryForegroundColor ??
                                 Colors.white,
                           ),
@@ -113,7 +108,16 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (widget.leadingIcon != null) ...[
-                              widget.leadingIcon!,
+                              IconTheme(
+                                data: IconThemeData(
+                                  color: widget.forecolor ??
+                                      widget.configuration
+                                          ?.primaryForegroundColor ??
+                                      Colors.white,
+                                  size: 18,
+                                ),
+                                child: widget.leadingIcon!,
+                              ),
                               const SizedBox(width: 8),
                             ],
                             if (widget.text != null)
@@ -121,10 +125,8 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                                 widget.text!,
                                 style: TextStyle(
                                   fontSize: widget.fontsize?.toDouble() ?? 14,
-                                  color:
-                                      widget.forecolor ??
-                                      widget
-                                          .configuration
+                                  color: widget.forecolor ??
+                                      widget.configuration
                                           ?.primaryForegroundColor ??
                                       Colors.white,
                                   fontWeight:

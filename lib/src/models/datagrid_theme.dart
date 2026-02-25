@@ -155,16 +155,18 @@ class OmDataGridTheme {
 
   /// Hover color — very light foreground tint.
   Color get hoverColor {
-    return foregroundColor.withAlpha(10);
+    return foregroundColor.withAlpha(20);
   }
 
   /// Selection color — light foreground tint.
   Color get selectionColor {
-    return foregroundColor.withAlpha(20);
+    return primaryColor.withAlpha(40);
   }
 
-  /// Input fill color — same as background.
-  Color get inputFillColor => backgroundColor;
+  /// Input fill color — slightly different from background for contrast.
+  Color get inputFillColor {
+    return Color.lerp(backgroundColor, foregroundColor, _isDark ? 0.12 : 0.06)!;
+  }
 
   /// Input border — same as border.
   Color get inputBorderColor => borderColor;

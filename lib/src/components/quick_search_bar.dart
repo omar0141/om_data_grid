@@ -102,8 +102,7 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
         decoration: BoxDecoration(
           color: widget.configuration.headerBackgroundColor,
           border: BorderDirectional(
-            bottom:
-                (widget.configuration.rowBorderVisibility ==
+            bottom: (widget.configuration.rowBorderVisibility ==
                         OmGridBorderVisibility.horizontal ||
                     widget.configuration.rowBorderVisibility ==
                         OmGridBorderVisibility.both)
@@ -112,8 +111,7 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
                     color: widget.configuration.rowBorderColor,
                   )
                 : BorderSide.none,
-            start:
-                !isFirstVisible &&
+            start: !isFirstVisible &&
                     (widget.configuration.rowBorderVisibility ==
                             OmGridBorderVisibility.vertical ||
                         widget.configuration.rowBorderVisibility ==
@@ -129,10 +127,10 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
         alignment: Alignment.center,
         child: Container(
           decoration: BoxDecoration(
-            color:  widget.configuration.inputFillColor,
+            color: widget.configuration.inputFillColor,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: widget.configuration.inputBorderColor.withOpacity(0.5),
+              color: widget.configuration.inputBorderColor,
               width: 1,
             ),
           ),
@@ -148,9 +146,9 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
                   column.type == OmGridRowTypeEnum.dateTime) {
                 DateTimeRange? picked =
                     await GridDatePickerUtils.showModernDateRangePicker(
-                      context: context,
-                      configuration: widget.configuration,
-                    );
+                  context: context,
+                  configuration: widget.configuration,
+                );
 
                 if (picked != null) {
                   final dateFormat = column.customDateFormat ?? 'yyyy-MM-dd';
@@ -165,9 +163,9 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
               } else if (column.type == OmGridRowTypeEnum.time) {
                 OmTimeRange? picked =
                     await GridDatePickerUtils.showModernTimeRangePicker(
-                      context: context,
-                      configuration: widget.configuration,
-                    );
+                  context: context,
+                  configuration: widget.configuration,
+                );
                 if (picked != null) {
                   final now = DateTime.now();
                   final startDt = DateTime(
@@ -213,7 +211,11 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
                         controller.clear();
                         widget.onSearchChanged(column.key, '');
                       },
-                      child: const Icon(Icons.clear, size: 16),
+                      child: Icon(
+                        Icons.clear,
+                        size: 16,
+                        color: widget.configuration.secondaryTextColor,
+                      ),
                     )
                   : null,
             ),
@@ -233,8 +235,7 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
           decoration: BoxDecoration(
             color: widget.configuration.headerBackgroundColor,
             border: BorderDirectional(
-              bottom:
-                  (widget.configuration.rowBorderVisibility ==
+              bottom: (widget.configuration.rowBorderVisibility ==
                           OmGridBorderVisibility.horizontal ||
                       widget.configuration.rowBorderVisibility ==
                           OmGridBorderVisibility.both)
@@ -243,8 +244,7 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
                       color: widget.configuration.rowBorderColor,
                     )
                   : BorderSide.none,
-              start:
-                  !isFirstVisible &&
+              start: !isFirstVisible &&
                       (widget.configuration.rowBorderVisibility ==
                               OmGridBorderVisibility.vertical ||
                           widget.configuration.rowBorderVisibility ==

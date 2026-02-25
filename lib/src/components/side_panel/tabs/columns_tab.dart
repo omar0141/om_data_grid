@@ -55,8 +55,8 @@ class _ColumnsTabState extends State<ColumnsTab> {
     final filteredColumns = allColumns.where((col) {
       if (_columnSearchText.isEmpty) return true;
       return col.column.title.toLowerCase().contains(
-        _columnSearchText.toLowerCase(),
-      );
+            _columnSearchText.toLowerCase(),
+          );
     }).toList();
 
     return Column(
@@ -71,9 +71,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: widget
-                          .controller
-                          .configuration
-                          .columnSearchBorderColor!,
+                          .controller.configuration.columnSearchBorderColor!,
                     ),
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -88,9 +86,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                           Icons.search,
                           size: 16,
                           color: widget
-                              .controller
-                              .configuration
-                              .columnSearchIconColor!,
+                              .controller.configuration.columnSearchIconColor!,
                         ),
                         filled: true,
                         fillColor:
@@ -119,8 +115,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
             itemCount: filteredColumns.length,
             itemBuilder: (context, index) {
               final colModel = filteredColumns[index];
-              final hasFilter =
-                  (colModel.advancedFilter != null &&
+              final hasFilter = (colModel.advancedFilter != null &&
                       colModel.advancedFilter!.conditions.isNotEmpty) ||
                   (colModel.filter == true &&
                       colModel.notSelectedFilterData != null &&
@@ -190,33 +185,22 @@ class _ColumnsTabState extends State<ColumnsTab> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: isOutside
-                                      ? (widget
-                                            .controller
-                                            .configuration
-                                            .dragFeedbackOutsideBackgroundColor!)
-                                      : (widget
-                                            .controller
-                                            .configuration
-                                            .dragFeedbackInsideBackgroundColor!),
+                                      ? (widget.controller.configuration
+                                          .dragFeedbackOutsideBackgroundColor!)
+                                      : (widget.controller.configuration
+                                          .dragFeedbackInsideBackgroundColor!),
                                   border: Border.all(
                                     color: isOutside
-                                        ? (widget
-                                              .controller
-                                              .configuration
-                                              .dragFeedbackOutsideBorderColor!)
-                                        : (widget
-                                              .controller
-                                              .configuration
-                                              .dragFeedbackInsideBorderColor!),
+                                        ? (widget.controller.configuration
+                                            .dragFeedbackOutsideBorderColor!)
+                                        : (widget.controller.configuration
+                                            .dragFeedbackInsideBorderColor!),
                                   ),
                                   borderRadius: BorderRadius.circular(4),
                                   boxShadow: [
                                     BoxShadow(
                                       blurRadius: 4,
-                                      color:
-                                          widget
-                                              .controller
-                                              .configuration
+                                      color: widget.controller.configuration
                                               .dragFeedbackShadowColor ??
                                           Colors.black.withOpacity(0.1),
                                     ),
@@ -232,9 +216,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                                         ),
                                         child: Icon(
                                           Icons.visibility_off,
-                                          color: widget
-                                              .controller
-                                              .configuration
+                                          color: widget.controller.configuration
                                               .dragFeedbackIconColor!,
                                           size: 16,
                                         ),
@@ -245,14 +227,10 @@ class _ColumnsTabState extends State<ColumnsTab> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
                                         color: isOutside
-                                            ? (widget
-                                                  .controller
-                                                  .configuration
-                                                  .dragFeedbackOutsideTextColor!)
-                                            : (widget
-                                                  .controller
-                                                  .configuration
-                                                  .dragFeedbackInsideTextColor!),
+                                            ? (widget.controller.configuration
+                                                .dragFeedbackOutsideTextColor!)
+                                            : (widget.controller.configuration
+                                                .dragFeedbackInsideTextColor!),
                                       ),
                                     ),
                                   ],
@@ -309,7 +287,8 @@ class _ColumnsTabState extends State<ColumnsTab> {
     );
   }
 
-  Widget _buildColumnItem(OmGridColumnModel colModel, bool hasFilter, int index) {
+  Widget _buildColumnItem(
+      OmGridColumnModel colModel, bool hasFilter, int index) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -323,8 +302,8 @@ class _ColumnsTabState extends State<ColumnsTab> {
           } else {
             colModel.width =
                 (colModel.savedWidth != null && colModel.savedWidth! > 0)
-                ? colModel.savedWidth
-                : (colModel.column.width ?? 100.0);
+                    ? colModel.savedWidth
+                    : (colModel.column.width ?? 100.0);
           }
           widget.controller.updateColumnModels(widget.controller.columnModels);
         },
@@ -347,8 +326,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                     }
                     colModel.width = 0;
                   } else {
-                    colModel.width =
-                        (colModel.savedWidth != null &&
+                    colModel.width = (colModel.savedWidth != null &&
                             colModel.savedWidth! > 0)
                         ? colModel.savedWidth
                         : (colModel.column.width ?? 100.0);
@@ -358,14 +336,19 @@ class _ColumnsTabState extends State<ColumnsTab> {
                   );
                 },
               ),
-              const Padding(
-                padding: EdgeInsets.only(right: 8),
-                child: Icon(Icons.drag_indicator, size: 14, color: Colors.grey),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Icon(Icons.drag_indicator,
+                    size: 14,
+                    color: widget.controller.configuration.secondaryTextColor),
               ),
               Expanded(
                 child: Text(
                   colModel.column.title,
-                  style: const TextStyle(fontSize: 13),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color:
+                          widget.controller.configuration.rowForegroundColor),
                 ),
               ),
               if (colModel.isCalculated)
@@ -424,11 +407,8 @@ class _ColumnsTabState extends State<ColumnsTab> {
                   child: Icon(
                     Icons.functions,
                     size: 14,
-                    color:
-                        widget
-                            .controller
-                            .configuration
-                            .columnFunctionIconColor ??
+                    color: widget
+                            .controller.configuration.columnFunctionIconColor ??
                         Colors.blue,
                   ),
                 ),
@@ -455,9 +435,9 @@ class _ColumnsTabState extends State<ColumnsTab> {
         final List<String> activeKeys = title == "Row Groups"
             ? widget.controller.groupedColumns
             : widget.controller.columnModels
-                  .where((c) => c.aggregation != OmAggregationType.none)
-                  .map((c) => c.key)
-                  .toList();
+                .where((c) => c.aggregation != OmAggregationType.none)
+                .map((c) => c.key)
+                .toList();
 
         return DragTarget<OmGridColumnDragData>(
           onWillAcceptWithDetails: (details) => true,
@@ -477,12 +457,9 @@ class _ColumnsTabState extends State<ColumnsTab> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color:
-                        widget
-                            .controller
-                            .configuration
+                    color: widget.controller.configuration
                             .bottomPanelSectionBorderColor ??
-                        Colors.grey.shade300,
+                        widget.controller.configuration.gridBorderColor,
                   ),
                 ),
               ),
@@ -521,10 +498,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                             child: Icon(
                               Icons.delete_sweep_outlined,
                               size: 16,
-                              color:
-                                  widget
-                                      .controller
-                                      .configuration
+                              color: widget.controller.configuration
                                       .groupPanelClearIconColor ??
                                   Colors.red,
                             ),
@@ -548,16 +522,15 @@ class _ColumnsTabState extends State<ColumnsTab> {
                     decoration: BoxDecoration(
                       color: isHovered
                           ? widget.controller.configuration.primaryColor
-                                .withOpacity(0.05)
+                              .withOpacity(0.05)
                           : widget.controller.configuration.inputFillColor,
                       border: Border.all(
                         color: isHovered
                             ? widget.controller.configuration.primaryColor
-                            : (widget
-                                      .controller
-                                      .configuration
-                                      .bottomPanelDragTargetInactiveColor ??
-                                  Colors.grey.shade200),
+                            : (widget.controller.configuration
+                                    .bottomPanelDragTargetInactiveColor ??
+                                widget
+                                    .controller.configuration.gridBorderColor),
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -567,8 +540,8 @@ class _ColumnsTabState extends State<ColumnsTab> {
                     child: activeKeys.isEmpty
                         ? _buildPlaceholder(placeholder)
                         : title == "Row Groups"
-                        ? _buildRowGroupsList(activeKeys)
-                        : _buildAggregationsList(activeKeys),
+                            ? _buildRowGroupsList(activeKeys)
+                            : _buildAggregationsList(activeKeys),
                   ),
                 ],
               ),
@@ -586,18 +559,16 @@ class _ColumnsTabState extends State<ColumnsTab> {
         Icon(
           Icons.move_to_inbox_outlined,
           size: 20,
-          color:
-              widget.controller.configuration.bottomPanelIconColor ??
-              Colors.grey.shade400,
+          color: widget.controller.configuration.bottomPanelIconColor ??
+              widget.controller.configuration.secondaryTextColor,
         ),
         const SizedBox(height: 4),
         Text(
           placeholder,
           style: TextStyle(
             fontSize: 11,
-            color:
-                widget.controller.configuration.bottomPanelIconColor ??
-                Colors.grey.shade500,
+            color: widget.controller.configuration.bottomPanelIconColor ??
+                widget.controller.configuration.secondaryTextColor,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -675,8 +646,9 @@ class _ColumnsTabState extends State<ColumnsTab> {
             borderRadius: 6,
             height: 38,
             fontSize: 12,
-            backgroundColor: Colors.white,
-            borderColor: Colors.grey.shade200,
+            backgroundColor:
+                widget.controller.configuration.gridBackgroundColor,
+            borderColor: widget.controller.configuration.gridBorderColor,
             contentPadding: const EdgeInsets.symmetric(horizontal: 6),
             // icon: Icon(
             //   Icons.functions,
@@ -692,9 +664,10 @@ class _ColumnsTabState extends State<ColumnsTab> {
 
   BoxDecoration _itemDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: widget.controller.configuration.gridBackgroundColor,
       borderRadius: BorderRadius.circular(6),
-      border: Border.all(color: Colors.grey.shade200),
+      border:
+          Border.all(color: widget.controller.configuration.gridBorderColor),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.02),
@@ -716,22 +689,26 @@ class _ColumnsTabState extends State<ColumnsTab> {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           children: [
-            const Padding(
-              padding: EdgeInsetsDirectional.only(end: 8),
-              child: Icon(Icons.drag_indicator, size: 14, color: Colors.grey),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: Icon(Icons.drag_indicator,
+                  size: 14,
+                  color: widget.controller.configuration.secondaryTextColor),
             ),
             Expanded(
               child: Text(
                 col.column.title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: widget.controller.configuration.rowForegroundColor,
                 ),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.close, size: 18, color: Colors.grey.shade400),
+              icon: Icon(Icons.close,
+                  size: 18,
+                  color: widget.controller.configuration.secondaryTextColor),
               onPressed: onRemove,
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
               constraints: const BoxConstraints(),

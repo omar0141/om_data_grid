@@ -45,7 +45,8 @@ class _GridCellState extends State<GridCell> {
   @override
   Widget build(BuildContext context) {
     if (widget.column.key == '__reorder_column__') {
-      return const Icon(Icons.drag_indicator, color: Colors.grey);
+      return Icon(Icons.drag_indicator,
+          color: widget.configuration.secondaryTextColor);
     }
 
     switch (widget.column.type) {
@@ -252,8 +253,10 @@ class _GridCellState extends State<GridCell> {
         );
       }
       return isFile
-          ? const Icon(Icons.insert_drive_file, color: Colors.grey)
-          : const Icon(Icons.image_not_supported);
+          ? Icon(Icons.insert_drive_file,
+              color: widget.configuration.secondaryTextColor)
+          : Icon(Icons.image_not_supported,
+              color: widget.configuration.secondaryTextColor);
     }
 
     return Stack(
@@ -400,7 +403,10 @@ class _GridCellState extends State<GridCell> {
           child: Material(
             elevation: 8,
             shadowColor: Colors.black.withOpacity(0.5),
-            shape: _ArrowShape(arrowOnTop: !_menuOpenedAbove),
+            shape: _ArrowShape(
+              arrowOnTop: !_menuOpenedAbove,
+              configuration: widget.configuration,
+            ),
             color: widget.configuration.menuBackgroundColor ?? Colors.white,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 24, 16),
@@ -408,7 +414,7 @@ class _GridCellState extends State<GridCell> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -422,6 +428,7 @@ class _GridCellState extends State<GridCell> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
+                          color: widget.configuration.rowForegroundColor,
                         ),
                       ),
                     ],
@@ -431,7 +438,10 @@ class _GridCellState extends State<GridCell> {
                     padding: const EdgeInsets.only(left: 28.0),
                     child: Text(
                       'Are you sure to delete this row?',
-                      style: TextStyle(color: Colors.grey[800], fontSize: 14),
+                      style: TextStyle(
+                        color: widget.configuration.secondaryTextColor,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -444,9 +454,13 @@ class _GridCellState extends State<GridCell> {
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
-                            side: BorderSide(color: Colors.grey.shade300),
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
+                            side: BorderSide(
+                              color: widget.configuration.inputBorderColor,
+                            ),
+                            backgroundColor:
+                                widget.configuration.gridBackgroundColor,
+                            foregroundColor:
+                                widget.configuration.rowForegroundColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -613,8 +627,9 @@ class _GridCellState extends State<GridCell> {
 
 class _ArrowShape extends ShapeBorder {
   final bool arrowOnTop;
+  final OmDataGridConfiguration configuration;
 
-  const _ArrowShape({this.arrowOnTop = true});
+  const _ArrowShape({this.arrowOnTop = true, required this.configuration});
 
   @override
   EdgeInsetsGeometry get dimensions => EdgeInsets.zero;
@@ -714,12 +729,13 @@ class _ArrowShape extends ShapeBorder {
     ui.TextDirection? textDirection,
   }) {
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.3)
+      ..color = configuration.rowBorderColor.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
     canvas.drawPath(getOuterPath(rect, textDirection: textDirection), paint);
   }
 
   @override
-  ShapeBorder scale(double t) => _ArrowShape(arrowOnTop: arrowOnTop);
+  ShapeBorder scale(double t) =>
+      _ArrowShape(arrowOnTop: arrowOnTop, configuration: configuration);
 }

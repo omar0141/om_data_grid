@@ -194,7 +194,7 @@ class OmDataGridTheme {
 
   /// Chart title/icon on dark overlays.
   Color get overlayOnSurfaceColor {
-    return _isDark ? foregroundColor : const Color(0xFFFFFFFF);
+    return foregroundColor;
   }
 
   /// Whether this is a dark theme.

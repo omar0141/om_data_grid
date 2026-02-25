@@ -173,7 +173,6 @@ class _HomeScreen2State extends State<HomeScreen2> {
       columnModels: columnModels,
       configuration: OmDataGridConfiguration.fromTheme(
         theme: OmDataGridTheme.light(),
-        inputFillColor: Colors.white,
         selectionMode: OmSelectionMode.cell,
         allowPagination: true,
         rowsPerPage: 5000,
@@ -235,9 +234,8 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
   @override
   Widget build(BuildContext context) {
-    final config = _controller.configuration;
     return Scaffold(
-      backgroundColor: config.gridBackgroundColor,
+      backgroundColor: Colors.white,
       body: Container(
         margin: const EdgeInsets.all(36),
         child: Column(
@@ -250,8 +248,9 @@ class _HomeScreen2State extends State<HomeScreen2> {
               onAddPressed: () async {
                 final result = await showDialog<Map<String, dynamic>>(
                   context: context,
-                  builder: (context) =>
-                      EmployeeDialog(primaryColor: config.primaryColor),
+                  builder: (context) => EmployeeDialog(
+                    primaryColor: _controller.configuration.primaryColor,
+                  ),
                 );
 
                 if (result != null) {
@@ -273,13 +272,15 @@ class _HomeScreen2State extends State<HomeScreen2> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: config.gridBorderColor, width: 1),
+                  border: Border.all(
+                    color: Colors.grey.withAlpha(51),
+                    width: 1,
+                  ),
                   borderRadius: BorderRadius.circular(16),
-                  color: config.gridBackgroundColor,
+                  color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: (config.dragFeedbackShadowColor ?? Colors.grey)
-                          .withAlpha(51),
+                      color: Colors.grey.withAlpha(51),
                       spreadRadius: 2,
                       blurRadius: 5,
                       offset: const Offset(0, 3),

@@ -1,9 +1,9 @@
 ## 0.0.14
 
-- Simplified grid theming and styling.
-- Added `OmDataGridConfiguration.simple` factory for quick dark/light mode switching.
-- Support for global grid font family.
-- Improved default color palette based on modern design standards.
+- **Cascading Theming System**: Simplified grid styling by allowing users to set base colors (`gridBackgroundColor`, `gridForegroundColor`, `gridBorderColor`, `primaryColor`) which automatically cascade to over 50+ individual UI components.
+- **Global Typography**: Added `gridFontFamily` to apply a consistent font across rows, headers, and grouping panels.
+- **Modern Default Palette**: Updated default colors to a clean, professional Slate/Gray design.
+- Full control: You can still override any specific property while using the new base theme fallbacks.
 
 ## 0.0.13
 

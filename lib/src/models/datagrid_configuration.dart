@@ -513,39 +513,6 @@ class OmDataGridConfiguration {
         contextMenuLayoutIconColor = contextMenuLayoutIconColor ??
             (gridForegroundColor ?? const Color(0xFF1E293B));
 
-  /// Creates a configuration with base colors for easy dark/light mode switching.
-  factory OmDataGridConfiguration.simple({
-    required Color backgroundColor,
-    required Color foregroundColor,
-    required Color borderColor,
-    required Color primaryColor,
-    String? fontFamily,
-  }) {
-    return OmDataGridConfiguration(
-      gridBackgroundColor: backgroundColor,
-      gridForegroundColor: foregroundColor,
-      gridBorderColor: borderColor,
-      primaryColor: primaryColor,
-      gridFontFamily: fontFamily,
-      headerBackgroundColor: backgroundColor,
-      headerForegroundColor: foregroundColor,
-      rowForegroundColor: foregroundColor,
-      selectedRowColor: primaryColor.withOpacity(0.12),
-      rowHoverColor: foregroundColor.withOpacity(0.05),
-      selectedRowForegroundColor: foregroundColor,
-      headerBorderColor: borderColor,
-      rowBorderColor: borderColor,
-      paginationBackgroundColor: backgroundColor,
-      paginationTextColor: foregroundColor,
-      filterIconColor: foregroundColor,
-      sortIconColor: foregroundColor,
-      filterPopupBackgroundColor: backgroundColor,
-      inputFillColor: backgroundColor,
-      inputBorderColor: borderColor,
-      secondaryTextColor: foregroundColor.withOpacity(0.6),
-    );
-  }
-
   OmDataGridConfiguration copyWith({
     Color? headerBackgroundColor,
     Color? headerForegroundColor,

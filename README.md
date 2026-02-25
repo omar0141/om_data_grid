@@ -65,7 +65,7 @@ Add `om_data_grid` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  om_data_grid: ^0.0.1
+  om_data_grid: ^0.0.14
 ```
 
 Then run:
@@ -157,36 +157,39 @@ OmGridColumn(
 
 ### Theming & UI
 
-Customize every pixel of the grid's appearance. You can now use the `simple` factory to set a base theme with just a few colors, or use the full constructor for detailed control.
+The grid supports a powerful cascading theming system. You can set a few base colors, and the entire grid will automatically update its palette, while still allowing you to override any specific property.
 
-#### Simplified Styling (Recommended)
+#### Quick Styling (Base Theme)
 
-Perfect for quickly matching your app's brand and supporting Light/Dark modes:
+Perfect for matching your app's brand and supporting Light/Dark modes with minimal code:
 
 ```dart
-OmDataGridConfiguration.simple(
-  primaryColor: Color(0xFF1E293B),
+OmDataGridConfiguration(
   gridBackgroundColor: Colors.white,
   gridForegroundColor: Color(0xFF1E293B),
   gridBorderColor: Color(0xFFE2E8F0),
-  gridFontFamily: 'Inter', // Global font family
+  primaryColor: Color(0xFF1E293B),
+  gridFontFamily: 'Inter',
+  // Non-color attributes
+  rowHeight: 45.0,
+  allowPagination: true,
 )
 ```
 
 #### Detailed Customization
 
-For more granular control over individual components:
+Override any of the 50+ styling properties for granular control:
 
 ```dart
 OmDataGridConfiguration(
+  gridBackgroundColor: Colors.white,
+  gridForegroundColor: Colors.black87,
+  // Specific overrides
   headerBackgroundColor: Color(0xFF1A1A1A),
   headerForegroundColor: Colors.white,
-  rowHoverColor: Colors.blue.withOpacity(0.05),
-  gridBorderColor: Colors.grey.shade300,
-  rowHeight: 45.0,
-  headerHeight: 55.0,
-  columnWidthMode: OmColumnWidthMode.fitByCellValue,
-  gridFontFamily: 'Roboto',
+  selectedRowColor: Colors.blue.withOpacity(0.1),
+  rowHeight: 50.0,
+  headerHeight: 60.0,
 )
 ```
 

@@ -106,9 +106,8 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
 
       // 3. Match values (numbers/text until next space or operator)
       final nextSpace = remaining.indexOf(' ');
-      final nextOp = remaining
-          .split('')
-          .indexWhere((char) => operators.contains(char));
+      final nextOp =
+          remaining.split('').indexWhere((char) => operators.contains(char));
 
       int end;
       if (nextSpace == -1 && nextOp == -1) {
@@ -150,21 +149,19 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = widget.controller.configuration.primaryColor;
+    final config = widget.controller.configuration;
+    final primaryColor = config.primaryColor;
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor:
-          widget.controller.configuration.dialogBackgroundColor ?? Colors.white,
-      surfaceTintColor:
-          widget.controller.configuration.dialogSurfaceTintColor ??
-          Colors.white,
+      backgroundColor: config.dialogBackgroundColor,
+      surfaceTintColor: config.dialogSurfaceTintColor,
       title: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
+              color: primaryColor.withAlpha(25),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -175,7 +172,11 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
           const SizedBox(width: 12),
           Text(
             _isEditing ? "Edit Equation" : "New Equation",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: config.dialogTextColor,
+            ),
           ),
           const Spacer(),
           Row(
@@ -184,9 +185,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                 "Advanced",
                 style: TextStyle(
                   fontSize: 12,
-                  color:
-                      widget.controller.configuration.dialogTextColor ??
-                      Colors.grey.shade600,
+                  color: config.dialogTextColor ?? config.secondaryTextColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -219,9 +218,10 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
             children: [
               TextField(
                 controller: _titleController,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
+                  color: config.gridForegroundColor,
                 ),
                 onChanged: (val) {
                   if (_titleError != null) {
@@ -230,39 +230,50 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                 },
                 decoration: InputDecoration(
                   hintText: "Enter Column Display Name (e.g., Total Salary)",
+                  hintStyle: TextStyle(color: config.secondaryTextColor),
                   errorText: _titleError,
-                  prefixIcon: const Icon(Icons.title, size: 18),
+                  prefixIcon: Icon(Icons.title,
+                      size: 18, color: config.secondaryTextColor),
                   filled: true,
-                  fillColor: Colors.grey.shade50,
+                  fillColor: config.inputFillColor,
                   contentPadding: const EdgeInsets.symmetric(vertical: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
+                    borderSide: BorderSide(color: config.inputBorderColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
+                    borderSide: BorderSide(color: config.inputBorderColor),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 "Equation Builder",
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: config.gridForegroundColor,
+                ),
               ),
               const SizedBox(height: 8),
               if (_isAdvancedMode)
                 TextField(
                   controller: _advancedController,
                   maxLines: 4,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+                  style: TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                    color: config.gridForegroundColor,
+                  ),
                   decoration: InputDecoration(
                     hintText: "Enter your formula...",
+                    hintStyle: TextStyle(color: config.secondaryTextColor),
                     filled: true,
-                    fillColor: Colors.grey.shade50,
+                    fillColor: config.inputFillColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.grey.shade200),
+                      borderSide: BorderSide(color: config.inputBorderColor),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -276,12 +287,13 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: config.gridBackgroundColor,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200, width: 1),
+                    border: Border.all(color: config.gridBorderColor, width: 1),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
+                        color: (config.dragFeedbackShadowColor ?? Colors.black)
+                            .withAlpha(5),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -294,7 +306,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                             children: [
                               Icon(
                                 Icons.add_chart,
-                                color: Colors.grey.shade300,
+                                color: config.secondaryTextColor.withAlpha(100),
                                 size: 32,
                               ),
                               const SizedBox(height: 8),
@@ -302,7 +314,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                                 "Start building your equation by adding blocks below",
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade400,
+                                  color: config.secondaryTextColor,
                                 ),
                               ),
                             ],
@@ -326,8 +338,8 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                 children: ['+', '-', '*', '/', '(', ')'].map((op) {
                   return _buildToolChip(
                     label: op,
-                    color: Colors.blue.shade100,
-                    textColor: Colors.blue.shade800,
+                    color: config.primaryColor.withAlpha(25),
+                    textColor: config.primaryColor,
                     onTap: () => _addBlock(
                       FormulaBlock(
                         label: op,
@@ -346,25 +358,23 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                 runSpacing: 8,
                 children: widget.controller.columnModels
                     .where(
-                      (c) =>
-                          !c.key.startsWith('__') &&
-                          c.key != widget.existing?.key,
-                    )
+                  (c) =>
+                      !c.key.startsWith('__') && c.key != widget.existing?.key,
+                )
                     .map((c) {
-                      return _buildToolChip(
+                  return _buildToolChip(
+                    label: c.column.title,
+                    color: primaryColor.withAlpha(15),
+                    textColor: primaryColor,
+                    onTap: () => _addBlock(
+                      FormulaBlock(
                         label: c.column.title,
-                        color: primaryColor.withOpacity(0.05),
-                        textColor: primaryColor,
-                        onTap: () => _addBlock(
-                          FormulaBlock(
-                            label: c.column.title,
-                            value: c.column.title,
-                            type: FormulaBlockType.column,
-                          ),
-                        ),
-                      );
-                    })
-                    .toList(),
+                        value: c.column.title,
+                        type: FormulaBlockType.column,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ],
           ),
@@ -373,7 +383,10 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text("Cancel", style: TextStyle(color: Colors.grey.shade600)),
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: config.secondaryTextColor),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -400,7 +413,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
-            foregroundColor: Colors.white,
+            foregroundColor: config.primaryForegroundColor,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -419,7 +432,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
       style: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.bold,
-        color: Colors.grey.shade700,
+        color: widget.controller.configuration.secondaryTextColor,
       ),
     );
   }
@@ -491,23 +504,24 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
     bool isDragging = false,
     bool isHighlighted = false,
   }) {
+    final config = widget.controller.configuration;
     final bool isColumn = block.type == FormulaBlockType.column;
     final bool isOp = block.type == FormulaBlockType.operator;
-    final primaryColor = Theme.of(context).primaryColor;
+    final primaryColor = config.primaryColor;
 
     Color bgColor = isColumn
-        ? primaryColor.withOpacity(0.08)
+        ? primaryColor.withAlpha(20)
         : isOp
-        ? Colors.orange.shade50
-        : Colors.grey.shade50;
+            ? Colors.orange.withAlpha(30)
+            : config.inputFillColor;
     Color textColor = isColumn
         ? primaryColor
         : isOp
-        ? Colors.orange.shade800
-        : Colors.black87;
+            ? Colors.orange
+            : config.gridForegroundColor;
     Color borderColor = isHighlighted
         ? primaryColor
-        : (isDragging ? Colors.transparent : Colors.grey.shade300);
+        : (isDragging ? Colors.transparent : config.gridBorderColor);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -518,7 +532,8 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
         boxShadow: isDragging
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: (config.dragFeedbackShadowColor ?? Colors.black)
+                      .withAlpha(20),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -532,7 +547,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
             Icon(
               Icons.table_chart_outlined,
               size: 14,
-              color: textColor.withOpacity(0.7),
+              color: textColor.withAlpha(180),
             ),
             const SizedBox(width: 4),
           ],
@@ -555,7 +570,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
             child: Icon(
               Icons.close,
               size: 14,
-              color: textColor.withOpacity(0.4),
+              color: textColor.withAlpha(100),
             ),
           ),
         ],

@@ -38,13 +38,13 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
       child: Material(
         elevation: 8,
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
+        color: configuration.dialogBackgroundColor,
         child: Container(
           width: _width,
           height: _height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: configuration.gridBorderColor),
           ),
           child: Column(
             children: [
@@ -61,7 +61,7 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: configuration.primaryColor.withOpacity(0.05),
+                    color: configuration.primaryColor.withAlpha(15),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(12),
                     ),
@@ -74,16 +74,21 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                         color: configuration.primaryColor,
                       ),
                       const SizedBox(width: 8),
-                      const Text(
+                      Text(
                         "Choose Columns",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
+                          color: configuration.dialogTextColor,
                         ),
                       ),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.close, size: 20),
+                        icon: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: configuration.secondaryTextColor,
+                        ),
                         onPressed: widget.onClose,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -112,6 +117,8 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                           leading: Checkbox(
                             activeColor:
                                 widget.controller.configuration.primaryColor,
+                            checkColor: widget.controller.configuration
+                                .primaryForegroundColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -124,7 +131,11 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                               );
                             },
                           ),
-                          title: Text(column.title),
+                          title: Text(
+                            column.title,
+                            style:
+                                TextStyle(color: configuration.dialogTextColor),
+                          ),
                         );
                       },
                     );
@@ -139,7 +150,7 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                     onPressed: () => widget.controller.resetColumns(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: configuration.primaryColor,
-                      foregroundColor: Colors.white,
+                      foregroundColor: configuration.primaryForegroundColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

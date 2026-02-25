@@ -236,11 +236,15 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                         child: IntrinsicWidth(
                           child: OmDefaultButton(
                             text: _effectiveConfig.addButtonText,
-                            leadingIcon: Icon(
-                              Icons.add,
-                              size: 18,
-                              color: Colors.red,
-                            ),
+                            leadingIcon: _effectiveConfig.addButtonIcon ??
+                                Icon(
+                                  Icons.add,
+                                  size: 18,
+                                  color:
+                                      _effectiveConfig.addButtonForegroundColor ?? widget.configuration
+                                          ?.primaryForegroundColor ??
+                                      Colors.white,
+                                ),
                             backcolor:
                                 _effectiveConfig.addButtonBackgroundColor,
                             forecolor:

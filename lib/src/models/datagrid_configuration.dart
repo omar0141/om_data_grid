@@ -590,7 +590,7 @@ class OmDataGridConfiguration {
     bool showClearFiltersButton = true,
     bool showAddButton = false,
     String? addButtonText = 'Add',
-    Widget addButtonIcon = const Icon(Icons.add, size: 18, color: Colors.white),
+    Widget? addButtonIcon,
     Color? addButtonBackgroundColor,
     Color? addButtonForegroundColor,
     Color? addButtonBorderColor,

@@ -357,7 +357,7 @@ class _GridCellState extends State<GridCell> {
   Widget _buildDelete(BuildContext context) {
     return MenuAnchor(
       controller: _menuController,
-      alignmentOffset: const Offset(-225, 0),
+      alignmentOffset: const Offset(-220, 0),
       style: MenuStyle(
         backgroundColor: MaterialStateProperty.all(Colors.transparent),
         surfaceTintColor: MaterialStateProperty.all(Colors.transparent),

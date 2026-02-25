@@ -729,7 +729,7 @@ class _ArrowShape extends ShapeBorder {
     ui.TextDirection? textDirection,
   }) {
     final paint = Paint()
-      ..color = configuration.rowBorderColor.withOpacity(0.3)
+      ..color = configuration.rowBorderColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
     canvas.drawPath(getOuterPath(rect, textDirection: textDirection), paint);

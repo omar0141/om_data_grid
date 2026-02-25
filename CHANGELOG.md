@@ -1,3 +1,7 @@
+## 0.0.16
+
+- fix delete pop confirm border color
+
 ## 0.0.15
 
 - **Unified Theme Integration**: Applied the `OmDataGridTheme` system to all popups and dialogs, including `ColumnChooserPopup`, `FormulaBuilderDialog`, and `DeleteConfirmation`.

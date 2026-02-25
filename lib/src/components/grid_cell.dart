@@ -384,7 +384,7 @@ class _GridCellState extends State<GridCell> {
               controller.open();
             }
           },
-          icon: const Icon(Icons.delete, color: Colors.red),
+          icon: Icon(Icons.delete, color: widget.configuration.errorColor),
         );
       },
       menuChildren: [

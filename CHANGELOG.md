@@ -1,3 +1,7 @@
+## 0.0.17
+
+- Added additive search behavior to the grid filter popup, allowing the user to search for and select new items without losing their previous manual selections.
+
 ## 0.0.16
 
 - fix delete pop confirm border color

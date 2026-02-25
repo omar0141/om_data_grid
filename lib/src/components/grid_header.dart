@@ -67,8 +67,7 @@ class OmGridHeader extends StatelessWidget {
         decoration: BoxDecoration(
           color: configuration.headerBackgroundColor,
           border: BorderDirectional(
-            bottom:
-                (configuration.headerBorderVisibility ==
+            bottom: (configuration.headerBorderVisibility ==
                         OmGridBorderVisibility.horizontal ||
                     configuration.headerBorderVisibility ==
                         OmGridBorderVisibility.both)
@@ -96,8 +95,7 @@ class OmGridHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: configuration.headerBackgroundColor,
               border: BorderDirectional(
-                bottom:
-                    (configuration.headerBorderVisibility ==
+                bottom: (configuration.headerBorderVisibility ==
                             OmGridBorderVisibility.horizontal ||
                         configuration.headerBorderVisibility ==
                             OmGridBorderVisibility.both)
@@ -126,8 +124,7 @@ class OmGridHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: configuration.headerBackgroundColor,
               border: BorderDirectional(
-                bottom:
-                    (configuration.headerBorderVisibility ==
+                bottom: (configuration.headerBorderVisibility ==
                             OmGridBorderVisibility.horizontal ||
                         configuration.headerBorderVisibility ==
                             OmGridBorderVisibility.both)
@@ -150,8 +147,7 @@ class OmGridHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: configuration.headerBackgroundColor,
               border: BorderDirectional(
-                bottom:
-                    (configuration.headerBorderVisibility ==
+                bottom: (configuration.headerBorderVisibility ==
                             OmGridBorderVisibility.horizontal ||
                         configuration.headerBorderVisibility ==
                             OmGridBorderVisibility.both)
@@ -237,9 +233,8 @@ class OmGridHeader extends StatelessWidget {
     }
 
     final double scrollX = hController.hasClients ? hController.offset : 0;
-    final double viewportWidth = hController.hasClients
-        ? hController.position.viewportDimension
-        : 0;
+    final double viewportWidth =
+        hController.hasClients ? hController.position.viewportDimension : 0;
     final double buffer = 400.0;
 
     final List<Widget> cells = [];
@@ -253,9 +248,8 @@ class OmGridHeader extends StatelessWidget {
       // Defensive range checks
       if (index < 0 || index >= columns.length) continue;
 
-      final width = (index < columnWidths.length)
-          ? (columnWidths[index] ?? 0.0)
-          : 0.0;
+      final width =
+          (index < columnWidths.length) ? (columnWidths[index] ?? 0.0) : 0.0;
 
       if (currentX + width < scrollX - buffer) {
         leadingSpace += width;
@@ -428,8 +422,7 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
                   ? configuration.primaryColor.withOpacity(0.05)
                   : Colors.transparent,
               border: BorderDirectional(
-                start:
-                    !widget.isFirstVisible &&
+                start: !widget.isFirstVisible &&
                         (configuration.headerBorderVisibility ==
                                 OmGridBorderVisibility.vertical ||
                             configuration.headerBorderVisibility ==
@@ -445,8 +438,7 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap:
-                        (configuration.allowSorting &&
+                    onTap: (configuration.allowSorting &&
                             column.isAllowSorting &&
                             !isFused)
                         ? () {
@@ -458,20 +450,20 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
                       mainAxisAlignment: column.textAlign == TextAlign.center
                           ? MainAxisAlignment.center
                           : (column.textAlign == TextAlign.right
-                                ? MainAxisAlignment.end
-                                : MainAxisAlignment.start),
+                              ? MainAxisAlignment.end
+                              : MainAxisAlignment.start),
                       children: [
                         Flexible(
                           child: Text(
                             column.title,
                             textAlign: column.textAlign,
                             overflow: TextOverflow.ellipsis,
-                            style:
-                                configuration.headerTextStyle ??
+                            style: configuration.headerTextStyle ??
                                 TextStyle(
                                   color: configuration.headerForegroundColor,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
+                                  fontFamily: configuration.gridFontFamily,
                                 ),
                           ),
                         ),
@@ -528,8 +520,7 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
                 ),
                 if (column.isAllowFiltering && !isFused)
                   Visibility(
-                    visible:
-                        !configuration.showFilterOnHover ||
+                    visible: !configuration.showFilterOnHover ||
                         _isHovered ||
                         isFiltered,
                     maintainSize: false,
@@ -624,14 +615,14 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
                       ),
                     Text(
                       column.title,
-                      style:
-                          (configuration.headerTextStyle ??
-                                  TextStyle(
-                                    color: configuration.headerForegroundColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ))
-                              .copyWith(color: isOutside ? Colors.white : null),
+                      style: (configuration.headerTextStyle ??
+                              TextStyle(
+                                color: configuration.headerForegroundColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                fontFamily: configuration.gridFontFamily,
+                              ))
+                          .copyWith(color: isOutside ? Colors.white : null),
                     ),
                   ],
                 ),
@@ -645,8 +636,7 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
     }
 
     Widget content = MouseRegion(
-      cursor:
-          (configuration.allowColumnReordering ||
+      cursor: (configuration.allowColumnReordering ||
                   (configuration.enableGrouping &&
                       configuration.allowGrouping)) &&
               !isFused
@@ -657,9 +647,9 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
       child: cellContent,
     );
 
-    final showSmallDivider =
-        !widget.isFirstVisible &&
-        configuration.headerBorderVisibility != OmGridBorderVisibility.vertical &&
+    final showSmallDivider = !widget.isFirstVisible &&
+        configuration.headerBorderVisibility !=
+            OmGridBorderVisibility.vertical &&
         configuration.headerBorderVisibility != OmGridBorderVisibility.both;
 
     if (!column.isResizable && !showSmallDivider) {

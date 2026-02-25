@@ -219,6 +219,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
               onTap: () {
                 selectAll = !(selectAll ?? true);
                 for (var item in dataSource) {
+                  item = Map<String, dynamic>.from(item);
                   item["select"] = selectAll ?? false;
                   keepTheSelectedItemsWhileSearching(item);
                 }
@@ -238,6 +239,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                     onChanged: (value) {
                       selectAll = value ?? false;
                       for (var item in dataSource) {
+                        item = Map<String, dynamic>.from(item);
                         item["select"] = value ?? false;
                         keepTheSelectedItemsWhileSearching(item);
                       }
@@ -263,7 +265,8 @@ class _GridFilterBodyState extends State<GridFilterBody> {
         Expanded(
           child: ListView(
             children: List.generate(dataSource.length, (i) {
-              var item = dataSource[i];
+              Map<String, dynamic> item =
+                  Map<String, dynamic>.from(dataSource[i]);
               String text = getTextFromValue(item);
               if (text == "null") text = "None";
 
@@ -276,6 +279,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: GestureDetector(
                   onTap: () {
+                    item = Map<String, dynamic>.from(item);
                     item["select"] = !(item["select"] ?? true);
                     keepTheSelectedItemsWhileSearching(item);
                     checkSelectAll();
@@ -290,6 +294,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                         activeColor: widget.configuration.primaryColor,
                         checkColor: widget.configuration.primaryForegroundColor,
                         onChanged: (value) {
+                          item = Map<String, dynamic>.from(item);
                           item["select"] = value!;
                           keepTheSelectedItemsWhileSearching(item);
                           checkSelectAll();
@@ -356,7 +361,8 @@ class _GridFilterBodyState extends State<GridFilterBody> {
     key = widget.attributes.key;
     attributes = widget.attributes;
 
-    final List<OmGridColumnModel> columnsForChecklist = widget.allAttributes.map((
+    final List<OmGridColumnModel> columnsForChecklist =
+        widget.allAttributes.map((
       c,
     ) {
       if (c.key == attributes.key) {

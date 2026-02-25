@@ -119,6 +119,7 @@ class OmDataGridConfiguration {
   final Color paginationUnselectedForegroundColor;
   final Color paginationTextColor;
   final Color gridBackgroundColor;
+  final Color gridForegroundColor;
   final Color gridBorderColor;
   final Color filterIconColor;
   final Color sortIconColor;
@@ -132,6 +133,7 @@ class OmDataGridConfiguration {
   final Color inputFocusBorderColor;
   final Color secondaryTextColor;
   final Color primaryForegroundColor;
+  final String? gridFontFamily;
   final double minColumnWidth;
   final double rowHeight;
   final double headerHeight;
@@ -248,49 +250,46 @@ class OmDataGridConfiguration {
   final Color? contextMenuLayoutIconColor;
 
   const OmDataGridConfiguration({
-    this.headerBackgroundColor = const Color(0xFFE7E7E7),
-    this.headerForegroundColor = const Color(0xFF131313),
-    this.rowBackgroundColor = Colors.transparent,
-    this.rowForegroundColor = const Color(0xFF131313),
-    this.selectedRowColor = const Color(0x14398FD4),
-    this.rowHoverColor = const Color(0x0A000000),
-    this.selectedRowForegroundColor = const Color(0xFF131313),
-    this.headerBorderColor = const Color(0xFFE5E5E5),
+    Color? headerBackgroundColor,
+    Color? headerForegroundColor,
+    Color? rowBackgroundColor,
+    Color? rowForegroundColor,
+    Color? selectedRowColor,
+    Color? rowHoverColor,
+    Color? selectedRowForegroundColor,
+    Color? headerBorderColor,
     this.headerBorderWidth = 0.5,
-    this.rowBorderColor = const Color(0xFFE5E5E5),
+    Color? rowBorderColor,
     this.rowBorderWidth = 0.5,
     this.headerBorderVisibility = OmGridBorderVisibility.both,
     this.rowBorderVisibility = OmGridBorderVisibility.both,
     this.headerTextStyle,
     this.rowTextStyle,
     this.selectedRowTextStyle,
-    this.resizeHandleColor = Colors.transparent,
+    Color? resizeHandleColor,
     this.resizeHandleWidth = 4,
-    this.paginationBackgroundColor = const Color(0xFFFFFFFF),
-    this.paginationSelectedBackgroundColor = const Color(0xFF398FD4),
-    this.paginationSelectedForegroundColor = const Color(0xFFFFFFFF),
-    this.paginationUnselectedBackgroundColor = const Color.fromARGB(
-      255,
-      250,
-      249,
-      247,
-    ),
-    this.paginationUnselectedForegroundColor = const Color(0xFFABABAB),
-    this.paginationTextColor = const Color(0xFF131313),
-    this.gridBackgroundColor = const Color(0xFFFFFFFF),
-    this.gridBorderColor = const Color(0xFFE5E5E5),
-    this.filterIconColor = const Color(0xFF131313),
-    this.sortIconColor = const Color(0xFF131313),
-    this.filterPopupBackgroundColor = const Color(0xFFFFFFFF),
-    this.keyboardHideButtonBackgroundColor = const Color(0xFF131313),
-    this.keyboardHideButtonForegroundColor = const Color(0xFFFFFFFF),
-    this.primaryColor = const Color(0xFF398FD4),
+    Color? paginationBackgroundColor,
+    Color? paginationSelectedBackgroundColor,
+    Color? paginationSelectedForegroundColor,
+    Color? paginationUnselectedBackgroundColor,
+    Color? paginationUnselectedForegroundColor,
+    Color? paginationTextColor,
+    Color? gridBackgroundColor,
+    Color? gridForegroundColor,
+    Color? gridBorderColor,
+    Color? filterIconColor,
+    Color? sortIconColor,
+    Color? filterPopupBackgroundColor,
+    Color? keyboardHideButtonBackgroundColor,
+    Color? keyboardHideButtonForegroundColor,
+    Color? primaryColor,
     this.errorColor = const Color(0xFFF44242),
-    this.inputFillColor = const Color.fromARGB(255, 255, 255, 255),
-    this.inputBorderColor = const Color.fromARGB(255, 181, 181, 181),
-    this.inputFocusBorderColor = const Color(0xFF398FD4),
-    this.secondaryTextColor = const Color(0xFF929292),
+    Color? inputFillColor,
+    Color? inputBorderColor,
+    Color? inputFocusBorderColor,
+    Color? secondaryTextColor,
     this.primaryForegroundColor = Colors.white,
+    this.gridFontFamily,
     this.minColumnWidth = 120,
     this.rowHeight = 40.0,
     this.headerHeight = 50.0,
@@ -301,7 +300,7 @@ class OmDataGridConfiguration {
     this.paginationMode = OmPaginationMode.pages,
     this.allowSorting = true,
     this.allowColumnReordering = true,
-    this.allowRowReordering = false, // Add default false
+    this.allowRowReordering = false,
     this.resetPageOnDataChange = false,
     this.selectionMode = OmSelectionMode.none,
     this.rowsPerPageOptions,
@@ -386,34 +385,166 @@ class OmDataGridConfiguration {
       width: 1,
     ),
     this.frozenPaneScrollMode = OmFrozenPaneScrollMode.sticky,
-    this.filterTabItemBackgroundColor = const Color(0xFFFFFFFF),
-    this.filterTabItemBorderColor = const Color(0xFFEEEEEE),
-    this.filterTabItemParamsColor = const Color(0xDD000000),
-    this.filterTabItemIconColor = const Color(0xFF757575),
-    this.chartPopupBackgroundColor = const Color(0xFFFFFFFF),
-    this.chartPopupBorderColor = const Color(0xFFBDBDBD),
-    this.chartPopupLoadingBackgroundColor = const Color(0xFF000000),
-    this.chartPopupLoadingTextColor = const Color(0xFF000000),
-    this.chartPopupResizeHandleColor = const Color(0xFF9E9E9E),
-    this.mobileSettingsBackgroundColor = const Color(0xFFFFFFFF),
-    this.mobileSettingsHeaderColor,
-    this.mobileSettingsIconColor,
-    this.chartTitleColor = const Color(0xFFFFFFFF),
-    this.chartIconColor = const Color(0xFFFFFFFF),
-    this.fullScreenButtonColor = const Color(0xFFFFFFFF),
-    this.closeButtonColor = const Color(0xFFFFFFFF),
-    this.chartSettingsSidebarBackgroundColor,
-    this.contextMenuIconColor = const Color(0xFF616161),
-    this.contextMenuTextColor = const Color(0xDD000000),
+    Color? filterTabItemBackgroundColor,
+    Color? filterTabItemBorderColor,
+    Color? filterTabItemParamsColor,
+    Color? filterTabItemIconColor,
+    Color? chartPopupBackgroundColor,
+    Color? chartPopupBorderColor,
+    Color? chartPopupLoadingBackgroundColor,
+    Color? chartPopupLoadingTextColor,
+    Color? chartPopupResizeHandleColor,
+    Color? mobileSettingsBackgroundColor,
+    Color? mobileSettingsHeaderColor,
+    Color? mobileSettingsIconColor,
+    Color? chartTitleColor,
+    Color? chartIconColor,
+    Color? fullScreenButtonColor,
+    Color? closeButtonColor,
+    Color? chartSettingsSidebarBackgroundColor,
+    Color? contextMenuIconColor,
+    Color? contextMenuTextColor,
     this.contextMenuDestructiveColor = const Color(0xFFF44336),
-    this.contextMenuSectionHeaderColor,
-    this.contextMenuItemIconBackgroundColor,
-    this.contextMenuSortIconColor,
-    this.contextMenuPinIconColor,
-    this.contextMenuGroupIconColor,
-    this.contextMenuAggregationIconColor,
-    this.contextMenuLayoutIconColor,
-  });
+    Color? contextMenuSectionHeaderColor,
+    Color? contextMenuItemIconBackgroundColor,
+    Color? contextMenuSortIconColor,
+    Color? contextMenuPinIconColor,
+    Color? contextMenuGroupIconColor,
+    Color? contextMenuAggregationIconColor,
+    Color? contextMenuLayoutIconColor,
+  })  : gridBackgroundColor = gridBackgroundColor ?? const Color(0xFFFFFFFF),
+        gridForegroundColor = gridForegroundColor ?? const Color(0xFF1E293B),
+        gridBorderColor = gridBorderColor ?? const Color(0xFFE2E8F0),
+        primaryColor = primaryColor ?? const Color(0xFF1E293B),
+        headerBackgroundColor = headerBackgroundColor ??
+            (gridBackgroundColor ?? const Color(0xFFFAFAFA)),
+        headerForegroundColor = headerForegroundColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        rowBackgroundColor = rowBackgroundColor ?? Colors.transparent,
+        rowForegroundColor = rowForegroundColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        selectedRowColor = selectedRowColor ?? const Color(0x141E293B),
+        rowHoverColor = rowHoverColor ?? const Color(0x0A1E293B),
+        selectedRowForegroundColor = selectedRowForegroundColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        headerBorderColor =
+            headerBorderColor ?? (gridBorderColor ?? const Color(0xFFE2E8F0)),
+        rowBorderColor =
+            rowBorderColor ?? (gridBorderColor ?? const Color(0xFFE2E8F0)),
+        resizeHandleColor = resizeHandleColor ?? Colors.transparent,
+        paginationBackgroundColor = paginationBackgroundColor ??
+            (gridBackgroundColor ?? const Color(0xFFFFFFFF)),
+        paginationSelectedBackgroundColor = paginationSelectedBackgroundColor ??
+            (primaryColor ?? const Color(0xFF1E293B)),
+        paginationSelectedForegroundColor =
+            paginationSelectedForegroundColor ?? Colors.white,
+        paginationUnselectedBackgroundColor =
+            paginationUnselectedBackgroundColor ??
+                const Color.fromARGB(255, 250, 249, 247),
+        paginationUnselectedForegroundColor =
+            paginationUnselectedForegroundColor ?? const Color(0xFFABABAB),
+        paginationTextColor = paginationTextColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        filterIconColor =
+            filterIconColor ?? (gridForegroundColor ?? const Color(0xFF1E293B)),
+        sortIconColor =
+            sortIconColor ?? (gridForegroundColor ?? const Color(0xFF1E293B)),
+        filterPopupBackgroundColor = filterPopupBackgroundColor ??
+            (gridBackgroundColor ?? const Color(0xFFFFFFFF)),
+        keyboardHideButtonBackgroundColor = keyboardHideButtonBackgroundColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        keyboardHideButtonForegroundColor = keyboardHideButtonForegroundColor ??
+            (gridBackgroundColor ?? const Color(0xFFFFFFFF)),
+        inputFillColor = inputFillColor ??
+            (gridBackgroundColor ?? const Color.fromARGB(255, 255, 255, 255)),
+        inputBorderColor = inputBorderColor ??
+            (gridBorderColor ?? const Color.fromARGB(255, 181, 181, 181)),
+        inputFocusBorderColor =
+            inputFocusBorderColor ?? (primaryColor ?? const Color(0xFF1E293B)),
+        secondaryTextColor = secondaryTextColor ?? const Color(0xFF929292),
+        filterTabItemBackgroundColor = filterTabItemBackgroundColor ??
+            (gridBackgroundColor ?? const Color(0xFFFFFFFF)),
+        filterTabItemBorderColor = filterTabItemBorderColor ??
+            (gridBorderColor ?? const Color(0xFFEEEEEE)),
+        filterTabItemParamsColor =
+            filterTabItemParamsColor ?? const Color(0xDD000000),
+        filterTabItemIconColor =
+            filterTabItemIconColor ?? const Color(0xFF757575),
+        chartPopupBackgroundColor = chartPopupBackgroundColor ??
+            (gridBackgroundColor ?? const Color(0xFFFFFFFF)),
+        chartPopupBorderColor = chartPopupBorderColor ??
+            (gridBorderColor ?? const Color(0xFFBDBDBD)),
+        chartPopupLoadingBackgroundColor =
+            chartPopupLoadingBackgroundColor ?? const Color(0xFF000000),
+        chartPopupLoadingTextColor =
+            chartPopupLoadingTextColor ?? const Color(0xFF000000),
+        chartPopupResizeHandleColor =
+            chartPopupResizeHandleColor ?? const Color(0xFF9E9E9E),
+        mobileSettingsBackgroundColor = mobileSettingsBackgroundColor ??
+            (gridBackgroundColor ?? const Color(0xFFFFFFFF)),
+        mobileSettingsHeaderColor = mobileSettingsHeaderColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        mobileSettingsIconColor = mobileSettingsIconColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        chartTitleColor = chartTitleColor ?? const Color(0xFFFFFFFF),
+        chartIconColor = chartIconColor ?? const Color(0xFFFFFFFF),
+        fullScreenButtonColor =
+            fullScreenButtonColor ?? const Color(0xFFFFFFFF),
+        closeButtonColor = closeButtonColor ?? const Color(0xFFFFFFFF),
+        chartSettingsSidebarBackgroundColor =
+            chartSettingsSidebarBackgroundColor ??
+                (gridBackgroundColor ?? const Color(0xFFFFFFFF)),
+        contextMenuIconColor = contextMenuIconColor ??
+            (gridForegroundColor ?? const Color(0xFF64748B)),
+        contextMenuTextColor = contextMenuTextColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        contextMenuSectionHeaderColor = contextMenuSectionHeaderColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        contextMenuItemIconBackgroundColor =
+            contextMenuItemIconBackgroundColor ?? Colors.transparent,
+        contextMenuSortIconColor = contextMenuSortIconColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        contextMenuPinIconColor = contextMenuPinIconColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        contextMenuGroupIconColor = contextMenuGroupIconColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        contextMenuAggregationIconColor = contextMenuAggregationIconColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B)),
+        contextMenuLayoutIconColor = contextMenuLayoutIconColor ??
+            (gridForegroundColor ?? const Color(0xFF1E293B));
+
+  /// Creates a configuration with base colors for easy dark/light mode switching.
+  factory OmDataGridConfiguration.simple({
+    required Color backgroundColor,
+    required Color foregroundColor,
+    required Color borderColor,
+    required Color primaryColor,
+    String? fontFamily,
+  }) {
+    return OmDataGridConfiguration(
+      gridBackgroundColor: backgroundColor,
+      gridForegroundColor: foregroundColor,
+      gridBorderColor: borderColor,
+      primaryColor: primaryColor,
+      gridFontFamily: fontFamily,
+      headerBackgroundColor: backgroundColor,
+      headerForegroundColor: foregroundColor,
+      rowForegroundColor: foregroundColor,
+      selectedRowColor: primaryColor.withOpacity(0.12),
+      rowHoverColor: foregroundColor.withOpacity(0.05),
+      selectedRowForegroundColor: foregroundColor,
+      headerBorderColor: borderColor,
+      rowBorderColor: borderColor,
+      paginationBackgroundColor: backgroundColor,
+      paginationTextColor: foregroundColor,
+      filterIconColor: foregroundColor,
+      sortIconColor: foregroundColor,
+      filterPopupBackgroundColor: backgroundColor,
+      inputFillColor: backgroundColor,
+      inputBorderColor: borderColor,
+      secondaryTextColor: foregroundColor.withOpacity(0.6),
+    );
+  }
 
   OmDataGridConfiguration copyWith({
     Color? headerBackgroundColor,
@@ -441,6 +572,7 @@ class OmDataGridConfiguration {
     Color? paginationUnselectedForegroundColor,
     Color? paginationTextColor,
     Color? gridBackgroundColor,
+    Color? gridForegroundColor,
     Color? gridBorderColor,
     Color? filterIconColor,
     Color? sortIconColor,
@@ -454,6 +586,7 @@ class OmDataGridConfiguration {
     Color? inputFocusBorderColor,
     Color? secondaryTextColor,
     Color? primaryForegroundColor,
+    String? gridFontFamily,
     double? minColumnWidth,
     double? rowHeight,
     double? headerHeight,
@@ -598,6 +731,7 @@ class OmDataGridConfiguration {
               this.paginationUnselectedForegroundColor,
       paginationTextColor: paginationTextColor ?? this.paginationTextColor,
       gridBackgroundColor: gridBackgroundColor ?? this.gridBackgroundColor,
+      gridForegroundColor: gridForegroundColor ?? this.gridForegroundColor,
       gridBorderColor: gridBorderColor ?? this.gridBorderColor,
       filterIconColor: filterIconColor ?? this.filterIconColor,
       sortIconColor: sortIconColor ?? this.sortIconColor,
@@ -616,6 +750,7 @@ class OmDataGridConfiguration {
       secondaryTextColor: secondaryTextColor ?? this.secondaryTextColor,
       primaryForegroundColor:
           primaryForegroundColor ?? this.primaryForegroundColor,
+      gridFontFamily: gridFontFamily ?? this.gridFontFamily,
       minColumnWidth: minColumnWidth ?? this.minColumnWidth,
       rowHeight: rowHeight ?? this.rowHeight,
       headerHeight: headerHeight ?? this.headerHeight,

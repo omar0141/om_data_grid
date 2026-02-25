@@ -1,3 +1,10 @@
+## 0.0.14
+
+- Simplified grid theming and styling.
+- Added `OmDataGridConfiguration.simple` factory for quick dark/light mode switching.
+- Support for global grid font family.
+- Improved default color palette based on modern design standards.
+
 ## 0.0.13
 
 - change style of the title in quick filter bar

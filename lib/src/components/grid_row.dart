@@ -320,11 +320,13 @@ class _GridRowState extends State<OmGridRow> {
                     TextStyle(
                       color: widget.configuration.selectedRowForegroundColor,
                       fontSize: 14,
+                      fontFamily: widget.configuration.gridFontFamily,
                     ))
                 : (widget.configuration.rowTextStyle ??
                     TextStyle(
                       color: widget.configuration.rowForegroundColor,
                       fontSize: 14,
+                      fontFamily: widget.configuration.gridFontFamily,
                     ));
 
             if (widget.isScrolling &&

@@ -26,8 +26,8 @@ class GridGroupHeader extends StatelessWidget {
         color: isHovered
             ? config.rowHoverColor
             : (isExpanded
-                  ? config.headerBackgroundColor.withOpacityNew(0.08)
-                  : config.headerBackgroundColor.withOpacityNew(0.03)),
+                ? config.headerBackgroundColor.withOpacityNew(0.08)
+                : config.headerBackgroundColor.withOpacityNew(0.03)),
         child: InkWell(
           onTap: onTap,
           child: AnimatedContainer(
@@ -53,9 +53,19 @@ class GridGroupHeader extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   "${group['groupKey']}: ",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: config.rowForegroundColor,
+                    fontFamily: config.gridFontFamily,
+                  ),
                 ),
-                Text("${group['value']} (${group['count']})"),
+                Text(
+                  "${group['value']} (${group['count']})",
+                  style: TextStyle(
+                    color: config.rowForegroundColor,
+                    fontFamily: config.gridFontFamily,
+                  ),
+                ),
               ],
             ),
           ),

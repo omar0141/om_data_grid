@@ -107,10 +107,10 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // if (widget.leadingIcon != null) ...[
-                            //   widget.leadingIcon!,
-                            //   const SizedBox(width: 8),
-                            // ],
+                            if (widget.leadingIcon != null) ...[
+                              widget.leadingIcon!,
+                              const SizedBox(width: 8),
+                            ],
                             if (widget.text != null)
                               Text(
                                 widget.text!,

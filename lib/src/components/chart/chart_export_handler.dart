@@ -4,7 +4,6 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 import 'package:om_data_grid/src/utils/file_viewer/file_viewer.dart';
 import 'chart_types.dart';
-import 'package:om_data_grid/src/utils/isolate_helper.dart';
 
 class OmChartExportHandler {
   static Future<void> exportToPDF({
@@ -12,9 +11,7 @@ class OmChartExportHandler {
     required String title,
   }) async {
     try {
-      final List<int> bytes = await IsolateHelper.run(
-        () => _generatePdfBytes(chartImageBytes, title),
-      );
+      final List<int> bytes = _generatePdfBytes(chartImageBytes, title);
       await saveAndOpenFile(bytes, 'Chart_Export.pdf', 'application/pdf');
     } catch (e) {
       debugPrint('PDF Export failed: $e');
@@ -50,13 +47,11 @@ class OmChartExportHandler {
     Uint8List? chartImageBytes,
   }) async {
     try {
-      final List<int> bytes = await IsolateHelper.run(
-        () => _generateExcelBytes(
-          data,
-          xAxisColumn,
-          yAxisColumns,
-          chartImageBytes,
-        ),
+      final List<int> bytes = _generateExcelBytes(
+        data,
+        xAxisColumn,
+        yAxisColumns,
+        chartImageBytes,
       );
 
       await saveAndOpenFile(

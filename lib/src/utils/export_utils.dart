@@ -4,7 +4,6 @@ import 'package:flutter/material.dart' show Color;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 import 'package:om_data_grid/src/utils/file_viewer/file_viewer.dart';
-import 'package:om_data_grid/src/utils/isolate_helper.dart';
 import '../models/grid_column_model.dart';
 import '../models/datagrid_configuration.dart';
 
@@ -16,9 +15,7 @@ class OmGridExportHandler {
     String fileName = 'Grid_Export.xlsx',
   }) async {
     try {
-      final List<int> bytes = await IsolateHelper.run(
-        () => _generateExcelBytes(data, columns, configuration),
-      );
+      final List<int> bytes = _generateExcelBytes(data, columns, configuration);
 
       await _saveAndOpenFile(
         bytes,
@@ -136,9 +133,8 @@ class OmGridExportHandler {
     String fileName = 'Grid_Export.pdf',
   }) async {
     try {
-      final List<int> bytes = await IsolateHelper.run(
-        () => _generatePdfBytes(data, columns, configuration, title),
-      );
+      final List<int> bytes =
+          _generatePdfBytes(data, columns, configuration, title);
       await _saveAndOpenFile(bytes, fileName, 'application/pdf');
     } catch (e) {
       debugPrint('PDF Export failed: $e');

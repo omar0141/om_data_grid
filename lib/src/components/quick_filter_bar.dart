@@ -240,10 +240,7 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                                 Icon(
                                   Icons.add,
                                   size: 18,
-                                  color:
-                                      _effectiveConfig.addButtonForegroundColor ?? widget.configuration
-                                          ?.primaryForegroundColor ??
-                                      Colors.white,
+                                  color: Colors.red,
                                 ),
                             backcolor:
                                 _effectiveConfig.addButtonBackgroundColor,

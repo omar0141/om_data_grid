@@ -129,7 +129,7 @@ class _QuickSearchBarState extends State<QuickSearchBar> {
         alignment: Alignment.center,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:  widget.configuration.inputFillColor,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: widget.configuration.inputBorderColor.withOpacity(0.5),

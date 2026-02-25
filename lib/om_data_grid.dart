@@ -6,6 +6,7 @@ export 'src/models/advanced_filter_model.dart';
 export 'src/models/cell_position.dart';
 export 'src/models/chart_instance.dart';
 export 'src/models/datagrid_configuration.dart';
+export 'src/models/datagrid_theme.dart';
 export 'src/models/grid_column_model.dart';
 export 'src/models/grid_combo_box_item.dart';
 export 'src/models/grid_header_model.dart';

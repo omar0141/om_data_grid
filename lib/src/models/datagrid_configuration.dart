@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../enums/selection_mode_enum.dart';
 import '../enums/grid_border_visibility_enum.dart';
 import 'side_panel_config.dart';
+import 'datagrid_theme.dart';
 
 /// Defines how column widths are calculated.
 enum OmColumnWidthMode {
@@ -512,6 +513,401 @@ class OmDataGridConfiguration {
             (gridForegroundColor ?? const Color(0xFF1E293B)),
         contextMenuLayoutIconColor = contextMenuLayoutIconColor ??
             (gridForegroundColor ?? const Color(0xFF1E293B));
+
+  /// Creates an [OmDataGridConfiguration] from a simple [OmDataGridTheme].
+  ///
+  /// This is the **recommended** way to configure colors. Just pass a theme
+  /// with a few base colors and all 80+ color properties are derived
+  /// automatically. You can still override any individual color.
+  ///
+  /// ```dart
+  /// // Minimal — just a primary color:
+  /// OmDataGridConfiguration.fromTheme(
+  ///   theme: OmDataGridTheme(primaryColor: Colors.indigo),
+  /// )
+  ///
+  /// // Use a preset + override a few things:
+  /// OmDataGridConfiguration.fromTheme(
+  ///   theme: OmDataGridTheme.dark(),
+  ///   rowHeight: 50,
+  ///   allowPagination: true,
+  ///   headerBackgroundColor: Colors.blueGrey, // override just this one
+  /// )
+  /// ```
+  factory OmDataGridConfiguration.fromTheme({
+    required OmDataGridTheme theme,
+    // --- Color overrides (all optional) ---
+    Color? headerBackgroundColor,
+    Color? headerForegroundColor,
+    Color? rowBackgroundColor,
+    Color? rowForegroundColor,
+    Color? selectedRowColor,
+    Color? rowHoverColor,
+    Color? selectedRowForegroundColor,
+    Color? headerBorderColor,
+    double headerBorderWidth = 0.5,
+    Color? rowBorderColor,
+    double rowBorderWidth = 0.5,
+    OmGridBorderVisibility headerBorderVisibility = OmGridBorderVisibility.both,
+    OmGridBorderVisibility rowBorderVisibility = OmGridBorderVisibility.both,
+    TextStyle? headerTextStyle,
+    TextStyle? rowTextStyle,
+    TextStyle? selectedRowTextStyle,
+    Color? resizeHandleColor,
+    double resizeHandleWidth = 4,
+    Color? paginationBackgroundColor,
+    Color? paginationSelectedBackgroundColor,
+    Color? paginationSelectedForegroundColor,
+    Color? paginationUnselectedBackgroundColor,
+    Color? paginationUnselectedForegroundColor,
+    Color? paginationTextColor,
+    Color? filterIconColor,
+    Color? sortIconColor,
+    Color? filterPopupBackgroundColor,
+    Color? keyboardHideButtonBackgroundColor,
+    Color? keyboardHideButtonForegroundColor,
+    Color? inputFillColor,
+    Color? inputBorderColor,
+    Color? inputFocusBorderColor,
+    Color? secondaryTextColor,
+    String? gridFontFamily,
+    double minColumnWidth = 120,
+    double rowHeight = 40.0,
+    double headerHeight = 50.0,
+    double cacheExtent = 250.0,
+    OmColumnWidthMode columnWidthMode = OmColumnWidthMode.fill,
+    bool allowPagination = true,
+    int rowsPerPage = 250,
+    OmPaginationMode paginationMode = OmPaginationMode.pages,
+    bool allowSorting = true,
+    bool allowColumnReordering = true,
+    bool allowRowReordering = false,
+    bool resetPageOnDataChange = false,
+    OmSelectionMode selectionMode = OmSelectionMode.none,
+    List<int>? rowsPerPageOptions,
+    List<OmQuickFilterConfig>? quickFilters,
+    bool showSettingsButton = true,
+    bool showClearFiltersButton = true,
+    bool showAddButton = false,
+    String? addButtonText = 'Add',
+    Widget addButtonIcon = const Icon(Icons.add, size: 18, color: Colors.white),
+    Color? addButtonBackgroundColor,
+    Color? addButtonForegroundColor,
+    Color? addButtonBorderColor,
+    double? addButtonFontSize,
+    FontWeight? addButtonFontWeight,
+    EdgeInsetsGeometry? addButtonPadding = const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 8,
+    ),
+    BorderRadiusDirectional? addButtonBorderRadius =
+        const BorderRadiusDirectional.all(Radius.circular(8)),
+    bool showFilterOnHover = true,
+    bool showSortOnHover = true,
+    bool enableGrouping = false,
+    bool allowGrouping = true,
+    bool showGroupingPanel = false,
+    Color? groupPanelBackgroundColor,
+    Color? groupPanelBorderColor,
+    double? groupPanelBorderWidth,
+    double? groupPanelHeight,
+    TextStyle? groupPanelTextStyle,
+    Color? groupPanelIconColor,
+    Color? groupPanelClearIconColor,
+    Color? groupPanelItemBackgroundColor,
+    Color? groupPanelItemBorderColor,
+    TextStyle? groupPanelItemTextStyle,
+    Color? columnSearchBorderColor,
+    Color? columnSearchIconColor,
+    Color? dragFeedbackOutsideBackgroundColor,
+    Color? dragFeedbackInsideBackgroundColor,
+    Color? dragFeedbackOutsideBorderColor,
+    Color? dragFeedbackInsideBorderColor,
+    Color? dragFeedbackOutsideTextColor,
+    Color? dragFeedbackInsideTextColor,
+    Color? dragFeedbackIconColor,
+    Color? dragFeedbackShadowColor,
+    Color? columnDragIndicatorColor,
+    Color? columnFunctionIconColor,
+    Color? bottomPanelSectionBorderColor,
+    Color? bottomPanelDragTargetColor,
+    Color? bottomPanelDragTargetInactiveColor,
+    Color? bottomPanelIconColor,
+    Color? menuBackgroundColor,
+    Color? menuSurfaceTintColor,
+    Color? menuTextColor,
+    Color? dialogBackgroundColor,
+    Color? dialogSurfaceTintColor,
+    Color? dialogTextColor,
+    List<OmDataGridContextMenuItem>? contextMenuItems,
+    bool useDefaultContextMenuItems = true,
+    bool showCopyMenuItem = true,
+    bool showCopyHeaderMenuItem = true,
+    bool showEquationMenuItem = true,
+    bool showSortMenuItem = true,
+    bool showFilterBySelectionMenuItem = true,
+    bool showChartsMenuItem = true,
+    OmSidePanelConfiguration sidePanelConfiguration =
+        const OmSidePanelConfiguration(),
+    bool showColumnsTab = true,
+    bool showFiltersTab = true,
+    bool showQuickSearch = false,
+    bool showGlobalSearch = false,
+    int frozenColumnCount = 0,
+    int footerFrozenColumnCount = 0,
+    int frozenRowCount = 0,
+    int footerFrozenRowCount = 0,
+    bool showPlaceholderWhileScrolling = true,
+    bool shrinkWrapRows = false,
+    bool shrinkWrapColumns = false,
+    double frozenPaneElevation = 0.0,
+    BorderSide? frozenPaneBorderSide,
+    OmFrozenPaneScrollMode frozenPaneScrollMode = OmFrozenPaneScrollMode.sticky,
+    Color? filterTabItemBackgroundColor,
+    Color? filterTabItemBorderColor,
+    Color? filterTabItemParamsColor,
+    Color? filterTabItemIconColor,
+    Color? chartPopupBackgroundColor,
+    Color? chartPopupBorderColor,
+    Color? chartPopupLoadingBackgroundColor,
+    Color? chartPopupLoadingTextColor,
+    Color? chartPopupResizeHandleColor,
+    Color? mobileSettingsBackgroundColor,
+    Color? mobileSettingsHeaderColor,
+    Color? mobileSettingsIconColor,
+    Color? chartTitleColor,
+    Color? chartIconColor,
+    Color? fullScreenButtonColor,
+    Color? closeButtonColor,
+    Color? chartSettingsSidebarBackgroundColor,
+    Color? contextMenuIconColor,
+    Color? contextMenuTextColor,
+    Color? contextMenuDestructiveColor,
+    Color? contextMenuSectionHeaderColor,
+    Color? contextMenuItemIconBackgroundColor,
+    Color? contextMenuSortIconColor,
+    Color? contextMenuPinIconColor,
+    Color? contextMenuGroupIconColor,
+    Color? contextMenuAggregationIconColor,
+    Color? contextMenuLayoutIconColor,
+  }) {
+    final t = theme;
+    return OmDataGridConfiguration(
+      // Core colors derived from theme
+      primaryColor: t.primaryColor,
+      primaryForegroundColor: t.onPrimaryColor,
+      errorColor: t.errorColor,
+      gridBackgroundColor: t.backgroundColor,
+      gridForegroundColor: t.foregroundColor,
+      gridBorderColor: t.borderColor,
+      // Header
+      headerBackgroundColor: headerBackgroundColor ?? t.surfaceColor,
+      headerForegroundColor: headerForegroundColor ?? t.foregroundColor,
+      headerBorderColor: headerBorderColor ?? t.borderColor,
+      headerBorderWidth: headerBorderWidth,
+      headerBorderVisibility: headerBorderVisibility,
+      headerTextStyle: headerTextStyle,
+      // Rows
+      rowBackgroundColor: rowBackgroundColor ?? Colors.transparent,
+      rowForegroundColor: rowForegroundColor ?? t.foregroundColor,
+      rowBorderColor: rowBorderColor ?? t.borderColor,
+      rowBorderWidth: rowBorderWidth,
+      rowBorderVisibility: rowBorderVisibility,
+      rowTextStyle: rowTextStyle,
+      selectedRowTextStyle: selectedRowTextStyle,
+      selectedRowColor: selectedRowColor ?? t.selectionColor,
+      rowHoverColor: rowHoverColor ?? t.hoverColor,
+      selectedRowForegroundColor:
+          selectedRowForegroundColor ?? t.foregroundColor,
+      // Resize
+      resizeHandleColor: resizeHandleColor ?? Colors.transparent,
+      resizeHandleWidth: resizeHandleWidth,
+      // Pagination
+      paginationBackgroundColor: paginationBackgroundColor ?? t.backgroundColor,
+      paginationSelectedBackgroundColor:
+          paginationSelectedBackgroundColor ?? t.primaryColor,
+      paginationSelectedForegroundColor:
+          paginationSelectedForegroundColor ?? t.onPrimaryColor,
+      paginationUnselectedBackgroundColor:
+          paginationUnselectedBackgroundColor ??
+              t.paginationUnselectedBackground,
+      paginationUnselectedForegroundColor:
+          paginationUnselectedForegroundColor ??
+              t.paginationUnselectedForeground,
+      paginationTextColor: paginationTextColor ?? t.foregroundColor,
+      // Filter / Sort icons
+      filterIconColor: filterIconColor ?? t.iconColor,
+      sortIconColor: sortIconColor ?? t.iconColor,
+      filterPopupBackgroundColor:
+          filterPopupBackgroundColor ?? t.backgroundColor,
+      // Keyboard
+      keyboardHideButtonBackgroundColor:
+          keyboardHideButtonBackgroundColor ?? t.foregroundColor,
+      keyboardHideButtonForegroundColor:
+          keyboardHideButtonForegroundColor ?? t.backgroundColor,
+      // Input
+      inputFillColor: inputFillColor ?? t.inputFillColor,
+      inputBorderColor: inputBorderColor ?? t.inputBorderColor,
+      inputFocusBorderColor: inputFocusBorderColor ?? t.inputFocusBorderColor,
+      secondaryTextColor: secondaryTextColor ?? t.secondaryTextColor,
+      // Font
+      gridFontFamily: gridFontFamily,
+      // Layout
+      minColumnWidth: minColumnWidth,
+      rowHeight: rowHeight,
+      headerHeight: headerHeight,
+      cacheExtent: cacheExtent,
+      columnWidthMode: columnWidthMode,
+      // Pagination behavior
+      allowPagination: allowPagination,
+      rowsPerPage: rowsPerPage,
+      paginationMode: paginationMode,
+      rowsPerPageOptions: rowsPerPageOptions,
+      // Behavior
+      allowSorting: allowSorting,
+      allowColumnReordering: allowColumnReordering,
+      allowRowReordering: allowRowReordering,
+      resetPageOnDataChange: resetPageOnDataChange,
+      selectionMode: selectionMode,
+      quickFilters: quickFilters,
+      // Toolbar
+      showSettingsButton: showSettingsButton,
+      showClearFiltersButton: showClearFiltersButton,
+      showAddButton: showAddButton,
+      addButtonText: addButtonText,
+      addButtonIcon: addButtonIcon,
+      addButtonBackgroundColor: addButtonBackgroundColor,
+      addButtonForegroundColor: addButtonForegroundColor,
+      addButtonBorderColor: addButtonBorderColor,
+      addButtonFontSize: addButtonFontSize,
+      addButtonFontWeight: addButtonFontWeight,
+      addButtonPadding: addButtonPadding,
+      addButtonBorderRadius: addButtonBorderRadius,
+      showFilterOnHover: showFilterOnHover,
+      showSortOnHover: showSortOnHover,
+      // Grouping
+      enableGrouping: enableGrouping,
+      allowGrouping: allowGrouping,
+      showGroupingPanel: showGroupingPanel,
+      groupPanelBackgroundColor: groupPanelBackgroundColor,
+      groupPanelBorderColor: groupPanelBorderColor ?? t.borderColor,
+      groupPanelBorderWidth: groupPanelBorderWidth,
+      groupPanelHeight: groupPanelHeight,
+      groupPanelTextStyle: groupPanelTextStyle,
+      groupPanelIconColor: groupPanelIconColor,
+      groupPanelClearIconColor: groupPanelClearIconColor,
+      groupPanelItemBackgroundColor: groupPanelItemBackgroundColor,
+      groupPanelItemBorderColor: groupPanelItemBorderColor,
+      groupPanelItemTextStyle: groupPanelItemTextStyle,
+      // Column search
+      columnSearchBorderColor: columnSearchBorderColor ?? t.borderColor,
+      columnSearchIconColor: columnSearchIconColor ?? t.mutedIconColor,
+      // Drag feedback
+      dragFeedbackOutsideBackgroundColor:
+          dragFeedbackOutsideBackgroundColor ?? t.errorColor,
+      dragFeedbackInsideBackgroundColor:
+          dragFeedbackInsideBackgroundColor ?? t.backgroundColor,
+      dragFeedbackOutsideBorderColor:
+          dragFeedbackOutsideBorderColor ?? t.errorColor,
+      dragFeedbackInsideBorderColor:
+          dragFeedbackInsideBorderColor ?? t.borderColor,
+      dragFeedbackOutsideTextColor:
+          dragFeedbackOutsideTextColor ?? t.onPrimaryColor,
+      dragFeedbackInsideTextColor:
+          dragFeedbackInsideTextColor ?? t.foregroundColor,
+      dragFeedbackIconColor: dragFeedbackIconColor ?? t.onPrimaryColor,
+      dragFeedbackShadowColor: dragFeedbackShadowColor ?? t.shadowColor,
+      columnDragIndicatorColor: columnDragIndicatorColor ?? t.mutedIconColor,
+      columnFunctionIconColor:
+          columnFunctionIconColor ?? const Color(0xFF2196F3),
+      // Bottom panel
+      bottomPanelSectionBorderColor:
+          bottomPanelSectionBorderColor ?? t.borderColor,
+      bottomPanelDragTargetColor: bottomPanelDragTargetColor,
+      bottomPanelDragTargetInactiveColor: bottomPanelDragTargetInactiveColor ??
+          t.paginationUnselectedBackground,
+      bottomPanelIconColor: bottomPanelIconColor ?? t.mutedIconColor,
+      // Menu
+      menuBackgroundColor: menuBackgroundColor ?? t.backgroundColor,
+      menuSurfaceTintColor: menuSurfaceTintColor ?? t.backgroundColor,
+      menuTextColor: menuTextColor ?? t.secondaryTextColor,
+      // Dialog
+      dialogBackgroundColor: dialogBackgroundColor ?? t.backgroundColor,
+      dialogSurfaceTintColor: dialogSurfaceTintColor ?? t.backgroundColor,
+      dialogTextColor: dialogTextColor ?? t.secondaryTextColor,
+      // Context menu
+      contextMenuItems: contextMenuItems,
+      useDefaultContextMenuItems: useDefaultContextMenuItems,
+      showCopyMenuItem: showCopyMenuItem,
+      showCopyHeaderMenuItem: showCopyHeaderMenuItem,
+      showEquationMenuItem: showEquationMenuItem,
+      showSortMenuItem: showSortMenuItem,
+      showFilterBySelectionMenuItem: showFilterBySelectionMenuItem,
+      showChartsMenuItem: showChartsMenuItem,
+      contextMenuIconColor: contextMenuIconColor ?? t.iconColor,
+      contextMenuTextColor: contextMenuTextColor ?? t.foregroundColor,
+      contextMenuDestructiveColor: contextMenuDestructiveColor ?? t.errorColor,
+      contextMenuSectionHeaderColor:
+          contextMenuSectionHeaderColor ?? t.foregroundColor,
+      contextMenuItemIconBackgroundColor:
+          contextMenuItemIconBackgroundColor ?? Colors.transparent,
+      contextMenuSortIconColor: contextMenuSortIconColor ?? t.foregroundColor,
+      contextMenuPinIconColor: contextMenuPinIconColor ?? t.foregroundColor,
+      contextMenuGroupIconColor: contextMenuGroupIconColor ?? t.foregroundColor,
+      contextMenuAggregationIconColor:
+          contextMenuAggregationIconColor ?? t.foregroundColor,
+      contextMenuLayoutIconColor:
+          contextMenuLayoutIconColor ?? t.foregroundColor,
+      // Side panel
+      sidePanelConfiguration: sidePanelConfiguration,
+      showColumnsTab: showColumnsTab,
+      showFiltersTab: showFiltersTab,
+      showQuickSearch: showQuickSearch,
+      showGlobalSearch: showGlobalSearch,
+      // Frozen panes
+      frozenColumnCount: frozenColumnCount,
+      footerFrozenColumnCount: footerFrozenColumnCount,
+      frozenRowCount: frozenRowCount,
+      footerFrozenRowCount: footerFrozenRowCount,
+      showPlaceholderWhileScrolling: showPlaceholderWhileScrolling,
+      shrinkWrapRows: shrinkWrapRows,
+      shrinkWrapColumns: shrinkWrapColumns,
+      frozenPaneElevation: frozenPaneElevation,
+      frozenPaneBorderSide: frozenPaneBorderSide ??
+          BorderSide(
+            color: t.borderColor,
+            width: 1,
+          ),
+      frozenPaneScrollMode: frozenPaneScrollMode,
+      // Filter tab
+      filterTabItemBackgroundColor:
+          filterTabItemBackgroundColor ?? t.backgroundColor,
+      filterTabItemBorderColor: filterTabItemBorderColor ?? t.borderColor,
+      filterTabItemParamsColor: filterTabItemParamsColor ?? t.foregroundColor,
+      filterTabItemIconColor: filterTabItemIconColor ?? t.mutedIconColor,
+      // Chart popup
+      chartPopupBackgroundColor: chartPopupBackgroundColor ?? t.backgroundColor,
+      chartPopupBorderColor: chartPopupBorderColor ?? t.borderColor,
+      chartPopupLoadingBackgroundColor:
+          chartPopupLoadingBackgroundColor ?? t.foregroundColor,
+      chartPopupLoadingTextColor:
+          chartPopupLoadingTextColor ?? t.foregroundColor,
+      chartPopupResizeHandleColor:
+          chartPopupResizeHandleColor ?? t.mutedIconColor,
+      // Mobile settings
+      mobileSettingsBackgroundColor:
+          mobileSettingsBackgroundColor ?? t.backgroundColor,
+      mobileSettingsHeaderColor: mobileSettingsHeaderColor ?? t.foregroundColor,
+      mobileSettingsIconColor: mobileSettingsIconColor ?? t.foregroundColor,
+      // Chart overlay
+      chartTitleColor: chartTitleColor ?? t.overlayOnSurfaceColor,
+      chartIconColor: chartIconColor ?? t.overlayOnSurfaceColor,
+      fullScreenButtonColor: fullScreenButtonColor ?? t.overlayOnSurfaceColor,
+      closeButtonColor: closeButtonColor ?? t.overlayOnSurfaceColor,
+      chartSettingsSidebarBackgroundColor:
+          chartSettingsSidebarBackgroundColor ?? t.backgroundColor,
+    );
+  }
 
   OmDataGridConfiguration copyWith({
     Color? headerBackgroundColor,

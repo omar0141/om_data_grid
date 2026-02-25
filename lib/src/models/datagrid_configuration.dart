@@ -154,7 +154,7 @@ class OmDataGridConfiguration {
   final bool showClearFiltersButton;
   final bool showAddButton;
   final String? addButtonText;
-  final Widget addButtonIcon;
+  final Widget? addButtonIcon;
   final Color? addButtonBackgroundColor;
   final Color? addButtonForegroundColor;
   final Color? addButtonBorderColor;
@@ -310,7 +310,7 @@ class OmDataGridConfiguration {
     this.showClearFiltersButton = true,
     this.showAddButton = false,
     this.addButtonText = 'Add',
-    this.addButtonIcon = const Icon(Icons.add, size: 18, color: Colors.white),
+    this.addButtonIcon,
     this.addButtonBackgroundColor,
     this.addButtonForegroundColor,
     this.addButtonBorderColor,

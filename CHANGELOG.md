@@ -1,11 +1,13 @@
+## 0.0.15
+
+- **Unified Theme Integration**: Applied the `OmDataGridTheme` system to all popups and dialogs, including `ColumnChooserPopup`, `FormulaBuilderDialog`, and `DeleteConfirmation`.
+- **Dark Mode Optimization**: Enhanced visibility and contrast for input fields and search bars when using dark themes.
+- **Improved Positioning**: Fixed context menu positioning to accurately track cursor and long-press coordinates.
+- **Bug Fixes**: Resolved property naming inconsistencies and missing asset errors in the chart sidebar.
+
 ## 0.0.14
 
 - **Cascading Theming System**: Simplified grid styling by allowing users to set base colors (`gridBackgroundColor`, `gridForegroundColor`, `gridBorderColor`, `primaryColor`) which automatically cascade to over 50+ individual UI components.
-- **Global Typography**: Added `gridFontFamily` to apply a consistent font across rows, headers, and grouping panels.
-- **Modern Default Palette**: Updated default colors to a clean, professional Slate/Gray design.
-- Full control: You can still override any specific property while using the new base theme fallbacks.
-
-## 0.0.13
 
 - change style of the title in quick filter bar
 

@@ -157,39 +157,44 @@ OmGridColumn(
 
 ### Theming & UI
 
-The grid supports a powerful cascading theming system. You can set a few base colors, and the entire grid will automatically update its palette, while still allowing you to override any specific property.
+The grid supports a powerful **Seed-Based Theming System**. Instead of setting over 80 color properties manually, you can use `OmDataGridTheme` to derive a full palette from just a few base colors.
 
-#### Quick Styling (Base Theme)
+#### 1. Using Presets (Recommended)
 
-Perfect for matching your app's brand and supporting Light/Dark modes with minimal code:
+Quickly switch between pre-defined styles for Light, Dark, or Accented themes:
 
 ```dart
-OmDataGridConfiguration(
-  gridBackgroundColor: Colors.white,
-  gridForegroundColor: Color(0xFF1E293B),
-  gridBorderColor: Color(0xFFE2E8F0),
-  primaryColor: Color(0xFF1E293B),
-  gridFontFamily: 'Inter',
-  // Non-color attributes
-  rowHeight: 45.0,
+OmDataGridConfiguration.fromTheme(
+  theme: OmDataGridTheme.dark(), // Options: .light(), .dark(), .blue(), .green(), .rose(), .purple()
   allowPagination: true,
 )
 ```
 
-#### Detailed Customization
+#### 2. Seed-Based Custom Theme
 
-Override any of the 50+ styling properties for granular control:
+Provide a custom primary color, and the grid will calculate complementary colors for selections, hover states, and input fields:
 
 ```dart
-OmDataGridConfiguration(
-  gridBackgroundColor: Colors.white,
-  gridForegroundColor: Colors.black87,
-  // Specific overrides
-  headerBackgroundColor: Color(0xFF1A1A1A),
-  headerForegroundColor: Colors.white,
-  selectedRowColor: Colors.blue.withOpacity(0.1),
-  rowHeight: 50.0,
+OmDataGridConfiguration.fromTheme(
+  theme: OmDataGridTheme(
+    primaryColor: Colors.teal,
+    backgroundColor: Colors.white,
+    foregroundColor: Color(0xFF2D3748),
+  ),
+  rowHeight: 48,
+)
+```
+
+#### 3. Granular Overrides
+
+You can still override any specific property while letting the theme handle the rest:
+
+```dart
+OmDataGridConfiguration.fromTheme(
+  theme: OmDataGridTheme.light(),
+  headerBackgroundColor: Colors.blueGrey, // Override specific theme colors
   headerHeight: 60.0,
+  gridFontFamily: 'Roboto',
 )
 ```
 

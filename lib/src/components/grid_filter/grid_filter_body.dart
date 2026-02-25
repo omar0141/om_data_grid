@@ -868,23 +868,29 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   return c.value.isNotEmpty;
                 });
 
-                // 2. "The Old Way" Logic:
-                // If search is active and everything visible is selected (selectAll == true or null),
-                // we treat the search as a "filter" by unchecking anything that doesn't match.
-                // This satisfies the "it filtering on values" requirement.
-                //
-                // BUT, if the user explicitly clicked "Deselect All" while searching (selectAll == false),
-                // we DO NOT touch the hidden items. This satisfies the "don't empty the grid" requirement
-                // because those hidden items will remain checked and stay visible in the grid.
+                // 2. Search & Selection Logic:
+                // Only treat search as a "replacement filter" (wiping non-matches)
+                // if the user hasn't already unselected items outside of the current search results.
+                // This allows for additive selection (Scenario: user searches and selects items to add to current filter).
                 if (hasFilterText && selectAll != false) {
-                  for (var item in orgData) {
-                    bool matches = OmFilterUtils.evaluateAdvancedFilter(
-                      item["value"],
-                      advancedFilter,
-                      attributes,
-                    );
-                    if (!matches) {
-                      item["select"] = false;
+                  bool hasManualSelectionsOutsideSearch = orgData.any((item) =>
+                      item["select"] == false &&
+                      !OmFilterUtils.evaluateAdvancedFilter(
+                        item["value"],
+                        advancedFilter,
+                        attributes,
+                      ));
+
+                  if (!hasManualSelectionsOutsideSearch) {
+                    for (var item in orgData) {
+                      bool matches = OmFilterUtils.evaluateAdvancedFilter(
+                        item["value"],
+                        advancedFilter,
+                        attributes,
+                      );
+                      if (!matches) {
+                        item["select"] = false;
+                      }
                     }
                   }
                 }

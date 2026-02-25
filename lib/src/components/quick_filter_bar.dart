@@ -244,7 +244,7 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                                       _effectiveConfig.addButtonForegroundColor ??
                                           widget.configuration
                                               ?.primaryForegroundColor ??
-                                          Colors.white,
+                                          Colors.red,
                                 ),
                             backcolor:
                                 _effectiveConfig.addButtonBackgroundColor,

@@ -358,8 +358,11 @@ class _GridCellState extends State<GridCell> {
     final isRTL = Directionality.of(context) == TextDirection.rtl;
     return MenuAnchor(
       controller: _menuController,
-      alignmentOffset: isRTL ? const Offset(220, 0) : const Offset(-220, 0),
+      alignmentOffset: Offset.zero,
       style: MenuStyle(
+        alignment: _menuOpenedAbove
+            ? AlignmentDirectional.topEnd
+            : AlignmentDirectional.bottomEnd,
         backgroundColor: WidgetStateProperty.all(Colors.transparent),
         surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
         elevation: WidgetStateProperty.all(0),
@@ -394,12 +397,20 @@ class _GridCellState extends State<GridCell> {
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           builder: (context, value, child) {
-            return Transform.scale(
-              scale: value,
-              alignment: _menuOpenedAbove
-                  ? AlignmentDirectional.bottomEnd
-                  : AlignmentDirectional.topEnd,
-              child: Opacity(opacity: value, child: child),
+            return FractionalTranslation(
+              // In LTR, button is at end (right), shift left by menu width.
+              // In RTL, button is at end (left), menu top-left is already at button bottom-left. No shift needed.
+              translation: Offset(
+                isRTL ? 0.0 : -1.0,
+                _menuOpenedAbove ? -1.0 : 0.0,
+              ),
+              child: Transform.scale(
+                scale: value,
+                alignment: _menuOpenedAbove
+                    ? AlignmentDirectional.bottomEnd
+                    : AlignmentDirectional.topEnd,
+                child: Opacity(opacity: value, child: child),
+              ),
             );
           },
           child: Material(

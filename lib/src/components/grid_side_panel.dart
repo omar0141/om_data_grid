@@ -175,11 +175,11 @@ class _GridSidePanelState extends State<OmGridSidePanel> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             color: isSelected ? config.activeTabColor : config.inactiveTabColor,
-            border: Border(
+            border: BorderDirectional(
               bottom: BorderSide(
                   color: widget.controller.configuration.gridBorderColor,
                   width: 0.5),
-              left: BorderSide(
+              start: BorderSide(
                 color: isSelected
                     ? widget.controller.configuration.primaryColor
                     : Colors.transparent,

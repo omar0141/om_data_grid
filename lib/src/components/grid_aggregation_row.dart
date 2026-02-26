@@ -17,18 +17,18 @@ class GridAggregationRow extends StatelessWidget {
     required this.visibleIndices,
   });
 
-  Alignment _getAlignment(TextAlign textAlign) {
+  AlignmentGeometry _getAlignment(TextAlign textAlign) {
     switch (textAlign) {
       case TextAlign.left:
-        return Alignment.centerLeft;
+        return AlignmentDirectional.centerStart;
       case TextAlign.right:
-        return Alignment.centerRight;
+        return AlignmentDirectional.centerEnd;
       case TextAlign.center:
         return Alignment.center;
       case TextAlign.start:
-        return Alignment.centerLeft;
+        return AlignmentDirectional.centerStart;
       case TextAlign.end:
-        return Alignment.centerRight;
+        return AlignmentDirectional.centerEnd;
       default:
         return Alignment.center;
     }
@@ -45,13 +45,13 @@ class GridAggregationRow extends StatelessWidget {
     return Container(
       height: 60,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: config.gridBackgroundColor,
         // border: Border(top: BorderSide(color: Colors.grey.shade300, width: 2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: const Offset(0, -2),
+            offset: Offset(0, -2),
           ),
         ],
       ),
@@ -69,7 +69,10 @@ class GridAggregationRow extends StatelessWidget {
             return Container(
               width: width,
               decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: Colors.grey.shade100)),
+                border: BorderDirectional(
+                  end:
+                      BorderSide(color: config.rowBorderColor.withOpacity(0.5)),
+                ),
               ),
             );
           }
@@ -89,7 +92,9 @@ class GridAggregationRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             alignment: _getAlignment(col.textAlign),
             decoration: BoxDecoration(
-              border: Border(right: BorderSide(color: Colors.grey.shade100)),
+              border: BorderDirectional(
+                end: BorderSide(color: config.rowBorderColor.withOpacity(0.5)),
+              ),
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

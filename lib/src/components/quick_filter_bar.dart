@@ -565,7 +565,7 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
               return GestureDetector(
                 onTap: () => _handleTap(column, value, config.isMultiSelect),
                 child: Container(
-                  margin: const EdgeInsets.only(right: 8),
+                  margin: const EdgeInsetsDirectional.only(end: 8),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 6,

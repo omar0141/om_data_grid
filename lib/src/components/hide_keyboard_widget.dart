@@ -27,10 +27,10 @@ class OmHideKeyboardWidget extends StatelessWidget {
             ),
             Visibility(
               visible: isKeyboardVisible,
-              child: Positioned(
+              child: PositionedDirectional(
                 top: availableHeight - additionHeight,
-                left: 0,
-                right: 0,
+                start: 0,
+                end: 0,
                 child: GestureDetector(
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();

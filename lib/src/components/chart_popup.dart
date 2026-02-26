@@ -229,11 +229,11 @@ class _ChartPopupState extends State<OmChartPopup> {
     Size screenSize = MediaQuery.of(context).size;
     final bool isMobile = screenSize.width < 600;
 
-    return Positioned(
-      left: (_isFullScreen || isMobile) ? 0 : _position.dx,
+    return PositionedDirectional(
+      start: (_isFullScreen || isMobile) ? 0 : _position.dx,
       top: (_isFullScreen || isMobile) ? 0 : _position.dy,
       bottom: (_isFullScreen || isMobile) ? 0 : null,
-      right: (_isFullScreen || isMobile) ? 0 : null,
+      end: (_isFullScreen || isMobile) ? 0 : null,
       width: (_isFullScreen || isMobile) ? null : _width,
       height: (_isFullScreen || isMobile) ? null : _height,
       child: GestureDetector(
@@ -308,22 +308,26 @@ class _ChartPopupState extends State<OmChartPopup> {
   }
 
   Widget _buildResizeHandle() {
-    return Positioned(
-      right: 0,
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
+    return PositionedDirectional(
+      end: 0,
       bottom: 0,
       child: GestureDetector(
         onPanUpdate: (details) {
           setState(() {
-            _width = (_width + details.delta.dx).clamp(450.0, 1600.0);
+            final dx = isRTL ? -details.delta.dx : details.delta.dx;
+            _width = (_width + dx).clamp(450.0, 1600.0);
             _height = (_height + details.delta.dy).clamp(350.0, 1000.0);
           });
         },
         child: MouseRegion(
-          cursor: SystemMouseCursors.resizeUpLeftDownRight,
+          cursor: isRTL
+              ? SystemMouseCursors.resizeUpRightDownLeft
+              : SystemMouseCursors.resizeUpLeftDownRight,
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Icon(
-              Icons.south_east,
+              isRTL ? Icons.south_west : Icons.south_east,
               size: 18,
               color: widget.configuration.chartPopupResizeHandleColor!,
             ),

@@ -13,10 +13,10 @@ class OmGridBody extends StatelessWidget {
   final Set<Map<String, dynamic>> selectedRows;
   final int? hoveredRowIndex;
   final ScrollController?
-  controller; // This is the vertical controller for the list
+      controller; // This is the vertical controller for the list
   final ScrollController verticalScrollController;
   final ScrollController?
-  horizontalScrollController; // Added for horizontal virtualization
+      horizontalScrollController; // Added for horizontal virtualization
   final List<int>? visibleIndicesToRender;
   final bool showScrollbar;
   final String globalSearchText;
@@ -34,8 +34,7 @@ class OmGridBody extends StatelessWidget {
     Offset position,
     int rowIndex, [
     int? colIndex,
-  ])
-  onShowContextMenu;
+  ]) onShowContextMenu;
   final void Function(int? index) onHoverChanged;
   final void Function(int oldIndex, int newIndex)? onRowReorder;
 
@@ -100,8 +99,8 @@ class OmGridBody extends StatelessWidget {
 
     final Iterable<dynamic> bottomRows =
         (totalItems >= (frozenTopCount + frozenBottomCount))
-        ? flattenedItems.skip(totalItems - frozenBottomCount)
-        : [];
+            ? flattenedItems.skip(totalItems - frozenBottomCount)
+            : [];
 
     Widget buildList() {
       final middleItemsList = middleItems.toList(); // Only copy once here
@@ -229,10 +228,10 @@ class OmGridBody extends StatelessWidget {
                 children: [
                   listWidget,
                   if (stickyTopRows.isNotEmpty)
-                    Positioned(
+                    PositionedDirectional(
                       top: 0,
-                      left: 0,
-                      right: 0,
+                      start: 0,
+                      end: 0,
                       child: Container(
                         decoration: BoxDecoration(
                           color: configuration.gridBackgroundColor,
@@ -250,8 +249,7 @@ class OmGridBody extends StatelessWidget {
                                 ]
                               : null,
                           border: Border(
-                            bottom:
-                                configuration.frozenPaneBorderSide ??
+                            bottom: configuration.frozenPaneBorderSide ??
                                 BorderSide.none,
                           ),
                         ),
@@ -264,10 +262,10 @@ class OmGridBody extends StatelessWidget {
                       ),
                     ),
                   if (stickyBottomRows.isNotEmpty)
-                    Positioned(
+                    PositionedDirectional(
                       bottom: 0,
-                      left: 0,
-                      right: 0,
+                      start: 0,
+                      end: 0,
                       child: Container(
                         decoration: BoxDecoration(
                           color: configuration.gridBackgroundColor,
@@ -285,8 +283,7 @@ class OmGridBody extends StatelessWidget {
                                 ]
                               : null,
                           border: Border(
-                            top:
-                                configuration.frozenPaneBorderSide ??
+                            top: configuration.frozenPaneBorderSide ??
                                 BorderSide.none,
                           ),
                         ),

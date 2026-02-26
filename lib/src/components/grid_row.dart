@@ -272,12 +272,12 @@ class _GridRowState extends State<OmGridRow> {
       );
     }
 
-    final double leftPadding =
+    final double startPadding =
         isFirstVisible ? 12.0 + (widget.level * 20.0) : 12.0;
 
     return Container(
       height: widget.configuration.rowHeight,
-      padding: EdgeInsets.fromLTRB(leftPadding, 4.0, 12.0, 4.0),
+      padding: EdgeInsetsDirectional.fromSTEB(startPadding, 4.0, 12.0, 4.0),
       decoration: BoxDecoration(
         color: cellSelected ? widget.configuration.selectedRowColor : null,
         border: BorderDirectional(

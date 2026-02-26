@@ -12,6 +12,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      // To test RTL, uncomment the following two lines:
+      // locale: const Locale('ar'),
+      // supportedLocales: const [Locale('ar'), Locale('en')],
       home: const HomeScreen2(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

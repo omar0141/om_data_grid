@@ -38,8 +38,7 @@ class GridMainContainer extends StatefulWidget {
     Offset position,
     int rowIndex, [
     int? colIndex,
-  ])
-  onShowContextMenu;
+  ]) onShowContextMenu;
   final void Function(int? index) onHoverChanged;
   final void Function(int index, double newWidth) onColumnResize;
   final void Function(dynamic newData) onSearch;
@@ -141,6 +140,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
 
   @override
   Widget build(BuildContext context) {
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
     final config = widget.controller.configuration;
     final sidePanelConfig = config.sidePanelConfiguration;
     double sidePanelWidth = sidePanelConfig.collapsedWidth;
@@ -178,15 +178,14 @@ class _GridMainContainerState extends State<GridMainContainer> {
     final otherIndices = <int>[];
 
     final legacyLeft = visibleIndices.take(frozenCount).toSet();
-    final legacyRight = visibleIndices
-        .skip(visibleIndices.length - footerFrozenCount)
-        .toSet();
+    final legacyRight =
+        visibleIndices.skip(visibleIndices.length - footerFrozenCount).toSet();
 
     for (var i in visibleIndices) {
       final col = widget.internalColumns[i];
-      if (col.pinning == OmColumnPinning.left || legacyLeft.contains(i)) {
+      if (col.pinning == OmColumnPinning.start || legacyLeft.contains(i)) {
         leftIndices.add(i);
-      } else if (col.pinning == OmColumnPinning.right ||
+      } else if (col.pinning == OmColumnPinning.end ||
           legacyRight.contains(i)) {
         rightIndices.add(i);
       } else {
@@ -224,9 +223,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: config.shrinkWrapRows
-            ? MainAxisSize.min
-            : MainAxisSize.max,
+        mainAxisSize:
+            config.shrinkWrapRows ? MainAxisSize.min : MainAxisSize.max,
         children: [
           OmGridHeader(
             controller: widget.controller,
@@ -243,9 +241,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
             sortAscending: widget.sortAscending,
             onSort: widget.onSort,
             onReorder: widget.onReorder,
-            horizontalScrollController: isMiddle
-                ? widget.horizontalScrollController
-                : null,
+            horizontalScrollController:
+                isMiddle ? widget.horizontalScrollController : null,
           ),
           if (config.showQuickSearch)
             QuickSearchBar(
@@ -266,9 +263,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
               hoveredRowIndex: widget.hoveredRowIndex,
               controller: verticalController,
               verticalScrollController: widget.verticalScrollController,
-              horizontalScrollController: isMiddle
-                  ? widget.horizontalScrollController
-                  : null,
+              horizontalScrollController:
+                  isMiddle ? widget.horizontalScrollController : null,
               onToggleGroup: widget.onToggleGroup,
               onRowTap: widget.onRowTap,
               onCellTapDown: widget.onCellTapDown,
@@ -296,9 +292,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
                 hoveredRowIndex: widget.hoveredRowIndex,
                 controller: verticalController,
                 verticalScrollController: widget.verticalScrollController,
-                horizontalScrollController: isMiddle
-                    ? widget.horizontalScrollController
-                    : null,
+                horizontalScrollController:
+                    isMiddle ? widget.horizontalScrollController : null,
                 onToggleGroup: widget.onToggleGroup,
                 onRowTap: widget.onRowTap,
                 onCellTapDown: widget.onCellTapDown,
@@ -339,11 +334,18 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: config.frozenPaneElevation,
-                    offset: Offset(config.frozenPaneElevation / 2, 0),
+                    offset: Offset(
+                      isRTL
+                          ? -config.frozenPaneElevation / 2
+                          : config.frozenPaneElevation / 2,
+                      0,
+                    ),
                   ),
                 ]
               : null,
-          border: Border(right: config.frozenPaneBorderSide ?? BorderSide.none),
+          border: BorderDirectional(
+            end: config.frozenPaneBorderSide ?? BorderSide.none,
+          ),
         ),
         child: buildPart(
           indices: indices,
@@ -367,11 +369,18 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: config.frozenPaneElevation,
-                    offset: Offset(-config.frozenPaneElevation / 2, 0),
+                    offset: Offset(
+                      isRTL
+                          ? config.frozenPaneElevation / 2
+                          : -config.frozenPaneElevation / 2,
+                      0,
+                    ),
                   ),
                 ]
               : null,
-          border: Border(left: config.frozenPaneBorderSide ?? BorderSide.none),
+          border: BorderDirectional(
+            start: config.frozenPaneBorderSide ?? BorderSide.none,
+          ),
         ),
         child: buildPart(
           indices: indices,
@@ -402,8 +411,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
             width: config.shrinkWrapColumns
                 ? middleTotalWidth
                 : (middleTotalWidth < availableWidth
-                      ? availableWidth
-                      : middleTotalWidth),
+                    ? availableWidth
+                    : middleTotalWidth),
             child: buildPart(
               indices: middleIndices,
               verticalController: widget.verticalScrollController,
@@ -471,8 +480,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
                 showVerticalScrollbar: showInRight,
               ),
               if (stickyLeftIndices.isNotEmpty)
-                Positioned(
-                  left: 0,
+                PositionedDirectional(
+                  start: 0,
                   top: 0,
                   bottom: 0,
                   child: buildLeftSegment(
@@ -482,8 +491,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   ),
                 ),
               if (stickyRightIndices.isNotEmpty)
-                Positioned(
-                  right: 0,
+                PositionedDirectional(
+                  end: 0,
                   top: 0,
                   bottom: 0,
                   child: buildRightSegment(

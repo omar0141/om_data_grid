@@ -25,7 +25,7 @@ class GridComboxBoxMultiColumnsHeaders extends StatelessWidget {
       myheaders.removeWhere((e) => e.isMobile != 1);
     }
     return Container(
-      margin: const EdgeInsets.only(left: 8, right: 8, top: 8),
+      margin: const EdgeInsetsDirectional.only(start: 8, end: 8, top: 8),
       decoration: BoxDecoration(
         color: configuration.primaryColor.withOpacityNew(0.1),
         border: Border(
@@ -96,9 +96,8 @@ class ComboxBoxMultiColumnsRows extends StatelessWidget {
       final value = itemData[header.key] ?? '';
       final cellWidget = Container(
         decoration: BoxDecoration(
-          color: selected
-              ? configuration.primaryColor.withOpacityNew(0.1)
-              : null,
+          color:
+              selected ? configuration.primaryColor.withOpacityNew(0.1) : null,
         ),
         width: header.width,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),

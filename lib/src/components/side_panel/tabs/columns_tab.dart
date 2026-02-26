@@ -62,7 +62,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 16, 8.0, 8.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(8.0, 16, 8.0, 8.0),
           child: Row(
             children: [
               Expanded(
@@ -207,13 +207,14 @@ class _ColumnsTabState extends State<ColumnsTab> {
                                     ),
                                   ],
                                 ),
-                                alignment: Alignment.centerLeft,
+                                alignment: AlignmentDirectional.centerStart,
                                 child: Row(
                                   children: [
                                     if (isOutside)
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 8.0,
+                                        padding:
+                                            const EdgeInsetsDirectional.only(
+                                          end: 8.0,
                                         ),
                                         child: Icon(
                                           Icons.visibility_off,
@@ -342,7 +343,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                 },
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsetsDirectional.only(end: 8),
                 child: Icon(Icons.drag_indicator,
                     size: 14,
                     color: widget.controller.configuration.secondaryTextColor),
@@ -385,7 +386,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                 ),
               if (colModel.aggregation != OmAggregationType.none)
                 Padding(
-                  padding: const EdgeInsets.only(left: 4),
+                  padding: const EdgeInsetsDirectional.only(start: 4),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 4,
@@ -408,7 +409,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                 ),
               if (colModel.isCalculated)
                 Padding(
-                  padding: const EdgeInsets.only(left: 4),
+                  padding: const EdgeInsetsDirectional.only(start: 4),
                   child: Icon(
                     Icons.functions,
                     size: 14,
@@ -419,7 +420,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                 ),
               if (hasFilter)
                 Padding(
-                  padding: EdgeInsets.only(left: 4),
+                  padding: const EdgeInsetsDirectional.only(start: 4),
                   child: Icon(
                     Icons.filter_alt,
                     size: 14,
@@ -527,7 +528,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                     constraints: const BoxConstraints(minHeight: 80),
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                    margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    margin: const EdgeInsetsDirectional.fromSTEB(12, 0, 12, 12),
                     decoration: BoxDecoration(
                       color: isHovered
                           ? widget.controller.configuration.primaryColor
@@ -545,7 +546,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                     ),
                     alignment: activeKeys.isEmpty
                         ? Alignment.center
-                        : Alignment.topLeft,
+                        : AlignmentDirectional.topStart,
                     child: activeKeys.isEmpty
                         ? _buildPlaceholder(placeholder)
                         : title == "Row Groups"

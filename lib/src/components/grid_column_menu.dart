@@ -122,13 +122,8 @@ class OmGridColumnMenu extends StatelessWidget {
                       vertical: 8,
                     ),
                   ),
-                  submenuIcon: WidgetStatePropertyAll(
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 15,
-                      color: Colors.grey[400],
-                    ),
-                  ),
+                  submenuIcon:
+                      WidgetStatePropertyAll(_buildSubmenuIcon(context)),
                   menuStyle: MenuStyle(
                     shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
@@ -143,14 +138,18 @@ class OmGridColumnMenu extends StatelessWidget {
                       Icons.block,
                     ),
                     _buildPinningItem(
-                      OmColumnPinning.left,
-                      configuration.labels.pinToLeft,
-                      Icons.keyboard_double_arrow_left_rounded,
+                      OmColumnPinning.start,
+                      configuration.labels.pinToStart,
+                      Directionality.of(context) == TextDirection.ltr
+                          ? Icons.keyboard_double_arrow_left_rounded
+                          : Icons.keyboard_double_arrow_right_rounded,
                     ),
                     _buildPinningItem(
-                      OmColumnPinning.right,
-                      configuration.labels.pinToRight,
-                      Icons.keyboard_double_arrow_right_rounded,
+                      OmColumnPinning.end,
+                      configuration.labels.pinToEnd,
+                      Directionality.of(context) == TextDirection.ltr
+                          ? Icons.keyboard_double_arrow_right_rounded
+                          : Icons.keyboard_double_arrow_left_rounded,
                     ),
                   ],
                   child: Text(
@@ -182,13 +181,8 @@ class OmGridColumnMenu extends StatelessWidget {
                       vertical: 8,
                     ),
                   ),
-                  submenuIcon: WidgetStatePropertyAll(
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 15,
-                      color: Colors.grey[400],
-                    ),
-                  ),
+                  submenuIcon:
+                      WidgetStatePropertyAll(_buildSubmenuIcon(context)),
                   menuStyle: MenuStyle(
                     shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
@@ -286,7 +280,7 @@ class OmGridColumnMenu extends StatelessWidget {
 
   Widget _buildSectionHeader(String label, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 12, 12),
       child: Row(
         children: [
           // Icon(icon, size: 14, color: Colors.grey[500]),
@@ -307,7 +301,21 @@ class OmGridColumnMenu extends StatelessWidget {
   }
 
   Widget _buildMenuIcon(IconData icon, {Color? color}) {
-    return Icon(icon, color: color ?? Colors.grey[400], size: 15);
+    return Icon(
+      icon,
+      size: 18,
+      color: color ?? controller.configuration.secondaryTextColor,
+    );
+  }
+
+  Widget _buildSubmenuIcon(BuildContext context) {
+    return Icon(
+      Directionality.of(context) == TextDirection.ltr
+          ? Icons.chevron_right_rounded
+          : Icons.chevron_left_rounded,
+      size: 15,
+      color: Colors.grey[400],
+    );
   }
 
   Widget _buildMenuItem({

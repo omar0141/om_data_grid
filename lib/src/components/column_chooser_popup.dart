@@ -32,8 +32,8 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
   Widget build(BuildContext context) {
     final configuration = widget.controller.configuration;
 
-    return Positioned(
-      left: _position.dx,
+    return PositionedDirectional(
+      start: _position.dx,
       top: _position.dy,
       child: Material(
         elevation: 8,

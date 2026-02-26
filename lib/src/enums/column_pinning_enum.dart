@@ -3,9 +3,9 @@ enum OmColumnPinning {
   /// The column is not pinned and scrolls normally.
   none,
 
-  /// The column is pinned to the left side of the grid.
-  left,
+  /// The column is pinned to the start side of the grid.
+  start,
 
-  /// The column is pinned to the right side of the grid.
-  right,
+  /// The column is pinned to the end side of the grid.
+  end,
 }

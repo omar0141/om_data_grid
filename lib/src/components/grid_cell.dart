@@ -260,7 +260,7 @@ class _GridCellState extends State<GridCell> {
     }
 
     return Stack(
-      alignment: Alignment.topRight,
+      alignment: AlignmentDirectional.topEnd,
       children: [
         GestureDetector(
           onTap: () {
@@ -287,9 +287,9 @@ class _GridCellState extends State<GridCell> {
           ),
         ),
         if (canEdit && widget.isEditing)
-          Positioned(
+          PositionedDirectional(
             top: 0,
-            right: 0,
+            end: 0,
             child: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -299,9 +299,9 @@ class _GridCellState extends State<GridCell> {
             ),
           ),
         if (canEdit && widget.isEditing)
-          Positioned(
+          PositionedDirectional(
             bottom: 0,
-            right: 0,
+            end: 0,
             child: IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -355,14 +355,15 @@ class _GridCellState extends State<GridCell> {
   }
 
   Widget _buildDelete(BuildContext context) {
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
     return MenuAnchor(
       controller: _menuController,
-      alignmentOffset: const Offset(-220, 0),
+      alignmentOffset: isRTL ? const Offset(0, 0) : const Offset(-220, 0),
       style: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.transparent),
-        surfaceTintColor: MaterialStateProperty.all(Colors.transparent),
-        elevation: MaterialStateProperty.all(0),
-        padding: MaterialStateProperty.all(EdgeInsets.zero),
+        backgroundColor: WidgetStateProperty.all(Colors.transparent),
+        surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
+        elevation: WidgetStateProperty.all(0),
+        padding: WidgetStateProperty.all(EdgeInsets.zero),
       ),
       builder: (context, controller, child) {
         return IconButton(
@@ -395,8 +396,9 @@ class _GridCellState extends State<GridCell> {
           builder: (context, value, child) {
             return Transform.scale(
               scale: value,
-              alignment:
-                  _menuOpenedAbove ? Alignment.bottomRight : Alignment.topRight,
+              alignment: _menuOpenedAbove
+                  ? AlignmentDirectional.bottomEnd
+                  : AlignmentDirectional.topEnd,
               child: Opacity(opacity: value, child: child),
             );
           },
@@ -409,7 +411,7 @@ class _GridCellState extends State<GridCell> {
             ),
             color: widget.configuration.menuBackgroundColor ?? Colors.white,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 24, 16),
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 24, 16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -435,7 +437,7 @@ class _GridCellState extends State<GridCell> {
                   ),
                   const SizedBox(height: 8),
                   Padding(
-                    padding: const EdgeInsets.only(left: 28.0),
+                    padding: const EdgeInsetsDirectional.only(start: 28.0),
                     child: Text(
                       'Are you sure to delete this row?',
                       style: TextStyle(

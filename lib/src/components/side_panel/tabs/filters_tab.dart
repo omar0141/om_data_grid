@@ -232,7 +232,7 @@ class _FilterCardState extends State<_FilterCard> {
           InkWell(
             onTap: () => setState(() => _isExpanded = !_isExpanded),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 12, 12),
               child: Row(
                 children: [
                   Expanded(
@@ -294,9 +294,9 @@ class _FilterCardState extends State<_FilterCard> {
               _textController2To,
             ),
             Align(
-              alignment: Alignment.centerRight,
+              alignment: AlignmentDirectional.centerEnd,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                padding: const EdgeInsetsDirectional.fromSTEB(12, 4, 12, 12),
                 child: SizedBox(
                   height: 32,
                   child: OutlinedButton(

@@ -22,8 +22,9 @@ class OmDataGridController extends ChangeNotifier {
 
   /// Callback to trigger visualization (charts).
   /// This is usually provided by the [OmDataGrid] widget when it attaches.
-  void Function(List<Map<String, dynamic>> data, List<OmGridColumnModel> columns)?
-  onVisualize;
+  void Function(
+          List<Map<String, dynamic>> data, List<OmGridColumnModel> columns)?
+      onVisualize;
 
   /// Callback when the add button is pressed.
   void Function()? onAddPressed;
@@ -58,11 +59,11 @@ class OmDataGridController extends ChangeNotifier {
     this.onRowReorder,
     this.onBeforeRowReorder,
     this.onColumnReorder,
-  }) : _data = data,
-       _filteredData = List.from(data),
-       _columnModels = columnModels,
-       _configuration = configuration ?? OmDataGridConfiguration(),
-       _additionalSidePanelTabs = additionalSidePanelTabs {
+  })  : _data = data,
+        _filteredData = List.from(data),
+        _columnModels = columnModels,
+        _configuration = configuration ?? OmDataGridConfiguration(),
+        _additionalSidePanelTabs = additionalSidePanelTabs {
     // Initialize original indexes and clones for initial state
     _initialColumnModels = [];
     for (int i = 0; i < columnModels.length; i++) {
@@ -155,9 +156,9 @@ class OmDataGridController extends ChangeNotifier {
     final index = _columnModels.indexWhere((c) => c.key == key);
     if (index != -1 && _columnModels[index].isCalculated) {
       _columnModels[index].column = _columnModels[index].column.copyWith(
-        title: title,
-        formula: formula,
-      );
+            title: title,
+            formula: formula,
+          );
       _calculateCalculatedColumns();
       notifyListeners();
     }
@@ -268,8 +269,8 @@ class OmDataGridController extends ChangeNotifier {
   void setAdditionalSidePanelTabVisibility(String id, bool visible) {
     final index = _additionalSidePanelTabs.indexWhere((tab) => tab.id == id);
     if (index != -1) {
-      _additionalSidePanelTabs[index] = _additionalSidePanelTabs[index]
-          .copyWith(visible: visible);
+      _additionalSidePanelTabs[index] =
+          _additionalSidePanelTabs[index].copyWith(visible: visible);
       notifyListeners();
     }
   }
@@ -322,30 +323,29 @@ class OmDataGridController extends ChangeNotifier {
       _columnModels.removeAt(index);
 
       int insertIdx = 0;
-      if (pinning == OmColumnPinning.left) {
+      if (pinning == OmColumnPinning.start) {
         // Move to appropriate position within left group based on original sequence
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning == OmColumnPinning.left &&
+            _columnModels[insertIdx].pinning == OmColumnPinning.start &&
             _columnModels[insertIdx].originalIndex < column.originalIndex) {
           insertIdx++;
         }
-      } else if (pinning == OmColumnPinning.right) {
+      } else if (pinning == OmColumnPinning.end) {
         // Find start of right pinned group
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning != OmColumnPinning.right) {
+            _columnModels[insertIdx].pinning != OmColumnPinning.end) {
           insertIdx++;
         }
         // Place correctly within right group
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning == OmColumnPinning.right &&
+            _columnModels[insertIdx].pinning == OmColumnPinning.end &&
             _columnModels[insertIdx].originalIndex < column.originalIndex) {
           insertIdx++;
         }
       } else {
         // Return to natural order among unpinned columns
-        // Skip all left-pinned columns
         while (insertIdx < _columnModels.length &&
-            _columnModels[insertIdx].pinning == OmColumnPinning.left) {
+            _columnModels[insertIdx].pinning == OmColumnPinning.start) {
           insertIdx++;
         }
         // Find position among unpinned columns

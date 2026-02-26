@@ -263,7 +263,7 @@ class OmGridGroupPanel extends StatelessWidget {
                 ),
               if (groupedColumns.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(left: 8),
+                  padding: const EdgeInsetsDirectional.only(start: 8),
                   child: Tooltip(
                     message: "Clear all groups",
                     child: InkWell(

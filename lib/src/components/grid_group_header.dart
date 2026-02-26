@@ -33,7 +33,7 @@ class GridGroupHeader extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             height: config.rowHeight,
-            padding: EdgeInsets.only(left: 16.0 * level + 12.0),
+            padding: EdgeInsetsDirectional.only(start: 16.0 * level + 12.0),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(color: config.gridBorderColor, width: 0.5),
@@ -42,10 +42,16 @@ class GridGroupHeader extends StatelessWidget {
             child: Row(
               children: [
                 AnimatedRotation(
-                  turns: isExpanded ? 0.25 : 0,
+                  turns: isExpanded
+                      ? (Directionality.of(context) == TextDirection.rtl
+                          ? -0.25
+                          : 0.25)
+                      : 0,
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
-                    Icons.chevron_right,
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.chevron_left
+                        : Icons.chevron_right,
                     size: 20,
                     color: config.secondaryTextColor,
                   ),

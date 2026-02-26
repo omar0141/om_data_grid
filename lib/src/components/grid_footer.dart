@@ -24,6 +24,7 @@ class OmGridFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
     final int actualRowsPerPage = rowsPerPage ?? configuration.rowsPerPage;
     final mode = configuration.paginationMode;
     final int totalPages =
@@ -138,7 +139,7 @@ class OmGridFooter extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               _PageNavButton(
-                icon: Icons.chevron_left,
+                icon: isRTL ? Icons.chevron_right : Icons.chevron_left,
                 onPressed: currentPage > 0
                     ? () => onPageChanged(currentPage - 1)
                     : null,
@@ -169,7 +170,7 @@ class OmGridFooter extends StatelessWidget {
                 ..._buildPageNumbers(totalPages, context),
               const SizedBox(width: 8),
               _PageNavButton(
-                icon: Icons.chevron_right,
+                icon: isRTL ? Icons.chevron_left : Icons.chevron_right,
                 onPressed: currentPage < totalPages - 1
                     ? () => onPageChanged(currentPage + 1)
                     : null,

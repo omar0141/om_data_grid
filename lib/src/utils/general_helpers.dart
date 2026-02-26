@@ -395,7 +395,8 @@ class GridDatePickerUtils {
                                 ),
                               ),
                               const Padding(
-                                padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    16, 20, 16, 0),
                                 child: Icon(
                                   Icons.arrow_forward,
                                   color: Colors.grey,
@@ -592,10 +593,10 @@ class GridFileViewerUtils {
                       ),
                     ),
                   ),
-                  Positioned(
+                  PositionedDirectional(
                     top: 16,
-                    left: 16,
-                    right: 16,
+                    start: 16,
+                    end: 16,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

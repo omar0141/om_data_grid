@@ -381,11 +381,11 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
       controller: _menuController,
       alignmentOffset: _menuPosition,
       style: MenuStyle(
-        alignment: Alignment.topLeft,
+        alignment: AlignmentDirectional.topStart,
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+        padding: const WidgetStatePropertyAll(EdgeInsetsDirectional.zero),
       ),
       menuChildren: [
         OmGridColumnMenu(
@@ -413,132 +413,142 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
             });
             controller.open();
           },
-          child: Container(
-            padding: isFused ? EdgeInsets.zero : const EdgeInsets.all(12),
-            width: isExpanded ? null : widget.columnWidths[index],
-            height: configuration.headerHeight,
-            decoration: BoxDecoration(
-              color: controller.isOpen
-                  ? configuration.primaryColor.withOpacity(0.05)
-                  : Colors.transparent,
-              border: BorderDirectional(
-                start: !widget.isFirstVisible &&
-                        (configuration.headerBorderVisibility ==
-                                OmGridBorderVisibility.vertical ||
-                            configuration.headerBorderVisibility ==
-                                OmGridBorderVisibility.both)
-                    ? BorderSide(
-                        width: configuration.headerBorderWidth,
-                        color: configuration.headerBorderColor,
-                      )
-                    : BorderSide.none,
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: (configuration.allowSorting &&
-                            column.isAllowSorting &&
-                            !isFused)
-                        ? () {
-                            widget.onSort?.call(column.key);
-                            _menuController.close();
-                          }
-                        : null,
-                    child: Row(
-                      mainAxisAlignment: column.textAlign == TextAlign.center
-                          ? MainAxisAlignment.center
-                          : (column.textAlign == TextAlign.right
-                              ? MainAxisAlignment.end
-                              : MainAxisAlignment.start),
-                      children: [
-                        Flexible(
-                          child: Text(
-                            column.title,
-                            textAlign: column.textAlign,
-                            overflow: TextOverflow.ellipsis,
-                            style: configuration.headerTextStyle ??
-                                TextStyle(
-                                  color: configuration.headerForegroundColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  fontFamily: configuration.gridFontFamily,
-                                ),
-                          ),
-                        ),
-                        if (isSorting)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 4),
-                            child: Icon(
-                              widget.sortAscending == true
-                                  ? Icons.arrow_upward_rounded
-                                  : Icons.arrow_downward_rounded,
-                              size: 16,
-                              color: configuration.sortIconColor,
-                            ),
-                          ),
-                      ],
-                    ),
+          child: Stack(
+            alignment: AlignmentDirectional.centerStart,
+            children: [
+              Container(
+                padding: isFused
+                    ? EdgeInsetsDirectional.zero
+                    : const EdgeInsets.all(12),
+                width: isExpanded ? null : widget.columnWidths[index],
+                height: configuration.headerHeight,
+                decoration: BoxDecoration(
+                  color: controller.isOpen
+                      ? configuration.primaryColor.withOpacity(0.05)
+                      : Colors.transparent,
+                  border: BorderDirectional(
+                    start: !widget.isFirstVisible &&
+                            (configuration.headerBorderVisibility ==
+                                    OmGridBorderVisibility.vertical ||
+                                configuration.headerBorderVisibility ==
+                                    OmGridBorderVisibility.both)
+                        ? BorderSide(
+                            width: configuration.headerBorderWidth,
+                            color: configuration.headerBorderColor,
+                          )
+                        : BorderSide.none,
                   ),
                 ),
-                Visibility(
-                  visible: _isHovered,
-                  maintainSize: false,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTapDown: (details) {
-                        final RenderBox box =
-                            context.findRenderObject() as RenderBox;
-                        final Offset localOffset = box.globalToLocal(
-                          details.globalPosition,
-                        );
-                        setState(() {
-                          // Open slightly below the click point to avoid covering the icon
-                          _menuPosition = Offset(
-                            localOffset.dx - 120,
-                            localOffset.dy + 20,
-                          );
-                        });
-                        controller.open();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.only(start: 6),
-                        child: Icon(
-                          Icons.more_vert,
-                          size: 18,
-                          color: isSorting
-                              ? configuration.primaryColor
-                              : configuration.sortIconColor,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: (configuration.allowSorting &&
+                                column.isAllowSorting &&
+                                !isFused)
+                            ? () {
+                                widget.onSort?.call(column.key);
+                                _menuController.close();
+                              }
+                            : null,
+                        child: Row(
+                          mainAxisAlignment:
+                              column.textAlign == TextAlign.center
+                                  ? MainAxisAlignment.center
+                                  : (column.textAlign == TextAlign.right
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.start),
+                          children: [
+                            Flexible(
+                              child: Text(
+                                column.title,
+                                textAlign: column.textAlign,
+                                overflow: TextOverflow.ellipsis,
+                                style: configuration.headerTextStyle ??
+                                    TextStyle(
+                                      color:
+                                          configuration.headerForegroundColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      fontFamily: configuration.gridFontFamily,
+                                    ),
+                              ),
+                            ),
+                            if (isSorting)
+                              Padding(
+                                padding:
+                                    const EdgeInsetsDirectional.only(start: 4),
+                                child: Icon(
+                                  widget.sortAscending == true
+                                      ? Icons.arrow_upward_rounded
+                                      : Icons.arrow_downward_rounded,
+                                  size: 16,
+                                  color: configuration.sortIconColor,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                ),
-                if (column.isAllowFiltering && !isFused)
-                  Visibility(
-                    visible: !configuration.showFilterOnHover ||
-                        _isHovered ||
-                        isFiltered,
-                    maintainSize: false,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    child: GridFilter(
-                      key: ValueKey(isFiltered),
-                      orgData: widget.orgData,
-                      dataSource: widget.srchData,
-                      onSearch: widget.onSearch,
-                      attributes: column,
-                      allAttributes: widget.columns,
-                      configuration: configuration,
-                      globalSearchText: widget.globalSearchText,
+                    Visibility(
+                      visible: _isHovered,
+                      maintainSize: false,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTapDown: (details) {
+                            final RenderBox box =
+                                context.findRenderObject() as RenderBox;
+                            final Offset localOffset = box.globalToLocal(
+                              details.globalPosition,
+                            );
+                            setState(() {
+                              // Open slightly below the click point to avoid covering the icon
+                              _menuPosition = Offset(
+                                localOffset.dx - 120,
+                                localOffset.dy + 20,
+                              );
+                            });
+                            controller.open();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.only(start: 6),
+                            child: Icon(
+                              Icons.more_vert,
+                              size: 18,
+                              color: isSorting
+                                  ? configuration.primaryColor
+                                  : configuration.sortIconColor,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-              ],
-            ),
+                    if (column.isAllowFiltering && !isFused)
+                      Visibility(
+                        visible: !configuration.showFilterOnHover ||
+                            _isHovered ||
+                            isFiltered,
+                        maintainSize: false,
+                        maintainAnimation: true,
+                        maintainState: true,
+                        child: GridFilter(
+                          key: ValueKey(isFiltered),
+                          orgData: widget.orgData,
+                          dataSource: widget.srchData,
+                          onSearch: widget.onSearch,
+                          attributes: column,
+                          allAttributes: widget.columns,
+                          configuration: configuration,
+                          globalSearchText: widget.globalSearchText,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -603,9 +613,9 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
                   children: [
                     if (isOutside)
                       const Padding(
-                        padding: EdgeInsets.only(right: 8),
+                        padding: EdgeInsetsDirectional.only(end: 8),
                         child: Padding(
-                          padding: EdgeInsets.only(right: 4.0),
+                          padding: EdgeInsetsDirectional.only(end: 4.0),
                           child: Icon(
                             Icons.visibility_off,
                             color: Colors.white,
@@ -670,15 +680,17 @@ class _GridHeaderCellState extends State<_GridHeaderCell> {
             ),
           ),
         if (column.isResizable)
-          Positioned(
-            right: 0,
+          PositionedDirectional(
+            end: 0,
             top: 0,
             bottom: 0,
             child: _ResizeHandle(
               onResize: (delta) {
+                final isRTL = Directionality.of(context) == TextDirection.rtl;
+                final adjustedDelta = isRTL ? -delta : delta;
                 final currentWidth = widget.columnWidths[index] ?? 0.0;
                 final minWidth = configuration.minColumnWidth;
-                final newWidth = (currentWidth + delta).clamp(
+                final newWidth = (currentWidth + adjustedDelta).clamp(
                   minWidth,
                   double.infinity,
                 );

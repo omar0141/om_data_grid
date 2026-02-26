@@ -41,6 +41,7 @@ class _GridCellState extends State<GridCell> {
   static final ImagePicker _picker = ImagePicker();
   final MenuController _menuController = MenuController();
   bool _menuOpenedAbove = false;
+  Offset _menuOffset = Offset.zero;
 
   @override
   Widget build(BuildContext context) {
@@ -358,11 +359,8 @@ class _GridCellState extends State<GridCell> {
     final isRTL = Directionality.of(context) == TextDirection.rtl;
     return MenuAnchor(
       controller: _menuController,
-      alignmentOffset: Offset.zero,
+      alignmentOffset: _menuOffset,
       style: MenuStyle(
-        alignment: _menuOpenedAbove
-            ? AlignmentDirectional.topEnd
-            : AlignmentDirectional.bottomEnd,
         backgroundColor: WidgetStateProperty.all(Colors.transparent),
         surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
         elevation: WidgetStateProperty.all(0),
@@ -378,9 +376,28 @@ class _GridCellState extends State<GridCell> {
               if (box != null) {
                 final position = box.localToGlobal(Offset.zero);
                 final screenHeight = MediaQuery.of(context).size.height;
+                final screenWidth = MediaQuery.of(context).size.width;
+
                 setState(() {
                   _menuOpenedAbove = (screenHeight - position.dy <
                       widget.configuration.rowHeight * 4);
+
+                  // Calculate X offset to point to the button center (24px)
+                  // The MenuAnchor default origin is the top-left (LTR) or top-right (RTL) of the anchor.
+                  // We want the popconfirm's arrow (which is 24px from its own edge) to align with button center.
+                  if (isRTL) {
+                    // RTL: Anchor starts at top-right of button.
+                    // Button center is 24px from RIGHT.
+                    // If popconfirm arrow is 24px from its LEFT, we need to shift right...
+                    // Wait, let's simplify: Set offset so popconfirm right edge aligns with button right edge.
+                    _menuOffset = const Offset(0, 0);
+                  } else {
+                    // LTR: Anchor starts at top-left of button.
+                    // Shift left by (menuWidth - 24) to align arrow.
+                    // Since we don't know the width yet, we'll keep using the Alignment approach for the container
+                    // but fix the MenuAnchor's actual placement.
+                    _menuOffset = const Offset(-250, 0); // Approximate fallback
+                  }
                 });
               }
               controller.open();
@@ -395,18 +412,12 @@ class _GridCellState extends State<GridCell> {
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           builder: (context, value, child) {
-            return FractionalTranslation(
-              translation: Offset(
-                isRTL ? 0.0 : -1.0,
-                _menuOpenedAbove ? -1.0 : 0.0,
-              ),
-              child: Transform.scale(
-                scale: value,
-                alignment: _menuOpenedAbove
-                    ? AlignmentDirectional.bottomEnd
-                    : AlignmentDirectional.topEnd,
-                child: Opacity(opacity: value, child: child),
-              ),
+            return Transform.scale(
+              scale: value,
+              alignment: _menuOpenedAbove
+                  ? AlignmentDirectional.bottomEnd
+                  : AlignmentDirectional.topEnd,
+              child: Opacity(opacity: value, child: child),
             );
           },
           child: Material(
@@ -418,94 +429,100 @@ class _GridCellState extends State<GridCell> {
             ),
             color: widget.configuration.menuBackgroundColor ?? Colors.white,
             child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.warning_amber_rounded,
-                        size: 20,
-                        color: Colors.orange,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.configuration.labels.deleteRowTitle,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: widget.configuration.rowForegroundColor,
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 24, 16),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 280),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.warning_amber_rounded,
+                          size: 20,
+                          color: Colors.orange,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(start: 28.0),
-                    child: Text(
-                      widget.configuration.labels.deleteRowConfirmation,
-                      style: TextStyle(
-                        color: widget.configuration.secondaryTextColor,
-                        fontSize: 14,
+                        const SizedBox(width: 8),
+                        Text(
+                          widget.configuration.labels.deleteRowTitle,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: widget.configuration.rowForegroundColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 28.0),
+                      child: Text(
+                        widget.configuration.labels.deleteRowConfirmation,
+                        style: TextStyle(
+                          color: widget.configuration.secondaryTextColor,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Spacer(),
-                      SizedBox(
-                        height: 30,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            side: BorderSide(
-                              color: widget.configuration.inputBorderColor,
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Spacer(),
+                        SizedBox(
+                          height: 30,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              side: BorderSide(
+                                color: widget.configuration.inputBorderColor,
+                              ),
+                              backgroundColor:
+                                  widget.configuration.gridBackgroundColor,
+                              foregroundColor:
+                                  widget.configuration.rowForegroundColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            backgroundColor:
-                                widget.configuration.gridBackgroundColor,
-                            foregroundColor:
-                                widget.configuration.rowForegroundColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
+                            onPressed: () {
+                              _menuController.close();
+                            },
+                            child: Text(widget.configuration.labels.no),
                           ),
-                          onPressed: () {
-                            _menuController.close();
-                          },
-                          child: Text(widget.configuration.labels.no),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        height: 30,
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            backgroundColor: widget.configuration.primaryColor,
-                            foregroundColor:
-                                widget.configuration.primaryForegroundColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          height: 30,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              backgroundColor:
+                                  widget.configuration.primaryColor,
+                              foregroundColor:
+                                  widget.configuration.primaryForegroundColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
+                            onPressed: () async {
+                              _menuController.close();
+                              final onDelete = widget.column.onDelete;
+                              if (onDelete != null) {
+                                await onDelete(widget.row);
+                              }
+                            },
+                            child: Text(widget.configuration.labels.yes),
                           ),
-                          onPressed: () async {
-                            _menuController.close();
-                            final onDelete = widget.column.onDelete;
-                            if (onDelete != null) {
-                              await onDelete(widget.row);
-                            }
-                          },
-                          child: Text(widget.configuration.labels.yes),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -651,8 +668,10 @@ class _ArrowShape extends ShapeBorder {
   ui.Path getOuterPath(ui.Rect rect, {ui.TextDirection? textDirection}) {
     const double arrowWidth = 14.0;
     const double arrowHeight = 8.0;
-    const double arrowOffset = 24.0; // Point to button center
-    const double radius = 8.0;
+    // Arrow should point to exactly 24px from the edge of the popconfirm
+    // (which is the center of the 48px IconButton)
+    const double arrowOffset = 24.0;
+    const double radius = 10.0;
 
     final bool isRtl = textDirection == ui.TextDirection.rtl;
 
@@ -667,24 +686,22 @@ class _ArrowShape extends ShapeBorder {
       final path = ui.Path()..moveTo(r.left + radius, r.top);
 
       if (isRtl) {
-        // RTL: Menu starts at Anchor.left and goes right.
-        // Arrow should be at button center (Offset from Left).
+        // Arrow points to button center (24px from anchor right)
+        // In LTR, anchor starts at top-left.
+        // Let's make it simple: arrow is ALWAYS 24px from the edge closest to the button.
         path
           ..lineTo(r.left + arrowOffset - (arrowWidth / 2), r.top)
           ..lineTo(r.left + arrowOffset, rect.top)
-          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), r.top)
-          ..lineTo(r.right - radius, r.top);
+          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), r.top);
       } else {
-        // LTR: Menu starts at Anchor.right and goes left (shifted).
-        // Arrow should be at button center (Offset from Right).
         path
           ..lineTo(r.right - arrowOffset - (arrowWidth / 2), r.top)
           ..lineTo(r.right - arrowOffset, rect.top)
-          ..lineTo(r.right - arrowOffset + (arrowWidth / 2), r.top)
-          ..lineTo(r.right - radius, r.top);
+          ..lineTo(r.right - arrowOffset + (arrowWidth / 2), r.top);
       }
 
       return path
+        ..lineTo(r.right - radius, r.top)
         ..arcToPoint(
           Offset(r.right, r.top + radius),
           radius: const Radius.circular(radius),

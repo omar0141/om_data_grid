@@ -374,12 +374,10 @@ class _GridCellState extends State<GridCell> {
             if (controller.isOpen) {
               controller.close();
             } else {
-              // Automatically detect opening direction based on screen space
               final RenderBox? box = context.findRenderObject() as RenderBox?;
               if (box != null) {
                 final position = box.localToGlobal(Offset.zero);
                 final screenHeight = MediaQuery.of(context).size.height;
-                // If space below is less than 250px, open above
                 setState(() {
                   _menuOpenedAbove = (screenHeight - position.dy <
                       widget.configuration.rowHeight * 4);
@@ -398,8 +396,6 @@ class _GridCellState extends State<GridCell> {
           curve: Curves.easeInOut,
           builder: (context, value, child) {
             return FractionalTranslation(
-              // In LTR, button is at end (right), shift left by menu width.
-              // In RTL, button is at end (left), menu top-left is already at button bottom-left. No shift needed.
               translation: Offset(
                 isRTL ? 0.0 : -1.0,
                 _menuOpenedAbove ? -1.0 : 0.0,
@@ -415,14 +411,14 @@ class _GridCellState extends State<GridCell> {
           },
           child: Material(
             elevation: 8,
-            shadowColor: Colors.black.withOpacity(0.5),
+            shadowColor: Colors.black.withOpacity(0.4),
             shape: _ArrowShape(
               arrowOnTop: !_menuOpenedAbove,
               configuration: widget.configuration,
             ),
             color: widget.configuration.menuBackgroundColor ?? Colors.white,
             child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 24, 16),
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -430,12 +426,12 @@ class _GridCellState extends State<GridCell> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.warning_amber_rounded,
                         size: 20,
                         color: Colors.orange,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
                         widget.configuration.labels.deleteRowTitle,
                         style: TextStyle(
@@ -463,10 +459,10 @@ class _GridCellState extends State<GridCell> {
                     children: [
                       const Spacer(),
                       SizedBox(
-                        height: 28,
+                        height: 30,
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             side: BorderSide(
                               color: widget.configuration.inputBorderColor,
                             ),
@@ -475,7 +471,7 @@ class _GridCellState extends State<GridCell> {
                             foregroundColor:
                                 widget.configuration.rowForegroundColor,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(6),
                             ),
                           ),
                           onPressed: () {
@@ -486,15 +482,15 @@ class _GridCellState extends State<GridCell> {
                       ),
                       const SizedBox(width: 8),
                       SizedBox(
-                        height: 28,
+                        height: 30,
                         child: FilledButton(
                           style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             backgroundColor: widget.configuration.primaryColor,
                             foregroundColor:
                                 widget.configuration.primaryForegroundColor,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(6),
                             ),
                           ),
                           onPressed: () async {
@@ -653,15 +649,14 @@ class _ArrowShape extends ShapeBorder {
 
   @override
   ui.Path getOuterPath(ui.Rect rect, {ui.TextDirection? textDirection}) {
-    const double arrowWidth = 12.0;
+    const double arrowWidth = 14.0;
     const double arrowHeight = 8.0;
-    const double arrowOffset = 18.0;
+    const double arrowOffset = 24.0; // Point to button center
     const double radius = 8.0;
 
     final bool isRtl = textDirection == ui.TextDirection.rtl;
 
     if (arrowOnTop) {
-      // Arrow points UP at the top of the shape
       final r = ui.Rect.fromLTRB(
         rect.left,
         rect.top + arrowHeight,
@@ -672,18 +667,20 @@ class _ArrowShape extends ShapeBorder {
       final path = ui.Path()..moveTo(r.left + radius, r.top);
 
       if (isRtl) {
-        // Arrow on the left (Start in RTL)
+        // RTL: Menu starts at Anchor.left and goes right.
+        // Arrow should be at button center (Offset from Left).
         path
-          ..lineTo(r.left + arrowOffset, r.top)
-          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), rect.top)
-          ..lineTo(r.left + arrowOffset + arrowWidth, r.top)
+          ..lineTo(r.left + arrowOffset - (arrowWidth / 2), r.top)
+          ..lineTo(r.left + arrowOffset, rect.top)
+          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), r.top)
           ..lineTo(r.right - radius, r.top);
       } else {
-        // Arrow on the right (End in LTR)
+        // LTR: Menu starts at Anchor.right and goes left (shifted).
+        // Arrow should be at button center (Offset from Right).
         path
-          ..lineTo(r.right - arrowOffset - arrowWidth, r.top)
-          ..lineTo(r.right - arrowOffset - (arrowWidth / 2), rect.top)
-          ..lineTo(r.right - arrowOffset, r.top)
+          ..lineTo(r.right - arrowOffset - (arrowWidth / 2), r.top)
+          ..lineTo(r.right - arrowOffset, rect.top)
+          ..lineTo(r.right - arrowOffset + (arrowWidth / 2), r.top)
           ..lineTo(r.right - radius, r.top);
       }
 
@@ -709,7 +706,6 @@ class _ArrowShape extends ShapeBorder {
         )
         ..close();
     } else {
-      // Arrow points DOWN at the bottom of the shape
       final r = ui.Rect.fromLTRB(
         rect.left,
         rect.top,
@@ -731,17 +727,15 @@ class _ArrowShape extends ShapeBorder {
         );
 
       if (isRtl) {
-        // Arrow on the left (Start in RTL)
         path
-          ..lineTo(r.left + arrowOffset + arrowWidth, r.bottom)
-          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), rect.bottom)
-          ..lineTo(r.left + arrowOffset, r.bottom);
+          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), r.bottom)
+          ..lineTo(r.left + arrowOffset, rect.bottom)
+          ..lineTo(r.left + arrowOffset - (arrowWidth / 2), r.bottom);
       } else {
-        // Arrow on the right (End in LTR)
         path
-          ..lineTo(r.right - arrowOffset, r.bottom)
-          ..lineTo(r.right - arrowOffset - (arrowWidth / 2), rect.bottom)
-          ..lineTo(r.right - arrowOffset - arrowWidth, r.bottom);
+          ..lineTo(r.right - arrowOffset + (arrowWidth / 2), r.bottom)
+          ..lineTo(r.right - arrowOffset, rect.bottom)
+          ..lineTo(r.right - arrowOffset - (arrowWidth / 2), r.bottom);
       }
 
       return path

@@ -1,5 +1,6 @@
 import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:flutter/material.dart';
+import 'package:om_data_grid/src/models/datagrid_labels.dart';
 import '../enums/selection_mode_enum.dart';
 import '../enums/grid_border_visibility_enum.dart';
 import 'side_panel_config.dart';
@@ -249,6 +250,7 @@ class OmDataGridConfiguration {
   final Color? contextMenuGroupIconColor;
   final Color? contextMenuAggregationIconColor;
   final Color? contextMenuLayoutIconColor;
+  final OmDataGridLabels labels;
 
   const OmDataGridConfiguration({
     Color? headerBackgroundColor,
@@ -413,6 +415,7 @@ class OmDataGridConfiguration {
     Color? contextMenuGroupIconColor,
     Color? contextMenuAggregationIconColor,
     Color? contextMenuLayoutIconColor,
+    this.labels = const OmDataGridLabels(),
   })  : gridBackgroundColor = gridBackgroundColor ?? const Color(0xFFFFFFFF),
         gridForegroundColor = gridForegroundColor ?? const Color(0xFF1E293B),
         gridBorderColor = gridBorderColor ?? const Color(0xFFE2E8F0),
@@ -537,6 +540,7 @@ class OmDataGridConfiguration {
   factory OmDataGridConfiguration.fromTheme({
     required OmDataGridTheme theme,
     // --- Color overrides (all optional) ---
+
     Color? headerBackgroundColor,
     Color? headerForegroundColor,
     Color? rowBackgroundColor,
@@ -691,9 +695,11 @@ class OmDataGridConfiguration {
     Color? contextMenuAggregationIconColor,
     Color? contextMenuLayoutIconColor,
     Color? primaryForegroundColor,
+    OmDataGridLabels? labels,
   }) {
     final t = theme;
     return OmDataGridConfiguration(
+      labels: labels ?? const OmDataGridLabels(),
       // Core colors derived from theme
       primaryColor: t.primaryColor,
       primaryForegroundColor: primaryForegroundColor ?? t.onPrimaryColor,
@@ -1068,6 +1074,7 @@ class OmDataGridConfiguration {
     Color? contextMenuGroupIconColor,
     Color? contextMenuAggregationIconColor,
     Color? contextMenuLayoutIconColor,
+    OmDataGridLabels? labels,
   }) {
     return OmDataGridConfiguration(
       headerBackgroundColor:
@@ -1288,6 +1295,7 @@ class OmDataGridConfiguration {
           this.contextMenuAggregationIconColor,
       contextMenuLayoutIconColor:
           contextMenuLayoutIconColor ?? this.contextMenuLayoutIconColor,
+      labels: labels ?? this.labels,
     );
   }
 }

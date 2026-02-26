@@ -41,11 +41,10 @@ class OmGridGroupPanel extends StatelessWidget {
             color: candidateData.isNotEmpty
                 ? Colors.amber.withOpacityNew(0.05)
                 : (configuration.groupPanelBackgroundColor ??
-                      configuration.headerBackgroundColor),
+                    configuration.headerBackgroundColor),
             border: Border(
               bottom: BorderSide(
-                color:
-                    configuration.groupPanelBorderColor ??
+                color: configuration.groupPanelBorderColor ??
                     configuration.gridBorderColor.withOpacityNew(0.4),
                 width: configuration.groupPanelBorderWidth ?? 0.5,
               ),
@@ -59,22 +58,22 @@ class OmGridGroupPanel extends StatelessWidget {
                 color: candidateData.isNotEmpty
                     ? Colors.orange
                     : (configuration.groupPanelIconColor ??
-                          configuration.headerForegroundColor.withOpacityNew(
-                            0.5,
-                          )),
+                        configuration.headerForegroundColor.withOpacityNew(
+                          0.5,
+                        )),
               ),
               const SizedBox(width: 8),
               if (groupedColumns.isEmpty)
                 Text(
-                  "Group by dragging columns here",
+                  configuration.labels.groupPanelPlaceholder,
                   style: candidateData.isNotEmpty
                       ? const TextStyle(color: Colors.orange, fontSize: 11)
                       : (configuration.groupPanelTextStyle ??
-                            TextStyle(
-                              color: configuration.headerForegroundColor
-                                  .withOpacityNew(0.5),
-                              fontSize: 11,
-                            )),
+                          TextStyle(
+                            color: configuration.headerForegroundColor
+                                .withOpacityNew(0.5),
+                            fontSize: 11,
+                          )),
                 )
               else
                 Expanded(
@@ -90,8 +89,8 @@ class OmGridGroupPanel extends StatelessWidget {
                           color: candidateData.isNotEmpty
                               ? Colors.orange
                               : (configuration.groupPanelIconColor ??
-                                    configuration.headerForegroundColor
-                                        .withOpacityNew(0.5)),
+                                  configuration.headerForegroundColor
+                                      .withOpacityNew(0.5)),
                         ),
                       ),
                     ),
@@ -179,15 +178,15 @@ class OmGridGroupPanel extends StatelessWidget {
                                           color: isOutside
                                               ? Colors.red
                                               : (isPanelHovered
-                                                    ? Colors.orange
-                                                          .withOpacityNew(0.05)
-                                                    : (configuration
-                                                              .groupPanelItemBackgroundColor ??
-                                                          configuration
-                                                              .headerForegroundColor
-                                                              .withOpacityNew(
-                                                                0.05,
-                                                              ))),
+                                                  ? Colors.orange
+                                                      .withOpacityNew(0.05)
+                                                  : (configuration
+                                                          .groupPanelItemBackgroundColor ??
+                                                      configuration
+                                                          .headerForegroundColor
+                                                          .withOpacityNew(
+                                                        0.05,
+                                                      ))),
                                           borderRadius: BorderRadius.circular(
                                             4,
                                           ),
@@ -195,15 +194,15 @@ class OmGridGroupPanel extends StatelessWidget {
                                             color: isOutside
                                                 ? Colors.red
                                                 : (isPanelHovered
-                                                      ? Colors.orange
-                                                            .withOpacityNew(0.1)
-                                                      : (configuration
-                                                                .groupPanelItemBorderColor ??
-                                                            configuration
-                                                                .headerForegroundColor
-                                                                .withOpacityNew(
-                                                                  0.1,
-                                                                ))),
+                                                    ? Colors.orange
+                                                        .withOpacityNew(0.1)
+                                                    : (configuration
+                                                            .groupPanelItemBorderColor ??
+                                                        configuration
+                                                            .headerForegroundColor
+                                                            .withOpacityNew(
+                                                          0.1,
+                                                        ))),
                                           ),
                                         ),
                                         child: Row(
@@ -228,18 +227,17 @@ class OmGridGroupPanel extends StatelessWidget {
                                                       color: Colors.white,
                                                     )
                                                   : (isPanelHovered
-                                                        ? const TextStyle(
+                                                      ? const TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors.orange,
+                                                        )
+                                                      : (configuration
+                                                              .groupPanelItemTextStyle ??
+                                                          TextStyle(
                                                             fontSize: 11,
-                                                            color:
-                                                                Colors.orange,
-                                                          )
-                                                        : (configuration
-                                                                  .groupPanelItemTextStyle ??
-                                                              TextStyle(
-                                                                fontSize: 11,
-                                                                color: configuration
-                                                                    .headerForegroundColor,
-                                                              ))),
+                                                            color: configuration
+                                                                .headerForegroundColor,
+                                                          ))),
                                             ),
                                           ],
                                         ),
@@ -276,8 +274,7 @@ class OmGridGroupPanel extends StatelessWidget {
                         child: Icon(
                           Icons.delete_sweep_outlined,
                           size: 18,
-                          color:
-                              configuration.groupPanelClearIconColor ??
+                          color: configuration.groupPanelClearIconColor ??
                               Colors.red,
                         ),
                       ),
@@ -299,13 +296,13 @@ class OmGridGroupPanel extends StatelessWidget {
           color: isPanelHovered
               ? Colors.orange.withOpacityNew(0.05)
               : (configuration.groupPanelItemBackgroundColor ??
-                    configuration.headerForegroundColor.withOpacityNew(0.05)),
+                  configuration.headerForegroundColor.withOpacityNew(0.05)),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: isPanelHovered
                 ? Colors.orange.withOpacityNew(0.1)
                 : (configuration.groupPanelItemBorderColor ??
-                      configuration.headerForegroundColor.withOpacityNew(0.1)),
+                    configuration.headerForegroundColor.withOpacityNew(0.1)),
           ),
         ),
         child: Row(
@@ -316,10 +313,10 @@ class OmGridGroupPanel extends StatelessWidget {
               style: isPanelHovered
                   ? const TextStyle(fontSize: 11, color: Colors.orange)
                   : (configuration.groupPanelItemTextStyle ??
-                        TextStyle(
-                          fontSize: 11,
-                          color: configuration.headerForegroundColor,
-                        )),
+                      TextStyle(
+                        fontSize: 11,
+                        color: configuration.headerForegroundColor,
+                      )),
             ),
             const SizedBox(width: 6),
             GestureDetector(
@@ -330,10 +327,10 @@ class OmGridGroupPanel extends StatelessWidget {
                 color: isPanelHovered
                     ? Colors.orange
                     : (configuration.groupPanelItemTextStyle?.color
-                              ?.withOpacityNew(0.6) ??
-                          configuration.headerForegroundColor.withOpacityNew(
-                            0.6,
-                          )),
+                            ?.withOpacityNew(0.6) ??
+                        configuration.headerForegroundColor.withOpacityNew(
+                          0.6,
+                        )),
               ),
             ),
           ],

@@ -11,6 +11,7 @@ export 'src/models/grid_column_model.dart';
 export 'src/models/grid_combo_box_item.dart';
 export 'src/models/grid_header_model.dart';
 export 'src/models/side_panel_config.dart';
+export 'src/models/datagrid_labels.dart';
 
 export 'src/enums/aggregation_type_enum.dart';
 export 'src/enums/column_pinning_enum.dart';

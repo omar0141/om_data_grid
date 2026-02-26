@@ -200,7 +200,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  "Clear Filter",
+                  widget.configuration.labels.clearFilter,
                   style: TextStyle(
                     color: widget.configuration.errorColor,
                     fontWeight: FontWeight.w600,
@@ -249,7 +249,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   ),
                   Expanded(
                     child: Text(
-                      "Select All",
+                      widget.configuration.labels.selectAll,
                       style: TextStyle(
                         color: widget.configuration.rowForegroundColor,
                         fontWeight: FontWeight.w500,
@@ -268,7 +268,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
               Map<String, dynamic> item =
                   Map<String, dynamic>.from(dataSource[i]);
               String text = getTextFromValue(item);
-              if (text == "null") text = "None";
+              if (text == "null") text = widget.configuration.labels.none;
 
               List<String> terms = [
                 _textController1.text,
@@ -512,9 +512,10 @@ class _GridFilterBodyState extends State<GridFilterBody> {
           ),
           child: GridComboBox(
             items: OmFilterConditionType.values.map((e) {
-              String label = e.toString().split('.').last;
-              label = label[0].toUpperCase() + label.substring(1);
-              return OmGridComboBoxItem(value: e.toString(), text: label);
+              return OmGridComboBoxItem(
+                value: e.toString(),
+                text: widget.configuration.labels.getConditionLabel(e),
+              );
             }).toList(),
             initialValue: condition.type.toString(),
             height: 36,
@@ -684,7 +685,9 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                 setState(() {});
               },
               decoration: InputDecoration(
-                hintText: isBetween ? "From..." : "Filter...",
+                hintText: isBetween
+                    ? widget.configuration.labels.from
+                    : widget.configuration.labels.search,
                 hintStyle: TextStyle(
                   color: widget.configuration.secondaryTextColor,
                   fontSize: 13,
@@ -786,7 +789,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   setState(() {});
                 },
                 decoration: InputDecoration(
-                  hintText: "To...",
+                  hintText: widget.configuration.labels.to,
                   hintStyle: TextStyle(
                     color: widget.configuration.secondaryTextColor,
                     fontSize: 13,
@@ -851,7 +854,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
           Expanded(
             child: OmDefaultButton(
               fontsize: 14,
-              text: "Search",
+              text: widget.configuration.labels.apply,
               configuration: widget.configuration,
               press: () {
                 attributes.notSelectedFilterData = [];
@@ -929,7 +932,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
           Expanded(
             child: OmDefaultButton(
               fontsize: 14,
-              text: "Cancel",
+              text: widget.configuration.labels.cancel,
               press: () {
                 Navigator.of(context).pop();
               },

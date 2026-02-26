@@ -73,10 +73,19 @@ class OmChartSettingsSidebar extends StatelessWidget {
               labelColor: configuration.primaryColor,
               unselectedLabelColor: Colors.grey,
               indicatorColor: configuration.primaryColor,
-              tabs: const [
-                Tab(text: "Type", icon: Icon(Icons.auto_graph)),
-                Tab(text: "Data", icon: Icon(Icons.storage)),
-                Tab(text: "Settings", icon: Icon(Icons.settings)),
+              tabs: [
+                Tab(
+                  text: configuration.labels.chartType,
+                  icon: const Icon(Icons.auto_graph),
+                ),
+                Tab(
+                  text: configuration.labels.chartData,
+                  icon: const Icon(Icons.storage),
+                ),
+                Tab(
+                  text: configuration.labels.chartSettings,
+                  icon: const Icon(Icons.settings),
+                ),
               ],
             ),
             Expanded(
@@ -110,9 +119,9 @@ class OmChartSettingsSidebar extends StatelessWidget {
                     if (onExportPDF != null)
                       Expanded(
                         child: OmDefaultButton(
-                          text: "Export PDF",
+                          text: configuration.labels.exportPdf,
                           press: onExportPDF,
-                          leadingIcon: Icon(
+                          leadingIcon: const Icon(
                             Icons.picture_as_pdf,
                             size: 20,
                             color: Colors.red,
@@ -127,7 +136,7 @@ class OmChartSettingsSidebar extends StatelessWidget {
                     if (onExportExcel != null)
                       Expanded(
                         child: OmDefaultButton(
-                          text: "Export Excel",
+                          text: configuration.labels.exportExcel,
                           press: onExportExcel,
                           leadingIcon: Icon(Icons.table_chart,
                               size: 20, color: Colors.green.shade700),

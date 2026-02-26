@@ -90,15 +90,18 @@ class OmGridColumnMenu extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildSectionHeader('Sorting', Icons.sort_rounded),
+                _buildSectionHeader(
+                  configuration.labels.sorting,
+                  Icons.sort_rounded,
+                ),
                 _buildMenuItem(
-                  label: 'Sort Ascending',
+                  label: configuration.labels.sortAscending,
                   icon: Icons.arrow_upward_rounded,
                   isSelected: isSortedAsc,
                   onPressed: () => onSort?.call(column.key, ascending: true),
                 ),
                 _buildMenuItem(
-                  label: 'Sort Descending',
+                  label: configuration.labels.sortDescending,
                   icon: Icons.arrow_downward_rounded,
                   isSelected: isSortedDesc,
                   onPressed: () => onSort?.call(column.key, ascending: false),
@@ -108,7 +111,7 @@ class OmGridColumnMenu extends StatelessWidget {
                   child: Divider(height: 1),
                 ),
                 _buildSectionHeader(
-                  'Organization',
+                  configuration.labels.organization,
                   Icons.dashboard_customize_rounded,
                 ),
                 SubmenuButton(
@@ -134,36 +137,39 @@ class OmGridColumnMenu extends StatelessWidget {
                     ),
                   ),
                   menuChildren: [
-                    _buildPinningItem(OmColumnPinning.none, 'Unpin', Icons.block),
+                    _buildPinningItem(
+                      OmColumnPinning.none,
+                      configuration.labels.unpin,
+                      Icons.block,
+                    ),
                     _buildPinningItem(
                       OmColumnPinning.left,
-                      'Pin to Left',
+                      configuration.labels.pinToLeft,
                       Icons.keyboard_double_arrow_left_rounded,
                     ),
                     _buildPinningItem(
                       OmColumnPinning.right,
-                      'Pin to Right',
+                      configuration.labels.pinToRight,
                       Icons.keyboard_double_arrow_right_rounded,
                     ),
                   ],
                   child: Text(
-                    'Pin Column',
+                    configuration.labels.pinColumn,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color:
-                          configuration.contextMenuTextColor ??
+                      color: configuration.contextMenuTextColor ??
                           Colors.grey[400],
                     ),
                   ),
                 ),
                 _buildMenuItem(
-                  label: 'Group By ${column.title}',
+                  label: '${configuration.labels.groupBy} ${column.title}',
                   icon: Icons.layers_outlined,
                   onPressed: () => controller.addGroupedColumn(column.key),
                 ),
                 _buildMenuItem(
-                  label: 'Hide Column',
+                  label: configuration.labels.hideColumn,
                   icon: Icons.visibility_off_outlined,
                   onPressed: () =>
                       controller.toggleColumnVisibility(column.key, false),
@@ -193,52 +199,51 @@ class OmGridColumnMenu extends StatelessWidget {
                   menuChildren: [
                     _buildAggregationItem(
                       OmAggregationType.none,
-                      'No Aggregation',
+                      configuration.labels.noAggregation,
                       Icons.block_rounded,
                     ),
                     _buildAggregationItem(
                       OmAggregationType.sum,
-                      'Sum (∑)',
+                      configuration.labels.sum,
                       Icons.add_circle_outline_rounded,
                     ),
                     _buildAggregationItem(
                       OmAggregationType.avg,
-                      'Average (μ)',
+                      configuration.labels.average,
                       Icons.show_chart_rounded,
                     ),
                     _buildAggregationItem(
                       OmAggregationType.min,
-                      'Minimum',
+                      configuration.labels.minimum,
                       Icons.vertical_align_bottom_rounded,
                     ),
                     _buildAggregationItem(
                       OmAggregationType.max,
-                      'Maximum',
+                      configuration.labels.maximum,
                       Icons.vertical_align_top_rounded,
                     ),
                     _buildAggregationItem(
                       OmAggregationType.count,
-                      'Count (n)',
+                      configuration.labels.count,
                       Icons.numbers_rounded,
                     ),
                     _buildAggregationItem(
                       OmAggregationType.first,
-                      'First',
+                      configuration.labels.first,
                       Icons.skip_previous_rounded,
                     ),
                     _buildAggregationItem(
                       OmAggregationType.last,
-                      'Last',
+                      configuration.labels.last,
                       Icons.skip_next_rounded,
                     ),
                   ],
                   child: Text(
-                    'Aggregations',
+                    configuration.labels.aggregations,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color:
-                          configuration.contextMenuTextColor ??
+                      color: configuration.contextMenuTextColor ??
                           Colors.grey[400],
                     ),
                   ),
@@ -247,23 +252,26 @@ class OmGridColumnMenu extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Divider(height: 1),
                 ),
-                _buildSectionHeader('Grid Layout', Icons.grid_view_rounded),
+                _buildSectionHeader(
+                  configuration.labels.gridLayout,
+                  Icons.grid_view_rounded,
+                ),
                 _buildMenuItem(
                   label: controller.configuration.showQuickSearch
-                      ? 'Hide Quick Search'
-                      : 'Show Quick Search',
+                      ? configuration.labels.hideQuickSearch
+                      : configuration.labels.showQuickSearch,
                   icon: controller.configuration.showQuickSearch
                       ? Icons.search_off_rounded
                       : Icons.search_rounded,
                   onPressed: () => controller.toggleQuickSearch(),
                 ),
                 _buildMenuItem(
-                  label: 'Column Management',
+                  label: configuration.labels.columnManagement,
                   icon: Icons.view_column_outlined,
                   onPressed: () => controller.onShowColumnChooser?.call(),
                 ),
                 _buildMenuItem(
-                  label: 'Reset Default Layout',
+                  label: configuration.labels.resetDefaultLayout,
                   icon: Icons.restore_rounded,
                   onPressed: () => controller.resetColumns(),
                   isDestructive: true,
@@ -288,8 +296,7 @@ class OmGridColumnMenu extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color:
-                  controller.configuration.contextMenuSectionHeaderColor ??
+              color: controller.configuration.contextMenuSectionHeaderColor ??
                   Colors.grey[500],
               letterSpacing: 1.2,
             ),
@@ -316,8 +323,8 @@ class OmGridColumnMenu extends StatelessWidget {
     final textColor = isDestructive
         ? (config.contextMenuDestructiveColor ?? Colors.red)
         : (isSelected
-              ? primaryColor
-              : (config.contextMenuTextColor ?? Colors.grey[400]));
+            ? primaryColor
+            : (config.contextMenuTextColor ?? Colors.grey[400]));
 
     return MenuItemButton(
       leadingIcon: _buildMenuIcon(
@@ -330,9 +337,8 @@ class OmGridColumnMenu extends StatelessWidget {
       onPressed: onPressed,
       style: MenuItemButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        backgroundColor: isSelected
-            ? primaryColor.withOpacity(0.05)
-            : Colors.transparent,
+        backgroundColor:
+            isSelected ? primaryColor.withOpacity(0.05) : Colors.transparent,
       ),
       child: Text(
         label,

@@ -241,9 +241,10 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                                   Icons.add,
                                   size: 18,
                                   color:
-                                      _effectiveConfig.addButtonForegroundColor ?? widget.configuration
-                                          ?.primaryForegroundColor ??
-                                      Colors.white,
+                                      _effectiveConfig.addButtonForegroundColor ??
+                                          widget.configuration
+                                              ?.primaryForegroundColor ??
+                                          Colors.white,
                                 ),
                             backcolor:
                                 _effectiveConfig.addButtonBackgroundColor,
@@ -287,7 +288,7 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
       elevation: 8,
       shadowColor: Colors.black26,
       color: _effectiveConfig.gridBackgroundColor,
-      tooltip: 'Options',
+      tooltip: _effectiveConfig.labels.options,
       onSelected: (value) async {
         final List<Map<String, dynamic>> sourceData =
             widget.controller?.data ?? widget.data ?? [];
@@ -348,17 +349,17 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
         _buildPopupMenuItem(
           'excel',
           Icon(Icons.table_chart, size: 20, color: Colors.green.shade700),
-          'Export to Excel',
+          _effectiveConfig.labels.exportToExcel,
         ),
         _buildPopupMenuItem(
           'pdf',
           Icon(Icons.picture_as_pdf, size: 22, color: Colors.red.shade700),
-          'Export to PDF',
+          _effectiveConfig.labels.exportToPdf,
         ),
         _buildPopupMenuItem(
           'visualize',
           Icon(Icons.bar_chart, size: 22, color: _effectiveConfig.primaryColor),
-          'Visualize all data',
+          _effectiveConfig.labels.visualize,
         ),
       ],
       child: MouseRegion(
@@ -443,7 +444,7 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
           _performFiltering();
         },
         decoration: InputDecoration(
-          hintText: 'Search in all columns...',
+          hintText: _effectiveConfig.labels.searchAllColumns,
           hintStyle: TextStyle(
             color: _effectiveConfig.secondaryTextColor.withOpacity(0.6),
             fontSize: 13,

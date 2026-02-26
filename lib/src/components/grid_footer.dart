@@ -26,12 +26,10 @@ class OmGridFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final int actualRowsPerPage = rowsPerPage ?? configuration.rowsPerPage;
     final mode = configuration.paginationMode;
-    final int totalPages = totalRows == 0
-        ? 1
-        : (totalRows / actualRowsPerPage).ceil();
-    final int startRow = totalRows == 0
-        ? 0
-        : currentPage * actualRowsPerPage + 1;
+    final int totalPages =
+        totalRows == 0 ? 1 : (totalRows / actualRowsPerPage).ceil();
+    final int startRow =
+        totalRows == 0 ? 0 : currentPage * actualRowsPerPage + 1;
     final int endRow = (currentPage + 1) * actualRowsPerPage > totalRows
         ? totalRows
         : (currentPage + 1) * actualRowsPerPage;
@@ -71,22 +69,22 @@ class OmGridFooter extends StatelessWidget {
                 color: configuration.paginationTextColor,
               ),
               children: [
-                const TextSpan(text: "Showing "),
+                TextSpan(text: "${configuration.labels.showing} "),
                 TextSpan(
                   text: "$startRow",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const TextSpan(text: " to "),
+                TextSpan(text: " ${configuration.labels.toLabel} "),
                 TextSpan(
                   text: "$endRow",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const TextSpan(text: " of "),
+                TextSpan(text: " ${configuration.labels.ofLabel} "),
                 TextSpan(
                   text: "$totalRows",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const TextSpan(text: " entries"),
+                TextSpan(text: " ${configuration.labels.entries}"),
               ],
             ),
           ),
@@ -94,7 +92,7 @@ class OmGridFooter extends StatelessWidget {
             children: [
               if (onRowsPerPageChanged != null) ...[
                 Text(
-                  "Rows per page:",
+                  configuration.labels.rowsPerPage,
                   style: TextStyle(
                     fontSize: 13,
                     color: configuration.paginationTextColor,
@@ -105,8 +103,7 @@ class OmGridFooter extends StatelessWidget {
                   width: 90,
                   height: 32,
                   child: GridComboBox(
-                    items:
-                        configuration.rowsPerPageOptions
+                    items: configuration.rowsPerPageOptions
                             ?.map(
                               (option) => OmGridComboBoxItem(
                                 value: option.toString(),
@@ -282,7 +279,7 @@ class _PageNavButton extends StatelessWidget {
             color: isEnabled
                 ? configuration.paginationUnselectedBackgroundColor
                 : configuration.paginationUnselectedBackgroundColor
-                      .withOpacityNew(0.5),
+                    .withOpacityNew(0.5),
           ),
           child: Icon(
             icon,
@@ -290,7 +287,7 @@ class _PageNavButton extends StatelessWidget {
             color: isEnabled
                 ? configuration.paginationUnselectedForegroundColor
                 : configuration.paginationUnselectedForegroundColor
-                      .withOpacityNew(0.5),
+                    .withOpacityNew(0.5),
           ),
         ),
       ),

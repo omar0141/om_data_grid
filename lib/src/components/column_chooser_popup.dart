@@ -75,7 +75,7 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "Choose Columns",
+                        configuration.labels.columnChooserTitle,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -155,7 +155,7 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text("Reset Columns"),
+                    child: Text(configuration.labels.resetDefaultLayout),
                   ),
                 ),
               ),

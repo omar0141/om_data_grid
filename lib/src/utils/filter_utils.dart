@@ -1,6 +1,8 @@
+import 'package:om_data_grid/src/models/datagrid_labels.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:om_data_grid/src/enums/grid_row_type_enum.dart';
 import 'package:om_data_grid/src/models/advanced_filter_model.dart';
+import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:intl/intl.dart';
 
@@ -9,6 +11,7 @@ class OmFilterUtils {
     required List<dynamic> data,
     required List<OmGridColumnModel> allColumns,
     String? globalSearch,
+    OmDataGridConfiguration? configuration,
   }) {
     List<dynamic> filteredData = [];
 
@@ -25,6 +28,7 @@ class OmFilterUtils {
             String cellValue = getDisplayValue(
               item[col.key],
               col,
+              configuration,
             ).toLowerCase();
             if (cellValue.contains(globalSearchLC)) {
               matchesGlobal = true;
@@ -81,6 +85,7 @@ class OmFilterUtils {
               String displayValue = getDisplayValue(
                 item[col.key],
                 col,
+                configuration,
               ).toLowerCase();
               if (!displayValue.contains(col.quickFilterText!.toLowerCase())) {
                 shouldInclude = false;
@@ -91,6 +96,7 @@ class OmFilterUtils {
             String displayValue = getDisplayValue(
               item[col.key],
               col,
+              configuration,
             ).toLowerCase();
             if (!displayValue.contains(col.quickFilterText!.toLowerCase())) {
               shouldInclude = false;
@@ -105,6 +111,7 @@ class OmFilterUtils {
             item[col.key],
             col.advancedFilter!,
             col,
+            configuration,
           )) {
             shouldInclude = false;
             break;
@@ -156,7 +163,8 @@ class OmFilterUtils {
               break;
             }
           } else {
-            String itemValue = cellValue?.toString() ?? "None";
+            String itemValue =
+                cellValue?.toString() ?? configuration?.labels.none ?? "None";
             bool isNotSelected = col.notSelectedFilterData!.any(
               (ns) => ns["value"] == itemValue,
             );
@@ -177,26 +185,29 @@ class OmFilterUtils {
     return filteredData;
   }
 
-  static String getDisplayValue(dynamic value, OmGridColumnModel col) {
-    if (value == null) return "None";
+  static String getDisplayValue(
+    dynamic value,
+    OmGridColumnModel col, [
+    OmDataGridConfiguration? config,
+  ]) {
+    final labels = config?.labels ?? const OmDataGridLabels();
+    if (value == null) return labels.none;
 
     switch (col.type) {
       case OmGridRowTypeEnum.comboBox:
         final options = col.comboBoxSettings?.items;
         if (options != null) {
           if (col.multiSelect == true && value is List) {
-            return value
-                .map((v) {
-                  final option = options.firstWhere(
-                    (o) => o.value == v.toString(),
-                    orElse: () => OmGridComboBoxItem(
-                      value: v.toString(),
-                      text: v.toString(),
-                    ),
-                  );
-                  return option.text;
-                })
-                .join(', ');
+            return value.map((v) {
+              final option = options.firstWhere(
+                (o) => o.value == v.toString(),
+                orElse: () => OmGridComboBoxItem(
+                  value: v.toString(),
+                  text: v.toString(),
+                ),
+              );
+              return option.text;
+            }).join(', ');
           } else {
             final option = options.firstWhere(
               (o) => o.value == value.toString(),
@@ -219,7 +230,7 @@ class OmFilterUtils {
         } else if (value is String) {
           isTrue = value.toLowerCase() == 'true';
         }
-        return isTrue ? "true" : "false";
+        return isTrue ? labels.trueText : labels.falseText;
 
       case OmGridRowTypeEnum.date:
       case OmGridRowTypeEnum.dateTime:
@@ -242,11 +253,10 @@ class OmFilterUtils {
       case OmGridRowTypeEnum.integer:
         if (value is num ||
             (value is String && double.tryParse(value) != null)) {
-          final double val = value is num
-              ? value.toDouble()
-              : double.parse(value);
-          final int digits =
-              col.decimalDigits ?? (col.type == OmGridRowTypeEnum.double ? 2 : 0);
+          final double val =
+              value is num ? value.toDouble() : double.parse(value);
+          final int digits = col.decimalDigits ??
+              (col.type == OmGridRowTypeEnum.double ? 2 : 0);
           final String decimalSeparator = col.decimalSeparator ?? '.';
           final String thousandsSeparator = col.thousandsSeparator ?? '';
 
@@ -279,12 +289,13 @@ class OmFilterUtils {
   static bool evaluateAdvancedFilter(
     dynamic cellValue,
     OmAdvancedFilterModel filter,
-    OmGridColumnModel col,
-  ) {
+    OmGridColumnModel col, [
+    OmDataGridConfiguration? config,
+  ]) {
     if (filter.conditions.isEmpty) return true;
 
     // Convert cell value to string for comparison mostly
-    String strValue = getDisplayValue(cellValue, col).toLowerCase();
+    String strValue = getDisplayValue(cellValue, col, config).toLowerCase();
 
     num? numValue;
     DateTime? dateValue;
@@ -408,9 +419,8 @@ class OmFilterUtils {
     required String columnKey,
     required dynamic selectedValue,
   }) {
-    final Set<String> allValues = data
-        .map((item) => item[columnKey]?.toString() ?? "None")
-        .toSet();
+    final Set<String> allValues =
+        data.map((item) => item[columnKey]?.toString() ?? "None").toSet();
     final String selectedStr = selectedValue?.toString() ?? "None";
 
     return allValues

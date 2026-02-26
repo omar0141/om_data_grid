@@ -102,7 +102,9 @@ class GridAggregationRow extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    col.aggregation.name.toUpperCase(),
+                    config.labels
+                        .getAggregationLabel(col.aggregation)
+                        .toUpperCase(),
                     style: TextStyle(
                       fontSize: 9,
                       fontWeight: FontWeight.w800,

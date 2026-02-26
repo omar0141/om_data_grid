@@ -169,9 +169,11 @@ class _HomeScreen2State extends State<HomeScreen2> {
     ].map((col) => OmGridColumnModel(column: col, width: col.width)).toList();
 
     _controller = OmDataGridController(
+      
       data: data,
       columnModels: columnModels,
       configuration: OmDataGridConfiguration.fromTheme(
+        
         theme: OmDataGridTheme.light(),
         selectionMode: OmSelectionMode.cell,
         allowPagination: true,
@@ -192,6 +194,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         frozenPaneElevation: 0.5,
         allowRowReordering: false,
         showAddButton: true,
+        labels: OmDataGridLabels(),
         rowsPerPageOptions: [
           10,
           20,

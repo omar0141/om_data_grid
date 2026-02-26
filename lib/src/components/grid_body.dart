@@ -104,16 +104,23 @@ class OmGridBody extends StatelessWidget {
 
     Widget buildList() {
       final middleItemsList = middleItems.toList(); // Only copy once here
+
+      Widget wrapWithScrollbar(Widget child, ScrollController? controller) {
+        if (!showScrollbar || controller == null) return child;
+        return Scrollbar(
+          controller: controller,
+          thumbVisibility: true,
+          child: child,
+        );
+      }
+
       if (configuration.allowRowReordering &&
           onRowReorder != null &&
           configuration.frozenRowCount == 0 &&
           configuration.footerFrozenRowCount == 0 &&
           !configuration.shrinkWrapRows) {
-        return ScrollConfiguration(
-          behavior: ScrollConfiguration.of(
-            context,
-          ).copyWith(scrollbars: showScrollbar),
-          child: ReorderableListView.builder(
+        return wrapWithScrollbar(
+          ReorderableListView.builder(
             padding: EdgeInsets.zero,
             buildDefaultDragHandles: false,
             scrollController: controller,
@@ -147,6 +154,7 @@ class OmGridBody extends StatelessWidget {
               );
             },
           ),
+          controller,
         );
       }
 
@@ -163,11 +171,8 @@ class OmGridBody extends StatelessWidget {
           ),
         );
       } else {
-        return ScrollConfiguration(
-          behavior: ScrollConfiguration.of(
-            context,
-          ).copyWith(scrollbars: showScrollbar),
-          child: ListView.builder(
+        return wrapWithScrollbar(
+          ListView.builder(
             padding: EdgeInsets.zero,
             controller: controller,
             physics: const ClampingScrollPhysics(),
@@ -183,6 +188,7 @@ class OmGridBody extends StatelessWidget {
               );
             },
           ),
+          controller,
         );
       }
     }

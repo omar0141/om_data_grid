@@ -401,7 +401,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
           ? gridConstraints.maxWidth
           : (gridConstraints.maxWidth - leftWidth - rightWidth);
 
-      return Scrollbar(
+      Widget middleContent = Scrollbar(
         thumbVisibility: true,
         controller: widget.horizontalScrollController,
         child: SingleChildScrollView(
@@ -417,11 +417,21 @@ class _GridMainContainerState extends State<GridMainContainer> {
               indices: middleIndices,
               verticalController: widget.verticalScrollController,
               isMiddle: true,
-              showVerticalScrollbar: showVerticalScrollbar,
+              showVerticalScrollbar:
+                  false, // Internal vertical scrollbar is disabled for middle segment
             ),
           ),
         ),
       );
+
+      if (showVerticalScrollbar) {
+        return Scrollbar(
+          controller: widget.verticalScrollController,
+          thumbVisibility: true,
+          child: middleContent,
+        );
+      }
+      return middleContent;
     }
 
     Widget buildStickyBody() {
@@ -477,7 +487,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
                 0,
                 middleTotalWidth,
                 middleIndices,
-                showVerticalScrollbar: showInRight,
+                showVerticalScrollbar: !showInRight,
               ),
               if (stickyLeftIndices.isNotEmpty)
                 PositionedDirectional(

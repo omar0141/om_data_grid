@@ -112,16 +112,18 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                               const SizedBox(width: 8),
                             ],
                             if (widget.text != null)
-                              Text(
-                                widget.text!,
-                                style: TextStyle(
-                                  fontSize: widget.fontsize?.toDouble() ?? 14,
-                                  color: widget.forecolor ??
-                                      widget.configuration
-                                          ?.primaryForegroundColor ??
-                                      Colors.white,
-                                  fontWeight:
-                                      widget.fontWeight ?? FontWeight.w700,
+                              Center(
+                                child: Text(
+                                  widget.text!,
+                                  style: TextStyle(
+                                    fontSize: widget.fontsize?.toDouble() ?? 14,
+                                    color: widget.forecolor ??
+                                        widget.configuration
+                                            ?.primaryForegroundColor ??
+                                        Colors.white,
+                                    fontWeight:
+                                        widget.fontWeight ?? FontWeight.w700,
+                                  ),
                                 ),
                               ),
                           ],

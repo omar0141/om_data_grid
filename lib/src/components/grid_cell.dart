@@ -389,13 +389,13 @@ class _GridCellState extends State<GridCell> {
                     // Button center is 24px from RIGHT.
                     // If popconfirm arrow is 24px from its LEFT, we need to shift right...
                     // Wait, let's simplify: Set offset so popconfirm right edge aligns with button right edge.
-                    _menuOffset = const Offset(-250, 0);
+                    _menuOffset = const Offset(-225, 0);
                   } else {
                     // LTR: Anchor starts at top-left of button.
                     // Shift left by (menuWidth - 24) to align arrow.
                     // Since we don't know the width yet, we'll keep using the Alignment approach for the container
                     // but fix the MenuAnchor's actual placement.
-                    _menuOffset = const Offset(-250, 0); // Approximate fallback
+                    _menuOffset = const Offset(-225, 0); // Approximate fallback
                   }
                 });
               }

@@ -380,22 +380,10 @@ class _GridCellState extends State<GridCell> {
                 setState(() {
                   _menuOpenedAbove = (screenHeight - position.dy <
                       widget.configuration.rowHeight * 4);
-
-                  // Calculate X offset to point to the button center (24px)
-                  // The MenuAnchor default origin is the top-left (LTR) or top-right (RTL) of the anchor.
-                  // We want the popconfirm's arrow (which is 24px from its own edge) to align with button center.
                   if (isRTL) {
-                    // RTL: Anchor starts at top-right of button.
-                    // Button center is 24px from RIGHT.
-                    // If popconfirm arrow is 24px from its LEFT, we need to shift right...
-                    // Wait, let's simplify: Set offset so popconfirm right edge aligns with button right edge.
-                    _menuOffset = const Offset(-225, 0);
+                    _menuOffset = const Offset(-230, 0);
                   } else {
-                    // LTR: Anchor starts at top-left of button.
-                    // Shift left by (menuWidth - 24) to align arrow.
-                    // Since we don't know the width yet, we'll keep using the Alignment approach for the container
-                    // but fix the MenuAnchor's actual placement.
-                    _menuOffset = const Offset(-225, 0); // Approximate fallback
+                    _menuOffset = const Offset(-225, 0);
                   }
                 });
               }

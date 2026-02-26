@@ -123,6 +123,7 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                                         widget.configuration
                                             ?.primaryForegroundColor ??
                                         Colors.white,
+                                    height: 1,
                                     fontWeight:
                                         widget.fontWeight ?? FontWeight.w700,
                                   ),

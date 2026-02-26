@@ -92,6 +92,7 @@ class _DefaultButtonState extends State<OmDefaultButton> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   loading == true
                       ? SizedBox(
@@ -106,6 +107,7 @@ class _DefaultButtonState extends State<OmDefaultButton> {
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             if (widget.leadingIcon != null) ...[
                               widget.leadingIcon!,

@@ -376,7 +376,6 @@ class _GridCellState extends State<GridCell> {
               if (box != null) {
                 final position = box.localToGlobal(Offset.zero);
                 final screenHeight = MediaQuery.of(context).size.height;
-                final screenWidth = MediaQuery.of(context).size.width;
 
                 setState(() {
                   _menuOpenedAbove = (screenHeight - position.dy <
@@ -390,7 +389,7 @@ class _GridCellState extends State<GridCell> {
                     // Button center is 24px from RIGHT.
                     // If popconfirm arrow is 24px from its LEFT, we need to shift right...
                     // Wait, let's simplify: Set offset so popconfirm right edge aligns with button right edge.
-                    _menuOffset = const Offset(0, 0);
+                    _menuOffset = const Offset(50, 0);
                   } else {
                     // LTR: Anchor starts at top-left of button.
                     // Shift left by (menuWidth - 24) to align arrow.

@@ -358,7 +358,7 @@ class _GridCellState extends State<GridCell> {
     final isRTL = Directionality.of(context) == TextDirection.rtl;
     return MenuAnchor(
       controller: _menuController,
-      alignmentOffset: isRTL ? const Offset(-150, 0) : const Offset(-220, 0),
+      alignmentOffset: isRTL ? const Offset(220, 0) : const Offset(-220, 0),
       style: MenuStyle(
         backgroundColor: WidgetStateProperty.all(Colors.transparent),
         surfaceTintColor: WidgetStateProperty.all(Colors.transparent),

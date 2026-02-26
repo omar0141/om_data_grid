@@ -426,7 +426,7 @@ class _GridCellState extends State<GridCell> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        'Delete the row',
+                        widget.configuration.labels.deleteRowTitle,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -439,7 +439,7 @@ class _GridCellState extends State<GridCell> {
                   Padding(
                     padding: const EdgeInsetsDirectional.only(start: 28.0),
                     child: Text(
-                      'Are you sure to delete this row?',
+                      widget.configuration.labels.deleteRowConfirmation,
                       style: TextStyle(
                         color: widget.configuration.secondaryTextColor,
                         fontSize: 14,
@@ -647,22 +647,36 @@ class _ArrowShape extends ShapeBorder {
     const double arrowOffset = 18.0;
     const double radius = 8.0;
 
+    final bool isRtl = textDirection == ui.TextDirection.rtl;
+
     if (arrowOnTop) {
       // Arrow points UP at the top of the shape
       final r = ui.Rect.fromLTRB(
         rect.left,
         rect.top + arrowHeight,
-        rect.right - arrowWidth,
+        rect.right,
         rect.bottom,
       );
 
-      return ui.Path()
-        ..moveTo(r.left + radius, r.top)
-        ..lineTo(r.right - arrowOffset - arrowWidth, r.top)
-        // Arrow up
-        ..lineTo(r.right - arrowOffset - (arrowWidth / 2), rect.top)
-        ..lineTo(r.right - arrowOffset, r.top)
-        ..lineTo(r.right - radius, r.top)
+      final path = ui.Path()..moveTo(r.left + radius, r.top);
+
+      if (isRtl) {
+        // Arrow on the left (Start in RTL)
+        path
+          ..lineTo(r.left + arrowOffset, r.top)
+          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), rect.top)
+          ..lineTo(r.left + arrowOffset + arrowWidth, r.top)
+          ..lineTo(r.right - radius, r.top);
+      } else {
+        // Arrow on the right (End in LTR)
+        path
+          ..lineTo(r.right - arrowOffset - arrowWidth, r.top)
+          ..lineTo(r.right - arrowOffset - (arrowWidth / 2), rect.top)
+          ..lineTo(r.right - arrowOffset, r.top)
+          ..lineTo(r.right - radius, r.top);
+      }
+
+      return path
         ..arcToPoint(
           Offset(r.right, r.top + radius),
           radius: const Radius.circular(radius),
@@ -688,12 +702,12 @@ class _ArrowShape extends ShapeBorder {
       final r = ui.Rect.fromLTRB(
         rect.left,
         rect.top,
-        rect.right - arrowWidth,
+        rect.right,
         rect.bottom - arrowHeight,
       );
 
-      return ui.Path()
-        ..moveTo(r.left + radius, r.top)
+      final path = ui.Path()..moveTo(r.left + radius, r.top);
+      path
         ..lineTo(r.right - radius, r.top)
         ..arcToPoint(
           Offset(r.right, r.top + radius),
@@ -703,13 +717,23 @@ class _ArrowShape extends ShapeBorder {
         ..arcToPoint(
           Offset(r.right - radius, r.bottom),
           radius: const Radius.circular(radius),
-        )
-        // Bottom line until arrow
-        ..lineTo(r.right - arrowOffset, r.bottom)
-        // Arrow down
-        ..lineTo(r.right - arrowOffset - (arrowWidth / 2), rect.bottom)
-        // Arrow back up
-        ..lineTo(r.right - arrowOffset - arrowWidth, r.bottom)
+        );
+
+      if (isRtl) {
+        // Arrow on the left (Start in RTL)
+        path
+          ..lineTo(r.left + arrowOffset + arrowWidth, r.bottom)
+          ..lineTo(r.left + arrowOffset + (arrowWidth / 2), rect.bottom)
+          ..lineTo(r.left + arrowOffset, r.bottom);
+      } else {
+        // Arrow on the right (End in LTR)
+        path
+          ..lineTo(r.right - arrowOffset, r.bottom)
+          ..lineTo(r.right - arrowOffset - (arrowWidth / 2), rect.bottom)
+          ..lineTo(r.right - arrowOffset - arrowWidth, r.bottom);
+      }
+
+      return path
         ..lineTo(r.left + radius, r.bottom)
         ..arcToPoint(
           Offset(r.left, r.bottom - radius),

@@ -143,7 +143,9 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
           if (widget.showBackButton)
             IconButton(
               icon: Icon(
-                Icons.arrow_back,
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward
+                    : Icons.arrow_back,
                 size: 22,
                 color: _effectiveConfig.rowForegroundColor,
               ),
@@ -235,7 +237,8 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                         height: 38,
                         child: IntrinsicWidth(
                           child: OmDefaultButton(
-                            text: _effectiveConfig.addButtonText,
+                            text: _effectiveConfig.addButtonText ??
+                                _effectiveConfig.labels.addButton,
                             leadingIcon: _effectiveConfig.addButtonIcon ??
                                 Icon(
                                   Icons.add,
@@ -503,9 +506,9 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
         }),
       ),
       icon: const Icon(Iconsax.filter_remove, size: 18),
-      label: const Text(
-        "Clear Filters",
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+      label: Text(
+        _effectiveConfig.labels.clearFilter,
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
       ),
     );
   }

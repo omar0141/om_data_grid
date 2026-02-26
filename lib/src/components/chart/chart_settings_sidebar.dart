@@ -157,7 +157,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
       width: 320,
       decoration: BoxDecoration(
         color: configuration.chartSettingsSidebarBackgroundColor,
-        border: Border(right: BorderSide(color: configuration.gridBorderColor)),
+        border: BorderDirectional(
+            end: BorderSide(color: configuration.gridBorderColor)),
       ),
       child: Row(
         children: [
@@ -170,8 +171,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
                 configuration.gridForegroundColor,
                 0.03,
               ),
-              border: Border(
-                right: BorderSide(color: configuration.gridBorderColor),
+              border: BorderDirectional(
+                end: BorderSide(color: configuration.gridBorderColor),
               ),
             ),
             child: Column(
@@ -223,8 +224,8 @@ class OmChartSettingsSidebar extends StatelessWidget {
         height: 50,
         width: 45,
         decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
+          border: BorderDirectional(
+            start: BorderSide(
               color: isActive ? configuration.primaryColor : Colors.transparent,
               width: 3,
             ),
@@ -483,35 +484,35 @@ class OmChartSettingsSidebar extends StatelessWidget {
   String _getDisplayNameForType(OmChartType type) {
     switch (type) {
       case OmChartType.bar:
-        return 'Bar';
+        return configuration.labels.chartBar;
       case OmChartType.line:
-        return 'Line';
+        return configuration.labels.chartLine;
       case OmChartType.column:
-        return 'Column';
+        return configuration.labels.chartColumn;
       case OmChartType.pie:
-        return 'Pie';
+        return configuration.labels.chartPie;
       case OmChartType.area:
-        return 'Area';
+        return configuration.labels.chartArea;
       case OmChartType.scatter:
-        return 'Scatter';
+        return configuration.labels.chartScatter;
       case OmChartType.spline:
-        return 'Spline';
+        return configuration.labels.chartSpline;
       case OmChartType.stepline:
-        return 'Step Line';
+        return configuration.labels.chartStepLine;
       case OmChartType.doughnut:
-        return 'Doughnut';
+        return configuration.labels.chartDoughnut;
       case OmChartType.funnel:
-        return 'Funnel';
+        return configuration.labels.chartFunnel;
       case OmChartType.pyramid:
-        return 'Pyramid';
+        return configuration.labels.chartPyramid;
       case OmChartType.radialBar:
-        return 'Radial Bar';
+        return configuration.labels.chartRadialBar;
       case OmChartType.histogram:
-        return 'Histogram';
+        return configuration.labels.chartHistogram;
       case OmChartType.stackedBar:
-        return 'Stacked Bar';
+        return configuration.labels.chartStackedBar;
       case OmChartType.stackedColumn:
-        return 'Stacked Column';
+        return configuration.labels.chartStackedColumn;
     }
   }
 

@@ -388,6 +388,11 @@ class _ChartPopupState extends State<OmChartPopup> {
                       onExportPDF: _exportToPDF,
                       onExportExcel: _exportToExcel,
                     ),
+                    VerticalDivider(
+                      width: 1,
+                      thickness: 1,
+                      color: widget.configuration.gridBorderColor,
+                    ),
                     Expanded(
                       child: RepaintBoundary(
                         child: Container(
@@ -559,7 +564,9 @@ class _ChartPopupState extends State<OmChartPopup> {
             if (isMobile) ...[
               IconButton(
                 icon: Icon(
-                  Icons.arrow_back_ios,
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_back_ios_new
+                      : Icons.arrow_back_ios,
                   color: widget.configuration.chartIconColor!,
                 ),
                 onPressed: widget.onClose,

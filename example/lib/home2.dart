@@ -192,7 +192,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         frozenPaneElevation: 0.5,
         allowRowReordering: false,
         showAddButton: true,
-        labels: OmDataGridLabels.ar(),
+        labels: OmDataGridLabels.en(),
         rowsPerPageOptions: [
           10,
           20,

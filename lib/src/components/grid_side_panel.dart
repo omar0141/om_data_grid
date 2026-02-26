@@ -64,7 +64,7 @@ class _GridSidePanelState extends State<OmGridSidePanel> {
         OmGridSidePanelTab(
           id: 'columns',
           icon: Icons.view_headline,
-          label: 'Columns',
+          label: widget.controller.configuration.labels.columns,
           builder: (context, controller) => ColumnsTab(controller: controller),
         ),
       );
@@ -75,7 +75,7 @@ class _GridSidePanelState extends State<OmGridSidePanel> {
         OmGridSidePanelTab(
           id: 'filters',
           icon: Icons.filter_alt,
-          label: 'Filters',
+          label: widget.controller.configuration.labels.filters,
           builder: (context, controller) => FiltersTab(controller: controller),
         ),
       );

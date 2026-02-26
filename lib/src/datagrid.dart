@@ -675,14 +675,15 @@ class _DatagridState extends State<OmDataGrid> {
     }
 
     final List<PopupMenuEntry<String>> items = [];
+    final labels = config.labels;
 
     if (config.useDefaultContextMenuItems) {
       if (config.showCopyMenuItem) {
-        items.add(_buildMenuItem(Icons.copy, 'Copy', 'copy'));
+        items.add(_buildMenuItem(Icons.copy, labels.copy, 'copy'));
       }
       if (config.showCopyHeaderMenuItem) {
         items.add(
-          _buildMenuItem(Icons.copy_all, 'Copy with Header', 'copy_header'),
+          _buildMenuItem(Icons.copy_all, labels.copyWithHeader, 'copy_header'),
         );
       }
 
@@ -692,26 +693,29 @@ class _DatagridState extends State<OmDataGrid> {
 
       if (config.showEquationMenuItem) {
         items.add(
-          _buildMenuItem(Icons.functions, 'Create Equation Column', 'equation'),
+          _buildMenuItem(
+              Icons.functions, labels.createEquationColumn, 'equation'),
         );
         items.add(const PopupMenuDivider());
       }
 
       if (config.showSortMenuItem) {
-        items.add(_buildMenuItem(Icons.sort, 'Sort Ascending', 'sort_asc'));
+        items.add(_buildMenuItem(Icons.sort, labels.sortAscending, 'sort_asc'));
         items.add(
-          _buildMenuItem(Icons.sort_by_alpha, 'Sort Descending', 'sort_desc'),
+          _buildMenuItem(
+              Icons.sort_by_alpha, labels.sortDescending, 'sort_desc'),
         );
         items.add(const PopupMenuDivider());
       }
 
       if (config.showFilterBySelectionMenuItem) {
         items.add(
-          _buildMenuItem(Icons.filter_alt, 'Filter by Selection', 'filter'),
+          _buildMenuItem(Icons.filter_alt, labels.filterBySelection, 'filter'),
         );
       }
       if (config.showChartsMenuItem) {
-        items.add(_buildMenuItem(Icons.bar_chart, 'Visualize Data', 'charts'));
+        items.add(
+            _buildMenuItem(Icons.bar_chart, labels.visualizeData, 'charts'));
       }
     }
 
@@ -783,7 +787,7 @@ class _DatagridState extends State<OmDataGrid> {
         _prepareChartData();
         break;
       case 'delete':
-        _showDummyAction('Delete functionality is currently disabled');
+        _showDummyAction(config.labels.deleteDisabled);
         break;
     }
   }
@@ -961,7 +965,10 @@ class _DatagridState extends State<OmDataGrid> {
 
     if (numericColumns.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No numeric data selected for charts')),
+        SnackBar(
+          content: Text(
+              widget.controller.configuration.labels.noNumericDataSelected),
+        ),
       );
       return;
     }

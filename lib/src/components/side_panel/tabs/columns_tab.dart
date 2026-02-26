@@ -81,7 +81,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
                       controller: _columnSearchController,
                       style: const TextStyle(fontSize: 13),
                       decoration: InputDecoration(
-                        hintText: "Search...",
+                        hintText: widget.controller.configuration.labels.search,
                         prefixIcon: Icon(
                           Icons.search,
                           size: 16,
@@ -103,7 +103,8 @@ class _ColumnsTabState extends State<ColumnsTab> {
               const SizedBox(width: 8),
               IconButton(
                 icon: const Icon(Icons.add_box_outlined, size: 20),
-                tooltip: "Add Calculated Column",
+                tooltip:
+                    widget.controller.configuration.labels.addCalculatedColumn,
                 onPressed: () => _showAddCalculatedColumnDialog(existing: null),
               ),
             ],
@@ -280,8 +281,12 @@ class _ColumnsTabState extends State<ColumnsTab> {
             );
           },
         ),
-        _buildBottomPanelSection("Row Groups", "Drag here to set row groups"),
-        _buildBottomPanelSection("Aggregations", "Drag here to aggregate"),
+        _buildBottomPanelSection(
+            widget.controller.configuration.labels.rowGroups,
+            widget.controller.configuration.labels.rowGroupsPlaceholder),
+        _buildBottomPanelSection(
+            widget.controller.configuration.labels.aggregationsTab,
+            widget.controller.configuration.labels.aggregationsPlaceholder),
         const SizedBox(height: 24),
       ],
     );
@@ -442,9 +447,10 @@ class _ColumnsTabState extends State<ColumnsTab> {
         return DragTarget<OmGridColumnDragData>(
           onWillAcceptWithDetails: (details) => true,
           onAcceptWithDetails: (details) {
-            if (title == "Row Groups") {
+            if (title == widget.controller.configuration.labels.rowGroups) {
               widget.controller.addGroupedColumn(details.data.column.key);
-            } else if (title == "Aggregations") {
+            } else if (title ==
+                widget.controller.configuration.labels.aggregationsTab) {
               widget.controller.updateColumnAggregation(
                 details.data.column.key,
                 OmAggregationType.sum,
@@ -476,10 +482,13 @@ class _ColumnsTabState extends State<ColumnsTab> {
                     const SizedBox(width: 8),
                     if (activeKeys.isNotEmpty)
                       Tooltip(
-                        message: "Clear all",
+                        message:
+                            widget.controller.configuration.labels.clearAll,
                         child: InkWell(
                           onTap: () {
-                            if (title == "Row Groups") {
+                            if (title ==
+                                widget.controller.configuration.labels
+                                    .rowGroups) {
                               widget.controller.clearGroupedColumns();
                             } else {
                               for (var col in widget.controller.columnModels) {

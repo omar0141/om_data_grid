@@ -171,7 +171,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
           ),
           const SizedBox(width: 12),
           Text(
-            _isEditing ? "Edit Equation" : "New Equation",
+            _isEditing ? config.labels.editEquation : config.labels.newEquation,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -182,7 +182,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
           Row(
             children: [
               Text(
-                "Advanced",
+                config.labels.advanced,
                 style: TextStyle(
                   fontSize: 12,
                   color: config.dialogTextColor ?? config.secondaryTextColor,
@@ -229,7 +229,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                   }
                 },
                 decoration: InputDecoration(
-                  hintText: "Enter Column Display Name (e.g., Total Salary)",
+                  hintText: config.labels.enterColumnDisplayName,
                   hintStyle: TextStyle(color: config.secondaryTextColor),
                   errorText: _titleError,
                   prefixIcon: Icon(Icons.title,
@@ -249,7 +249,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
               ),
               const SizedBox(height: 24),
               Text(
-                "Equation Builder",
+                config.labels.equationBuilder,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -267,7 +267,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                     color: config.gridForegroundColor,
                   ),
                   decoration: InputDecoration(
-                    hintText: "Enter your formula...",
+                    hintText: config.labels.enterYourFormula,
                     hintStyle: TextStyle(color: config.secondaryTextColor),
                     filled: true,
                     fillColor: config.inputFillColor,
@@ -311,7 +311,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                "Start building your equation by adding blocks below",
+                                config.labels.startBuildingEquation,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: config.secondaryTextColor,
@@ -331,7 +331,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                         ),
                 ),
               const SizedBox(height: 24),
-              _buildSectionTitle("Operators"),
+              _buildSectionTitle(config.labels.operators),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 6,
@@ -351,7 +351,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
                 }).toList(),
               ),
               const SizedBox(height: 20),
-              _buildSectionTitle("Available Columns"),
+              _buildSectionTitle(config.labels.availableColumns),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -384,7 +384,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(
-            "Cancel",
+            config.labels.cancel,
             style: TextStyle(color: config.secondaryTextColor),
           ),
         ),
@@ -394,7 +394,7 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
             final title = _titleController.text.trim();
 
             if (title.isEmpty) {
-              setState(() => _titleError = "Title is required");
+              setState(() => _titleError = config.labels.titleIsRequired);
               return;
             }
 
@@ -420,7 +420,9 @@ class _FormulaBuilderDialogState extends State<FormulaBuilderDialog> {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          child: Text(_isEditing ? "Update Column" : "Create Column"),
+          child: Text(_isEditing
+              ? config.labels.updateColumn
+              : config.labels.createColumn),
         ),
       ],
     );

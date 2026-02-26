@@ -70,7 +70,7 @@ class _FiltersTabState extends State<FiltersTab> {
           padding: const EdgeInsets.all(8.0),
           child: GridComboBox(
             items: comboItems,
-            initialText: "Add Filter",
+            initialText: widget.controller.configuration.labels.addFilter,
             height: 36,
             borderRadius: 4,
             fontSize: 13,
@@ -277,13 +277,13 @@ class _FilterCardState extends State<_FilterCard> {
               child: Row(
                 children: [
                   _buildOperatorRadio(
-                    "And",
+                    widget.configuration.labels.and,
                     OmFilterOperator.and,
                     advancedFilter,
                   ),
                   const SizedBox(width: 16),
-                  _buildOperatorRadio(
-                      "Or", OmFilterOperator.or, advancedFilter),
+                  _buildOperatorRadio(widget.configuration.labels.or,
+                      OmFilterOperator.or, advancedFilter),
                 ],
               ),
             ),
@@ -326,7 +326,7 @@ class _FilterCardState extends State<_FilterCard> {
                           width: 1),
                     ),
                     child: Text(
-                      "Clear",
+                      widget.configuration.labels.clearAll,
                       style: TextStyle(
                         color: widget.configuration.rowForegroundColor,
                         fontSize: 12,
@@ -396,9 +396,10 @@ class _FilterCardState extends State<_FilterCard> {
             ),
             child: GridComboBox(
               items: OmFilterConditionType.values.map((e) {
-                String label = e.toString().split('.').last;
-                label = label[0].toUpperCase() + label.substring(1);
-                return OmGridComboBoxItem(value: e.toString(), text: label);
+                return OmGridComboBoxItem(
+                  value: e.toString(),
+                  text: widget.configuration.labels.getConditionLabel(e),
+                );
               }).toList(),
               initialValue: condition.type.toString(),
               height: 36,
@@ -552,7 +553,9 @@ class _FilterCardState extends State<_FilterCard> {
                       widget.onApply();
                     },
                     decoration: InputDecoration(
-                      hintText: isBetween ? "From..." : "Filter...",
+                      hintText: isBetween
+                          ? widget.configuration.labels.from
+                          : widget.configuration.labels.filterPlaceholder,
                       hintStyle: TextStyle(
                         color: widget.configuration.secondaryTextColor,
                         fontSize: 13,
@@ -670,7 +673,7 @@ class _FilterCardState extends State<_FilterCard> {
                         widget.onApply();
                       },
                       decoration: InputDecoration(
-                        hintText: "To...",
+                        hintText: widget.configuration.labels.to,
                         hintStyle: TextStyle(
                           color: widget.configuration.secondaryTextColor,
                           fontSize: 13,

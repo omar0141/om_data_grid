@@ -237,7 +237,7 @@ class GridDatePickerUtils {
                               ),
                             ),
                             onPressed: () => Navigator.pop(context),
-                            child: const Text("Cancel"),
+                            child: Text(configuration.labels.cancel),
                           ),
                           const SizedBox(width: 12),
                           ElevatedButton(
@@ -255,7 +255,7 @@ class GridDatePickerUtils {
                               ),
                             ),
                             onPressed: () => Navigator.pop(context, tempResult),
-                            child: const Text("Apply Range"),
+                            child: Text(configuration.labels.applyRange),
                           ),
                         ],
                       ),
@@ -369,7 +369,7 @@ class GridDatePickerUtils {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Select Time Range",
+                                configuration.labels.selectTimeRange,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -388,7 +388,7 @@ class GridDatePickerUtils {
                               Expanded(
                                 child: _buildTimeSelector(
                                   context,
-                                  "Start Time",
+                                  configuration.labels.startTime,
                                   start,
                                   configuration,
                                   (val) => setState(() => start = val),
@@ -404,7 +404,7 @@ class GridDatePickerUtils {
                               Expanded(
                                 child: _buildTimeSelector(
                                   context,
-                                  "End Time",
+                                  configuration.labels.endTime,
                                   end,
                                   configuration,
                                   (val) => setState(() => end = val),
@@ -418,7 +418,7 @@ class GridDatePickerUtils {
                             children: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text("Cancel"),
+                                child: Text(configuration.labels.cancel),
                               ),
                               const SizedBox(width: 12),
                               ElevatedButton(
@@ -439,7 +439,7 @@ class GridDatePickerUtils {
                                   context,
                                   OmTimeRange(start: start, end: end),
                                 ),
-                                child: const Text("Apply"),
+                                child: Text(configuration.labels.applyButton),
                               ),
                             ],
                           ),
@@ -678,7 +678,7 @@ class GridFileViewerUtils {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            "Click to open file in system viewer",
+                            configuration.labels.openFileInSystemViewer,
                             style: TextStyle(
                               color: configuration.secondaryTextColor,
                             ),
@@ -692,7 +692,7 @@ class GridFileViewerUtils {
                             ),
                             onPressed: () => _openSystemFile(url),
                             icon: const Icon(Icons.open_in_new),
-                            label: const Text("Open File"),
+                            label: Text(configuration.labels.openFile),
                           ),
                         ],
                       ),

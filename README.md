@@ -233,6 +233,36 @@ OmDataGridController(
 )
 ```
 
+### 🌍 Localization (Internationalization)
+
+`om_data_grid` comes with built-in support for 10+ languages. You can easily switch the grid's language by setting the `labels` property in `OmDataGridConfiguration`.
+
+Supported languages: English (`.en`), Arabic (`.ar`), French (`.fr`), Spanish (`.es`), Chinese (`.zh`), Japanese (`.ja`), Russian (`.ru`), German (`.de`), Turkish (`.tr`), Hindi (`.hi`), Portuguese (`.pt`).
+
+#### Using a Built-in Language
+
+```dart
+final configuration = OmDataGridConfiguration(
+  // Use the Arabic constructor for full RTL and localized strings
+  labels: OmDataGridLabels.ar(),
+  // ... other settings
+);
+```
+
+#### Overriding Specific Strings
+
+You can use a built-in language as a base and override specific labels:
+
+```dart
+final configuration = OmDataGridConfiguration(
+  labels: OmDataGridLabels.en(
+    search: "Find...",
+    exportToExcel: "Download Report",
+    noData: "Nothing to see here!",
+  ),
+);
+```
+
 ---
 
 ## 📊 Grid Features in Depth

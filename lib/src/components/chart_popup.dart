@@ -71,7 +71,8 @@ class _ChartPopupState extends State<OmChartPopup> {
     });
 
     _position = widget.initialPosition;
-    _titleController = TextEditingController(text: 'Data Analysis');
+    _titleController = TextEditingController(
+        text: widget.configuration.labels.dataAnalysisTitle);
 
     // Filter columns that can be shown in charts
     final visibleChartColumns =
@@ -169,14 +170,17 @@ class _ChartPopupState extends State<OmChartPopup> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully exported to PDF')),
+          SnackBar(
+              content:
+                  Text(widget.configuration.labels.successfullyExportedToPdf)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error exporting PDF: $e'),
+            content:
+                Text('${widget.configuration.labels.errorExportingPdf}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -200,14 +204,17 @@ class _ChartPopupState extends State<OmChartPopup> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully exported to Excel')),
+          SnackBar(
+              content: Text(
+                  widget.configuration.labels.successfullyExportedToExcel)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error exporting Excel: $e'),
+            content:
+                Text('${widget.configuration.labels.errorExportingExcel}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -287,7 +294,7 @@ class _ChartPopupState extends State<OmChartPopup> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Generating Export...',
+                widget.configuration.labels.generatingExport,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: widget.configuration.chartPopupLoadingTextColor,
@@ -424,7 +431,7 @@ class _ChartPopupState extends State<OmChartPopup> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Settings",
+                    widget.configuration.labels.settings,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -562,7 +569,7 @@ class _ChartPopupState extends State<OmChartPopup> {
             ),
             const SizedBox(width: 12),
             Text(
-              'Chart Analysis',
+              widget.configuration.labels.chartAnalysis,
               style: TextStyle(
                 color: widget.configuration.chartTitleColor!,
                 fontWeight: FontWeight.bold,
@@ -577,7 +584,7 @@ class _ChartPopupState extends State<OmChartPopup> {
                 children: [
                   if (isMobile)
                     IconButton(
-                      tooltip: 'Settings',
+                      tooltip: widget.configuration.labels.settings,
                       icon: Icon(
                         Icons.tune,
                         color: widget.configuration.chartIconColor!,
@@ -586,7 +593,9 @@ class _ChartPopupState extends State<OmChartPopup> {
                     ),
                   if (!isMobile) ...[
                     IconButton(
-                      tooltip: fullScreen ? 'Exit Fullscreen' : 'Fullscreen',
+                      tooltip: fullScreen
+                          ? widget.configuration.labels.exitFullScreen
+                          : widget.configuration.labels.fullScreen,
                       icon: Icon(
                         fullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
                         color: widget.configuration.fullScreenButtonColor!,
@@ -596,7 +605,7 @@ class _ChartPopupState extends State<OmChartPopup> {
                           setState(() => _isFullScreen = !_isFullScreen),
                     ),
                     IconButton(
-                      tooltip: 'Close Chart',
+                      tooltip: widget.configuration.labels.closeChart,
                       icon: Icon(
                         Icons.close,
                         color: widget.configuration.closeButtonColor!,

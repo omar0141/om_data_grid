@@ -186,14 +186,14 @@ class OmChartSettingsSidebar extends StatelessWidget {
                     onPressed: onExportPDF!,
                     icon:
                         Icon(Icons.picture_as_pdf, size: 20, color: Colors.red),
-                    tooltip: 'Export to PDF',
+                    tooltip: configuration.labels.exportToPdf,
                   ),
                 if (onExportExcel != null)
                   _buildSideExportButton(
                     onPressed: onExportExcel!,
                     icon: Icon(Icons.table_chart,
                         size: 20, color: Colors.green.shade700),
-                    tooltip: 'Export to Excel',
+                    tooltip: configuration.labels.exportToExcel,
                   ),
                 const SizedBox(height: 12),
               ],
@@ -268,7 +268,10 @@ class OmChartSettingsSidebar extends StatelessWidget {
   Widget _buildFormatTab(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: [_buildPanelSection('CHART TYPE', _buildTypeGrid(context))],
+      children: [
+        _buildPanelSection(configuration.labels.chartType.toUpperCase(),
+            _buildTypeGrid(context))
+      ],
     );
   }
 
@@ -277,11 +280,12 @@ class OmChartSettingsSidebar extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         _buildPanelSection(
-          'CATEGORIES (X-AXIS)',
+          configuration.labels.categoriesXAxis.toUpperCase(),
           _buildAxisDropdown('', xAxisColumn, (val) => onXAxisChanged(val!)),
         ),
         const SizedBox(height: 20),
-        _buildPanelSection('MEASURES (Y-AXIS)', _buildMultiMeasureSelection()),
+        _buildPanelSection(configuration.labels.measuresYAxis.toUpperCase(),
+            _buildMultiMeasureSelection()),
       ],
     );
   }
@@ -346,17 +350,17 @@ class OmChartSettingsSidebar extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         _buildPanelSection(
-          'General Settings',
+          configuration.labels.chartSettings.toUpperCase(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildPropertyLabel('Chart Title'),
+              _buildPropertyLabel(configuration.labels.chartTitle),
               TextField(
                 controller: titleController,
                 style: TextStyle(
                     fontSize: 13, color: configuration.rowForegroundColor),
                 decoration: InputDecoration(
-                  hintText: 'Enter title...',
+                  hintText: configuration.labels.enterTitle,
                   isDense: true,
                   filled: true,
                   fillColor: configuration.gridBackgroundColor,
@@ -383,26 +387,26 @@ class OmChartSettingsSidebar extends StatelessWidget {
           ),
         ),
         _buildPanelSection(
-          'Interactivity',
+          configuration.labels.interactivity.toUpperCase(),
           Column(
             children: [
               _buildSwitch(
-                'Show Legend',
+                configuration.labels.showLegend,
                 showLegend,
                 (v) => onShowLegendChanged(v),
               ),
               _buildSwitch(
-                'Data Labels',
+                configuration.labels.showDataLabels,
                 showDataLabels,
                 (v) => onShowDataLabelsChanged(v),
               ),
               _buildSwitch(
-                'Tooltips',
+                configuration.labels.showTooltip,
                 showTooltip,
                 (v) => onShowTooltipChanged(v),
               ),
               _buildSwitch(
-                'Transpose Axes',
+                configuration.labels.transpose,
                 isTransposed,
                 (v) => onIsTransposedChanged(v),
               ),

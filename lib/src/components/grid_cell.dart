@@ -468,7 +468,7 @@ class _GridCellState extends State<GridCell> {
                           onPressed: () {
                             _menuController.close();
                           },
-                          child: const Text('No'),
+                          child: Text(widget.configuration.labels.no),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -491,7 +491,7 @@ class _GridCellState extends State<GridCell> {
                               await onDelete(widget.row);
                             }
                           },
-                          child: const Text('Yes'),
+                          child: Text(widget.configuration.labels.yes),
                         ),
                       ),
                     ],

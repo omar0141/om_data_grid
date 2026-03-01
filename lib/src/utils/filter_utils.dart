@@ -165,6 +165,19 @@ class OmFilterUtils {
           } else {
             String itemValue =
                 cellValue?.toString() ?? configuration?.labels.none ?? "None";
+
+            if (col.type == OmGridRowTypeEnum.iosSwitch) {
+              bool isTrue = false;
+              if (cellValue is bool) {
+                isTrue = cellValue;
+              } else if (cellValue is int) {
+                isTrue = cellValue == 1;
+              } else if (cellValue is String) {
+                isTrue = cellValue.toLowerCase() == 'true';
+              }
+              itemValue = isTrue ? 'true' : 'false';
+            }
+
             bool isNotSelected = col.notSelectedFilterData!.any(
               (ns) => ns["value"] == itemValue,
             );

@@ -434,12 +434,30 @@ class _GridFilterBodyState extends State<GridFilterBody> {
       orgData = availableData
           .map((obj) => obj[key])
           .toSet()
-          .map((val) => Map.from({"value": val.toString()}))
+          .map((val) => Map.from({
+                "value": (attributes.type == OmGridRowTypeEnum.iosSwitch)
+                    ? (val.toString().toLowerCase() == 'true' ||
+                            val == 1 ||
+                            val == true
+                        ? 'true'
+                        : 'false')
+                    : val.toString()
+              }))
+          .toSet()
           .toList();
       dataSource = widget.dataSource
           .map((obj) => obj[key])
           .toSet()
-          .map((val) => Map.from({"value": val.toString()}))
+          .map((val) => Map.from({
+                "value": (attributes.type == OmGridRowTypeEnum.iosSwitch)
+                    ? (val.toString().toLowerCase() == 'true' ||
+                            val == 1 ||
+                            val == true
+                        ? 'true'
+                        : 'false')
+                    : val.toString()
+              }))
+          .toSet()
           .toList();
     }
 

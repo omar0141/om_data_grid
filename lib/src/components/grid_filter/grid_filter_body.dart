@@ -432,15 +432,14 @@ class _GridFilterBodyState extends State<GridFilterBody> {
           values.toSet().map((obj) => Map.from({"value": obj})).toList();
     } else {
       orgData = availableData
-          .map((obj) => obj[key].toString())
+          .map((obj) => obj[key])
           .toSet()
-          .map((obj) => Map.from({"value": obj}))
-          .toSet()
+          .map((val) => Map.from({"value": val.toString()}))
           .toList();
       dataSource = widget.dataSource
-          .map((obj) => obj[key].toString())
+          .map((obj) => obj[key])
           .toSet()
-          .map((obj) => Map.from({"value": obj}))
+          .map((val) => Map.from({"value": val.toString()}))
           .toList();
     }
 

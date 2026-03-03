@@ -524,29 +524,29 @@ class _GridMainContainerState extends State<GridMainContainer> {
         _handleScrollNotification(notification);
         return false;
       },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (!config.shrinkWrapRows)
-                  Expanded(
-                    child: Scrollbar(
-                      controller: widget.verticalScrollController,
-                      thumbVisibility: true,
-                      trackVisibility: true,
+      child: Scrollbar(
+        controller: widget.verticalScrollController,
+        thumbVisibility: true,
+        trackVisibility: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!config.shrinkWrapRows)
+                    Expanded(
                       child:
                           isSticky ? buildStickyBody() : buildNonStickyBody(),
-                    ),
-                  )
-                else
-                  isSticky ? buildStickyBody() : buildNonStickyBody(),
-              ],
+                    )
+                  else
+                    isSticky ? buildStickyBody() : buildNonStickyBody(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

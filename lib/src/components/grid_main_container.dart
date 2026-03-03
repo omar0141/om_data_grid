@@ -288,8 +288,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
             Expanded(
               child: Scrollbar(
                 controller: isMiddle ? widget.verticalScrollController : null,
-                thumbVisibility: isMiddle,
-                trackVisibility: isMiddle,
+                thumbVisibility: false,
+                trackVisibility: false,
                 child: OmGridBody(
                   flattenedItems: widget.flattenedItems,
                   configuration: config,
@@ -548,12 +548,32 @@ class _GridMainContainerState extends State<GridMainContainer> {
       ],
     );
 
+    // Overlay the vertical scrollbar on top of the full viewport so it is
+    // always visible at the right edge regardless of horizontal scroll position.
+    final gridWithScrollbar = config.shrinkWrapRows
+        ? gridBody
+        : Stack(
+            children: [
+              gridBody,
+              ScrollbarTheme(
+                data: ScrollbarThemeData(
+                  thumbVisibility: WidgetStateProperty.all(true),
+                  trackVisibility: WidgetStateProperty.all(true),
+                ),
+                child: Scrollbar(
+                  controller: widget.verticalScrollController,
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ],
+          );
+
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         _handleScrollNotification(notification);
         return false;
       },
-      child: gridBody,
+      child: gridWithScrollbar,
     );
   }
 }

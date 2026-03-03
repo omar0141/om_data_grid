@@ -524,49 +524,31 @@ class _GridMainContainerState extends State<GridMainContainer> {
         _handleScrollNotification(notification);
         return false;
       },
-      child: Stack(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!config.shrinkWrapRows)
-                      Expanded(
-                        child:
-                            isSticky ? buildStickyBody() : buildNonStickyBody(),
-                      )
-                    else
-                      isSticky ? buildStickyBody() : buildNonStickyBody(),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          // Persistent vertical scrollbar
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: 12, // Scrollbar default width roughly
-            child: Scrollbar(
-              controller: widget.verticalScrollController,
-              thumbVisibility: true,
-              trackVisibility: true,
-              child: SingleChildScrollView(
-                controller: widget.verticalScrollController,
-                child: SizedBox(
-                  // We simulate the total height. Row height * count + header
-                  height:
-                      (widget.flattenedItems.length * config.rowHeight) + 60,
-                  width: 1,
-                ),
+      // Wrapping with Scrollbar here puts it on the absolute right edge of the tree!
+      // Since it shares the controller attached to OmGridBody below, it will work perfectly.
+      child: Scrollbar(
+        controller: widget.verticalScrollController,
+        thumbVisibility: true,
+        trackVisibility: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!config.shrinkWrapRows)
+                    Expanded(
+                      child:
+                          isSticky ? buildStickyBody() : buildNonStickyBody(),
+                    )
+                  else
+                    isSticky ? buildStickyBody() : buildNonStickyBody(),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

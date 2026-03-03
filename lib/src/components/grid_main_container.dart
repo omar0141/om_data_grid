@@ -92,6 +92,7 @@ class GridMainContainer extends StatefulWidget {
 class _GridMainContainerState extends State<GridMainContainer> {
   bool _isScrolling = false;
   Timer? _scrollEndTimer;
+  final ValueNotifier<bool> _vScrollbarVisible = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -106,6 +107,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
   @override
   void dispose() {
     _scrollEndTimer?.cancel();
+    _vScrollbarVisible.dispose();
     super.dispose();
   }
 
@@ -419,11 +421,15 @@ class _GridMainContainerState extends State<GridMainContainer> {
       // SingleChildScrollView and takes vScrollbarWidth px, so we must subtract
       // it from the available viewport width — otherwise contentWidth > viewport
       // by exactly vScrollbarWidth and the horizontal scrollbar never hides.
+      // We only subtract if the v-scrollbar is actually visible.
       const double vScrollbarWidth = 12.0;
       const double hScrollbarHeight = 12.0;
+      final bool vScrollbarShown = _vScrollbarVisible.value;
       final double effectiveAvailableWidth = config.shrinkWrapRows
           ? availableWidth
-          : availableWidth - vScrollbarWidth;
+          : (vScrollbarShown
+              ? availableWidth - vScrollbarWidth
+              : availableWidth);
 
       final double contentWidth = config.shrinkWrapColumns
           ? middleTotalWidth
@@ -483,7 +489,13 @@ class _GridMainContainerState extends State<GridMainContainer> {
               builder: (context, _) {
                 try {
                   final vc = widget.verticalScrollController;
-                  if (!vc.hasClients) return const SizedBox.shrink();
+                  if (!vc.hasClients) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_vScrollbarVisible.value)
+                        _vScrollbarVisible.value = false;
+                    });
+                    return const SizedBox.shrink();
+                  }
                   final pos = vc.position;
                   final double? viewport = pos.viewportDimension as double?;
                   final double? maxExt = pos.maxScrollExtent as double?;
@@ -494,10 +506,24 @@ class _GridMainContainerState extends State<GridMainContainer> {
                       maxExt < 5 ||
                       viewport <= 0 ||
                       trackH <= 0) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_vScrollbarVisible.value)
+                        _vScrollbarVisible.value = false;
+                    });
                     return const SizedBox.shrink();
                   }
                   final double vf = viewport / (maxExt + viewport);
-                  if (vf >= 1.0) return const SizedBox.shrink();
+                  if (vf >= 1.0) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_vScrollbarVisible.value)
+                        _vScrollbarVisible.value = false;
+                    });
+                    return const SizedBox.shrink();
+                  }
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!_vScrollbarVisible.value)
+                      _vScrollbarVisible.value = true;
+                  });
                   final double thumbH = (vf * trackH).clamp(30.0, trackH);
                   final double thumbRange = trackH - thumbH;
                   final double thumbTop = (pixels / maxExt) * thumbRange;
@@ -523,7 +549,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
                           thumbTop: thumbTop,
                           thumbHeight: thumbH,
                           trackWidth: vScrollbarWidth,
-                          radius: 6.0,
+                          radius: 2,
                           trackColor: safeTrackColor(),
                           thumbColor: safeThumbColor(),
                         ),
@@ -531,6 +557,10 @@ class _GridMainContainerState extends State<GridMainContainer> {
                     ),
                   );
                 } catch (_) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (_vScrollbarVisible.value)
+                      _vScrollbarVisible.value = false;
+                  });
                   return const SizedBox.shrink();
                 }
               },
@@ -589,7 +619,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
                           thumbLeft: thumbLeft,
                           thumbWidth: thumbW,
                           trackHeight: hScrollbarHeight,
-                          radius: 6.0,
+                          radius: 2,
                           trackColor: safeTrackColor(),
                           thumbColor: safeThumbColor(),
                         ),
@@ -606,104 +636,126 @@ class _GridMainContainerState extends State<GridMainContainer> {
       }
 
       // ── Main layout ─────────────────────────────────────────────────────────
-      return Stack(
-        children: [
-          // Left part: horizontal scroll area + h-scrollbar below it.
-          // Right part: vertical scrollbar strip.
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Scrollable content (header + body + aggregation).
-                    Expanded(
-                      child: ScrollConfiguration(
-                        behavior: ScrollConfiguration.of(context)
-                            .copyWith(scrollbars: false),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          controller: widget.horizontalScrollController,
-                          child: SizedBox(
-                            width: contentWidth,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                buildHeader(
-                                  indices: middleIndices,
-                                  isMiddle: true,
-                                ),
-                                Expanded(
-                                  child: ScrollConfiguration(
-                                    behavior: ScrollConfiguration.of(context)
-                                        .copyWith(scrollbars: false),
-                                    child: OmGridBody(
-                                      flattenedItems: widget.flattenedItems,
-                                      configuration: config,
-                                      internalColumns: widget.internalColumns,
-                                      columnWidths: currentColumnWidths,
-                                      expandedGroups: widget.expandedGroups,
-                                      selectedRows: widget.selectedRows,
-                                      hoveredRowIndex: widget.hoveredRowIndex,
-                                      controller:
-                                          widget.verticalScrollController,
-                                      verticalScrollController:
-                                          widget.verticalScrollController,
-                                      horizontalScrollController:
-                                          widget.horizontalScrollController,
-                                      onToggleGroup: widget.onToggleGroup,
-                                      onRowTap: widget.onRowTap,
-                                      onCellTapDown: widget.onCellTapDown,
-                                      onCellPanUpdate: widget.onCellPanUpdate,
-                                      onCellPanEnd: widget.onCellPanEnd,
-                                      isCellSelected: widget.isCellSelected,
-                                      onShowContextMenu:
-                                          widget.onShowContextMenu,
-                                      onHoverChanged: widget.onHoverChanged,
-                                      visibleIndicesToRender: middleIndices,
-                                      showScrollbar: false,
-                                      globalSearchText:
-                                          widget.controller.globalSearchText,
-                                      onRowReorder: widget.onRowReorder,
-                                      isEditing: widget.isEditing,
-                                      isScrolling: _isScrolling,
+      // Wrap in ValueListenableBuilder so the layout recomputes when
+      // v-scrollbar visibility changes (affects effectiveAvailableWidth).
+      return ValueListenableBuilder<bool>(
+          valueListenable: _vScrollbarVisible,
+          builder: (context, _, __) => Stack(
+                children: [
+                  // Left part: horizontal scroll area + h-scrollbar below it.
+                  // Right part: vertical scrollbar strip.
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Scrollable content (header + body + aggregation).
+                            Expanded(
+                              child: ScrollConfiguration(
+                                behavior: ScrollConfiguration.of(context)
+                                    .copyWith(scrollbars: false),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  controller: widget.horizontalScrollController,
+                                  child: SizedBox(
+                                    width: contentWidth,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        buildHeader(
+                                          indices: middleIndices,
+                                          isMiddle: true,
+                                        ),
+                                        Expanded(
+                                          child: ScrollConfiguration(
+                                            behavior:
+                                                ScrollConfiguration.of(context)
+                                                    .copyWith(
+                                                        scrollbars: false),
+                                            child: OmGridBody(
+                                              flattenedItems:
+                                                  widget.flattenedItems,
+                                              configuration: config,
+                                              internalColumns:
+                                                  widget.internalColumns,
+                                              columnWidths: currentColumnWidths,
+                                              expandedGroups:
+                                                  widget.expandedGroups,
+                                              selectedRows: widget.selectedRows,
+                                              hoveredRowIndex:
+                                                  widget.hoveredRowIndex,
+                                              controller: widget
+                                                  .verticalScrollController,
+                                              verticalScrollController: widget
+                                                  .verticalScrollController,
+                                              horizontalScrollController: widget
+                                                  .horizontalScrollController,
+                                              onToggleGroup:
+                                                  widget.onToggleGroup,
+                                              onRowTap: widget.onRowTap,
+                                              onCellTapDown:
+                                                  widget.onCellTapDown,
+                                              onCellPanUpdate:
+                                                  widget.onCellPanUpdate,
+                                              onCellPanEnd: widget.onCellPanEnd,
+                                              isCellSelected:
+                                                  widget.isCellSelected,
+                                              onShowContextMenu:
+                                                  widget.onShowContextMenu,
+                                              onHoverChanged:
+                                                  widget.onHoverChanged,
+                                              visibleIndicesToRender:
+                                                  middleIndices,
+                                              showScrollbar: false,
+                                              globalSearchText: widget
+                                                  .controller.globalSearchText,
+                                              onRowReorder: widget.onRowReorder,
+                                              isEditing: widget.isEditing,
+                                              isScrolling: _isScrolling,
+                                            ),
+                                          ),
+                                        ),
+                                        GridAggregationRow(
+                                          controller: widget.controller,
+                                          columns: widget.internalColumns,
+                                          columnWidths: currentColumnWidths,
+                                          visibleIndices: middleIndices,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                GridAggregationRow(
-                                  controller: widget.controller,
-                                  columns: widget.internalColumns,
-                                  columnWidths: currentColumnWidths,
-                                  visibleIndices: middleIndices,
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                            // Vertical scrollbar — collapses to 0 width when not needed.
+                            ValueListenableBuilder<bool>(
+                              valueListenable: _vScrollbarVisible,
+                              builder: (context, visible, _) {
+                                return SizedBox(
+                                  width: visible ? vScrollbarWidth : 0,
+                                  child: buildVScrollbar(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    // Vertical scrollbar — fixed width, outside horiz scroll.
-                    SizedBox(
-                      width: vScrollbarWidth,
-                      child: buildVScrollbar(),
-                    ),
-                  ],
-                ),
-              ),
-              // Horizontal scrollbar — full width minus v-scrollbar.
-              Padding(
-                padding: const EdgeInsetsDirectional.only(
-                  end: vScrollbarWidth,
-                ),
-                child: buildHScrollbar(),
-              ),
-            ],
-          ),
-        ],
-      );
+                      // Horizontal scrollbar — full width minus v-scrollbar.
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          end: vScrollbarShown ? vScrollbarWidth : 0,
+                        ),
+                        child: buildHScrollbar(),
+                      ),
+                    ],
+                  ),
+                ],
+              ));
     }
 
     Widget buildStickyBody() {

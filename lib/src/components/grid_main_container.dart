@@ -92,7 +92,7 @@ class GridMainContainer extends StatefulWidget {
 class _GridMainContainerState extends State<GridMainContainer> {
   bool _isScrolling = false;
   Timer? _scrollEndTimer;
-  late ScrollbarPainter _scrollbarPainter;
+  ScrollbarPainter? _scrollbarPainter;
 
   @override
   void initState() {
@@ -104,12 +104,10 @@ class _GridMainContainerState extends State<GridMainContainer> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final scrollbarTheme = ScrollbarTheme.of(context);
-    if (mounted) {
-      _scrollbarPainter.dispose();
-    }
+    _scrollbarPainter?.dispose();
     _initScrollbarPainter(scrollbarTheme);
     // Apply text direction immediately
-    _scrollbarPainter.textDirection = Directionality.of(context);
+    _scrollbarPainter!.textDirection = Directionality.of(context);
   }
 
   void _initScrollbarPainter([ScrollbarThemeData? scrollbarTheme]) {
@@ -145,7 +143,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
     final ctrl = widget.verticalScrollController;
     if (ctrl.hasClients) {
       final pos = ctrl.position;
-      _scrollbarPainter.update(pos, pos.axisDirection);
+      _scrollbarPainter?.update(pos, pos.axisDirection);
     }
   }
 
@@ -161,7 +159,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
   @override
   void dispose() {
     widget.verticalScrollController.removeListener(_onScrollChanged);
-    _scrollbarPainter.dispose();
+    _scrollbarPainter?.dispose();
     _scrollEndTimer?.cancel();
     super.dispose();
   }
@@ -614,9 +612,9 @@ class _GridMainContainerState extends State<GridMainContainer> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (!mounted) return;
                   final ctrl = widget.verticalScrollController;
-                  if (ctrl.hasClients) {
+                  if (ctrl.hasClients && _scrollbarPainter != null) {
                     final pos = ctrl.position;
-                    _scrollbarPainter
+                    _scrollbarPainter!
                       ..textDirection = Directionality.of(context)
                       ..update(pos, pos.axisDirection);
                   }

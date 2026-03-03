@@ -519,46 +519,51 @@ class _GridMainContainerState extends State<GridMainContainer> {
       );
     }
 
-    // Build the grid body without any vertical scrollbar inside it
-    Widget gridBody;
-    if (config.shrinkWrapRows) {
-      gridBody = isSticky ? buildStickyBody() : buildNonStickyBody();
-    } else {
-      gridBody = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: isSticky ? buildStickyBody() : buildNonStickyBody(),
-          ),
-        ],
-      );
-    }
-
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         _handleScrollNotification(notification);
         return false;
       },
-      // Use a Stack so the vertical scrollbar is always visible at the right
-      // edge, independent of horizontal scrolling position.
       child: Stack(
         children: [
-          // The full grid content fills all available space
-          Positioned.fill(child: gridBody),
-          // Vertical scrollbar anchored to the right edge, always visible
-          PositionedDirectional(
-            end: 0,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!config.shrinkWrapRows)
+                      Expanded(
+                        child:
+                            isSticky ? buildStickyBody() : buildNonStickyBody(),
+                      )
+                    else
+                      isSticky ? buildStickyBody() : buildNonStickyBody(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // Persistent vertical scrollbar
+          Positioned(
+            right: 0,
             top: 0,
             bottom: 0,
-            width: 8,
+            width: 12, // Scrollbar default width roughly
             child: Scrollbar(
               controller: widget.verticalScrollController,
               thumbVisibility: true,
               trackVisibility: true,
-              // This invisible scroll view is needed to give the Scrollbar
-              // a scroll position to attach to without conflicting with the
-              // ListViews inside OmGridBody (which use their own controllers).
-              child: const SizedBox.expand(),
+              child: SingleChildScrollView(
+                controller: widget.verticalScrollController,
+                child: SizedBox(
+                  // We simulate the total height. Row height * count + header
+                  height:
+                      (widget.flattenedItems.length * config.rowHeight) + 60,
+                  width: 1,
+                ),
+              ),
             ),
           ),
         ],

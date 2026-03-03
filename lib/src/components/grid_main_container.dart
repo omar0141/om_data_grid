@@ -9,6 +9,7 @@ import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:om_data_grid/src/utils/datagrid_controller.dart';
 import 'package:om_data_grid/src/utils/datagrid_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:om_data_grid/src/utils/general_helpers.dart';
 
 class GridMainContainer extends StatefulWidget {
   final OmDataGridController controller;
@@ -476,8 +477,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
       // never moves when the user scrolls left/right.
 
       // Safe colour helper — never calls resolve() to avoid web JS-null crash.
-      Color safeTrackColor() => Colors.grey[350]!;
-      Color safeThumbColor() => Colors.grey[500]!;
+      Color safeTrackColor() => Colors.grey.withAlpha(100);
+      Color safeThumbColor() => Colors.grey.withAlpha(200);
 
       // ── Vertical scrollbar (custom painted, outside horiz scroll) ──────────
       Widget buildVScrollbar() {

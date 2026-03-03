@@ -1,10 +1,8 @@
+## 0.0.19
+
+- **Filter Normalization**: Fixed an issue where boolean/iosSwitch columns displayed duplicate "false" values in the filter checklist. Improved value normalization for truthy and falsy values to ensure consistent filtering behavior.
+
 ## 0.0.18
-
-- **Multi-Language Support**: Added comprehensive localization support for 11 languages (English, Arabic, French, Turkish, Hindi, Spanish, Japanese, Chinese, Russian, German, Portuguese) via `OmDataGridLabels` named constructors.
-- **Enhanced Chart Localization**: Fully localized chart UI, including settings panels, tooltips, and export dialogs.
-- **Model-Driven Strings**: Refactored all hardcoded strings to use the central `OmDataGridLabels` configuration, enabling complete customization.
-
-## 0.0.17
 
 - Added additive search behavior to the grid filter popup, allowing the user to search for and select new items without losing their previous manual selections.
 

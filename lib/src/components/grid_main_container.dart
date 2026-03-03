@@ -444,27 +444,26 @@ class _GridMainContainerState extends State<GridMainContainer> {
       // Non-shrinkWrap: split header and body so the vertical RawScrollbar
       // wraps the ListView directly (making drag and metrics work correctly),
       // while the header stays inside the horizontal SingleChildScrollView.
+      // The horizontal scrollbar lives at the very bottom as a dedicated strip.
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: [
-          // Header row — scrolls horizontally with content.
-          Scrollbar(
-            thumbVisibility: true,
+          // Header row — scrolls horizontally with content (no scrollbar here).
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             controller: widget.horizontalScrollController,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: widget.horizontalScrollController,
-              child: SizedBox(
-                width: contentWidth,
-                child: buildHeader(
-                  indices: middleIndices,
-                  isMiddle: true,
-                ),
+            child: SizedBox(
+              width: contentWidth,
+              child: buildHeader(
+                indices: middleIndices,
+                isMiddle: true,
               ),
             ),
           ),
           // Body rows — RawScrollbar is a direct ancestor of the ListView.
+          // ScrollConfiguration suppresses Flutter's auto-added desktop scrollbar
+          // so only our RawScrollbar shows.
           Expanded(
             child: RawScrollbar(
               controller: widget.verticalScrollController,
@@ -473,31 +472,36 @@ class _GridMainContainerState extends State<GridMainContainer> {
               thickness: 12.0,
               radius: const Radius.circular(6),
               interactive: true,
-              child: OmGridBody(
-                flattenedItems: widget.flattenedItems,
-                configuration: config,
-                internalColumns: widget.internalColumns,
-                columnWidths: currentColumnWidths,
-                expandedGroups: widget.expandedGroups,
-                selectedRows: widget.selectedRows,
-                hoveredRowIndex: widget.hoveredRowIndex,
-                controller: widget.verticalScrollController,
-                verticalScrollController: widget.verticalScrollController,
-                horizontalScrollController: widget.horizontalScrollController,
-                onToggleGroup: widget.onToggleGroup,
-                onRowTap: widget.onRowTap,
-                onCellTapDown: widget.onCellTapDown,
-                onCellPanUpdate: widget.onCellPanUpdate,
-                onCellPanEnd: widget.onCellPanEnd,
-                isCellSelected: widget.isCellSelected,
-                onShowContextMenu: widget.onShowContextMenu,
-                onHoverChanged: widget.onHoverChanged,
-                visibleIndicesToRender: middleIndices,
-                showScrollbar: false,
-                globalSearchText: widget.controller.globalSearchText,
-                onRowReorder: widget.onRowReorder,
-                isEditing: widget.isEditing,
-                isScrolling: _isScrolling,
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  scrollbars: false,
+                ),
+                child: OmGridBody(
+                  flattenedItems: widget.flattenedItems,
+                  configuration: config,
+                  internalColumns: widget.internalColumns,
+                  columnWidths: currentColumnWidths,
+                  expandedGroups: widget.expandedGroups,
+                  selectedRows: widget.selectedRows,
+                  hoveredRowIndex: widget.hoveredRowIndex,
+                  controller: widget.verticalScrollController,
+                  verticalScrollController: widget.verticalScrollController,
+                  horizontalScrollController: widget.horizontalScrollController,
+                  onToggleGroup: widget.onToggleGroup,
+                  onRowTap: widget.onRowTap,
+                  onCellTapDown: widget.onCellTapDown,
+                  onCellPanUpdate: widget.onCellPanUpdate,
+                  onCellPanEnd: widget.onCellPanEnd,
+                  isCellSelected: widget.isCellSelected,
+                  onShowContextMenu: widget.onShowContextMenu,
+                  onHoverChanged: widget.onHoverChanged,
+                  visibleIndicesToRender: middleIndices,
+                  showScrollbar: false,
+                  globalSearchText: widget.controller.globalSearchText,
+                  onRowReorder: widget.onRowReorder,
+                  isEditing: widget.isEditing,
+                  isScrolling: _isScrolling,
+                ),
               ),
             ),
           ),
@@ -507,6 +511,18 @@ class _GridMainContainerState extends State<GridMainContainer> {
             columns: widget.internalColumns,
             columnWidths: currentColumnWidths,
             visibleIndices: middleIndices,
+          ),
+          // Horizontal scrollbar strip at the bottom — always visible,
+          // linked to the same horizontalScrollController as the header.
+          Scrollbar(
+            controller: widget.horizontalScrollController,
+            thumbVisibility: true,
+            trackVisibility: true,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              controller: widget.horizontalScrollController,
+              child: SizedBox(width: contentWidth, height: 1),
+            ),
           ),
         ],
       );

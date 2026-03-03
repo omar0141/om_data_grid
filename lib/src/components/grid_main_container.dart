@@ -286,37 +286,32 @@ class _GridMainContainerState extends State<GridMainContainer> {
             )
           else
             Expanded(
-              child: Scrollbar(
-                controller: isMiddle ? widget.verticalScrollController : null,
-                thumbVisibility: false,
-                trackVisibility: false,
-                child: OmGridBody(
-                  flattenedItems: widget.flattenedItems,
-                  configuration: config,
-                  internalColumns: widget.internalColumns,
-                  columnWidths: currentColumnWidths,
-                  expandedGroups: widget.expandedGroups,
-                  selectedRows: widget.selectedRows,
-                  hoveredRowIndex: widget.hoveredRowIndex,
-                  controller: verticalController,
-                  verticalScrollController: widget.verticalScrollController,
-                  horizontalScrollController:
-                      isMiddle ? widget.horizontalScrollController : null,
-                  onToggleGroup: widget.onToggleGroup,
-                  onRowTap: widget.onRowTap,
-                  onCellTapDown: widget.onCellTapDown,
-                  onCellPanUpdate: widget.onCellPanUpdate,
-                  onCellPanEnd: widget.onCellPanEnd,
-                  isCellSelected: widget.isCellSelected,
-                  onShowContextMenu: widget.onShowContextMenu,
-                  onHoverChanged: widget.onHoverChanged,
-                  visibleIndicesToRender: indices,
-                  showScrollbar: false,
-                  globalSearchText: widget.controller.globalSearchText,
-                  onRowReorder: widget.onRowReorder,
-                  isEditing: widget.isEditing,
-                  isScrolling: _isScrolling,
-                ),
+              child: OmGridBody(
+                flattenedItems: widget.flattenedItems,
+                configuration: config,
+                internalColumns: widget.internalColumns,
+                columnWidths: currentColumnWidths,
+                expandedGroups: widget.expandedGroups,
+                selectedRows: widget.selectedRows,
+                hoveredRowIndex: widget.hoveredRowIndex,
+                controller: verticalController,
+                verticalScrollController: widget.verticalScrollController,
+                horizontalScrollController:
+                    isMiddle ? widget.horizontalScrollController : null,
+                onToggleGroup: widget.onToggleGroup,
+                onRowTap: widget.onRowTap,
+                onCellTapDown: widget.onCellTapDown,
+                onCellPanUpdate: widget.onCellPanUpdate,
+                onCellPanEnd: widget.onCellPanEnd,
+                isCellSelected: widget.isCellSelected,
+                onShowContextMenu: widget.onShowContextMenu,
+                onHoverChanged: widget.onHoverChanged,
+                visibleIndicesToRender: indices,
+                showScrollbar: false,
+                globalSearchText: widget.controller.globalSearchText,
+                onRowReorder: widget.onRowReorder,
+                isEditing: widget.isEditing,
+                isScrolling: _isScrolling,
               ),
             ),
           GridAggregationRow(
@@ -550,18 +545,31 @@ class _GridMainContainerState extends State<GridMainContainer> {
 
     // Overlay the vertical scrollbar on top of the full viewport so it is
     // always visible at the right edge regardless of horizontal scroll position.
+    // The overlay is constrained to the scrollbar width so it never blocks
+    // pointer events on the grid content.
+    const double scrollbarThickness = 12.0;
     final gridWithScrollbar = config.shrinkWrapRows
         ? gridBody
         : Stack(
             children: [
-              gridBody,
-              ScrollbarTheme(
-                data: ScrollbarThemeData(
-                  thumbVisibility: WidgetStateProperty.all(true),
-                  trackVisibility: WidgetStateProperty.all(true),
-                ),
-                child: Scrollbar(
+              // Pad the grid body so content is never hidden behind the scrollbar.
+              Padding(
+                padding: EdgeInsetsDirectional.only(end: scrollbarThickness),
+                child: gridBody,
+              ),
+              // Scrollbar strip pinned to the end edge — only covers its own width.
+              PositionedDirectional(
+                top: 0,
+                bottom: 0,
+                end: 0,
+                width: scrollbarThickness,
+                child: RawScrollbar(
                   controller: widget.verticalScrollController,
+                  thumbVisibility: true,
+                  trackVisibility: true,
+                  thickness: scrollbarThickness,
+                  radius: const Radius.circular(6),
+                  interactive: true,
                   child: const SizedBox.expand(),
                 ),
               ),

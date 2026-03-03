@@ -491,7 +491,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   if (viewport == null ||
                       maxExt == null ||
                       pixels == null ||
-                      maxExt <= 0 ||
+                      maxExt < 5 ||
                       viewport <= 0 ||
                       trackH <= 0) {
                     return const SizedBox.shrink();

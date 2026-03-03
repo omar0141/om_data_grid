@@ -415,10 +415,20 @@ class _GridMainContainerState extends State<GridMainContainer> {
           ? gridConstraints.maxWidth
           : (gridConstraints.maxWidth - leftWidth - rightWidth);
 
+      // In non-shrinkWrap mode the vertical scrollbar strip sits outside the
+      // SingleChildScrollView and takes vScrollbarWidth px, so we must subtract
+      // it from the available viewport width — otherwise contentWidth > viewport
+      // by exactly vScrollbarWidth and the horizontal scrollbar never hides.
+      const double vScrollbarWidth = 12.0;
+      const double hScrollbarHeight = 12.0;
+      final double effectiveAvailableWidth = config.shrinkWrapRows
+          ? availableWidth
+          : availableWidth - vScrollbarWidth;
+
       final double contentWidth = config.shrinkWrapColumns
           ? middleTotalWidth
-          : (middleTotalWidth < availableWidth
-              ? availableWidth
+          : (middleTotalWidth < effectiveAvailableWidth
+              ? effectiveAvailableWidth
               : middleTotalWidth);
 
       if (config.shrinkWrapRows) {
@@ -458,8 +468,6 @@ class _GridMainContainerState extends State<GridMainContainer> {
       // The vertical scrollbar is in the OUTER Stack (right column),
       // completely outside the horizontal SingleChildScrollView, so it
       // never moves when the user scrolls left/right.
-      const double vScrollbarWidth = 12.0;
-      const double hScrollbarHeight = 12.0;
 
       // Safe colour helper — never calls resolve() to avoid web JS-null crash.
       Color safeTrackColor() => Colors.black12;

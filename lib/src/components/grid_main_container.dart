@@ -92,74 +92,19 @@ class GridMainContainer extends StatefulWidget {
 class _GridMainContainerState extends State<GridMainContainer> {
   bool _isScrolling = false;
   Timer? _scrollEndTimer;
-  ScrollbarPainter? _scrollbarPainter;
 
   @override
   void initState() {
     super.initState();
-    widget.verticalScrollController.addListener(_onScrollChanged);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final scrollbarTheme = ScrollbarTheme.of(context);
-    _scrollbarPainter?.dispose();
-    _initScrollbarPainter(scrollbarTheme);
-    // Apply text direction immediately
-    _scrollbarPainter!.textDirection = Directionality.of(context);
-  }
-
-  void _initScrollbarPainter([ScrollbarThemeData? scrollbarTheme]) {
-    final Color thumbColor =
-        scrollbarTheme?.thumbColor?.resolve({WidgetState.hovered}) ??
-            const Color(0xFF9E9E9E);
-    final Color trackColor =
-        scrollbarTheme?.trackColor?.resolve({WidgetState.hovered}) ??
-            const Color(0xFFEEEEEE);
-    final Color trackBorderColor =
-        scrollbarTheme?.trackBorderColor?.resolve({WidgetState.hovered}) ??
-            const Color(0xFFE0E0E0);
-    final double thickness =
-        scrollbarTheme?.thickness?.resolve({WidgetState.hovered}) ?? 8.0;
-    final Radius radius = scrollbarTheme?.radius ?? const Radius.circular(4);
-
-    _scrollbarPainter = ScrollbarPainter(
-      color: thumbColor,
-      trackColor: trackColor,
-      trackBorderColor: trackBorderColor,
-      fadeoutOpacityAnimation: const AlwaysStoppedAnimation(1.0),
-      thickness: thickness,
-      radius: radius,
-      mainAxisMargin: 2.0,
-      crossAxisMargin: 2.0,
-      minLength: 48.0,
-      padding: EdgeInsets.zero,
-    );
-  }
-
-  void _onScrollChanged() {
-    if (!mounted) return;
-    final ctrl = widget.verticalScrollController;
-    if (ctrl.hasClients) {
-      final pos = ctrl.position;
-      _scrollbarPainter?.update(pos, pos.axisDirection);
-    }
   }
 
   @override
   void didUpdateWidget(GridMainContainer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.verticalScrollController != widget.verticalScrollController) {
-      oldWidget.verticalScrollController.removeListener(_onScrollChanged);
-      widget.verticalScrollController.addListener(_onScrollChanged);
-    }
   }
 
   @override
   void dispose() {
-    widget.verticalScrollController.removeListener(_onScrollChanged);
-    _scrollbarPainter?.dispose();
     _scrollEndTimer?.cancel();
     super.dispose();
   }
@@ -341,32 +286,37 @@ class _GridMainContainerState extends State<GridMainContainer> {
             )
           else
             Expanded(
-              child: OmGridBody(
-                flattenedItems: widget.flattenedItems,
-                configuration: config,
-                internalColumns: widget.internalColumns,
-                columnWidths: currentColumnWidths,
-                expandedGroups: widget.expandedGroups,
-                selectedRows: widget.selectedRows,
-                hoveredRowIndex: widget.hoveredRowIndex,
-                controller: verticalController,
-                verticalScrollController: widget.verticalScrollController,
-                horizontalScrollController:
-                    isMiddle ? widget.horizontalScrollController : null,
-                onToggleGroup: widget.onToggleGroup,
-                onRowTap: widget.onRowTap,
-                onCellTapDown: widget.onCellTapDown,
-                onCellPanUpdate: widget.onCellPanUpdate,
-                onCellPanEnd: widget.onCellPanEnd,
-                isCellSelected: widget.isCellSelected,
-                onShowContextMenu: widget.onShowContextMenu,
-                onHoverChanged: widget.onHoverChanged,
-                visibleIndicesToRender: indices,
-                showScrollbar: false,
-                globalSearchText: widget.controller.globalSearchText,
-                onRowReorder: widget.onRowReorder,
-                isEditing: widget.isEditing,
-                isScrolling: _isScrolling,
+              child: Scrollbar(
+                controller: isMiddle ? widget.verticalScrollController : null,
+                thumbVisibility: isMiddle,
+                trackVisibility: isMiddle,
+                child: OmGridBody(
+                  flattenedItems: widget.flattenedItems,
+                  configuration: config,
+                  internalColumns: widget.internalColumns,
+                  columnWidths: currentColumnWidths,
+                  expandedGroups: widget.expandedGroups,
+                  selectedRows: widget.selectedRows,
+                  hoveredRowIndex: widget.hoveredRowIndex,
+                  controller: verticalController,
+                  verticalScrollController: widget.verticalScrollController,
+                  horizontalScrollController:
+                      isMiddle ? widget.horizontalScrollController : null,
+                  onToggleGroup: widget.onToggleGroup,
+                  onRowTap: widget.onRowTap,
+                  onCellTapDown: widget.onCellTapDown,
+                  onCellPanUpdate: widget.onCellPanUpdate,
+                  onCellPanEnd: widget.onCellPanEnd,
+                  isCellSelected: widget.isCellSelected,
+                  onShowContextMenu: widget.onShowContextMenu,
+                  onHoverChanged: widget.onHoverChanged,
+                  visibleIndicesToRender: indices,
+                  showScrollbar: false,
+                  globalSearchText: widget.controller.globalSearchText,
+                  onRowReorder: widget.onRowReorder,
+                  isEditing: widget.isEditing,
+                  isScrolling: _isScrolling,
+                ),
               ),
             ),
           GridAggregationRow(
@@ -603,47 +553,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
         _handleScrollNotification(notification);
         return false;
       },
-      child: config.shrinkWrapRows
-          ? gridBody
-          : LayoutBuilder(
-              builder: (context, layoutConstraints) {
-                // Update the painter with current viewport size so it can
-                // correctly calculate the thumb size and position.
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!mounted) return;
-                  final ctrl = widget.verticalScrollController;
-                  if (ctrl.hasClients && _scrollbarPainter != null) {
-                    final pos = ctrl.position;
-                    _scrollbarPainter!
-                      ..textDirection = Directionality.of(context)
-                      ..update(pos, pos.axisDirection);
-                  }
-                });
-                return Stack(
-                  children: [
-                    gridBody,
-                    // Overlay scrollbar — always pinned to the right edge of
-                    // the visible viewport, never scrolls horizontally.
-                    PositionedDirectional(
-                      top: 0,
-                      bottom: 0,
-                      end: 0,
-                      width: 12,
-                      child: RepaintBoundary(
-                        child: AnimatedBuilder(
-                          animation: widget.verticalScrollController,
-                          builder: (context, _) {
-                            return CustomPaint(
-                              painter: _scrollbarPainter,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+      child: gridBody,
     );
   }
 }

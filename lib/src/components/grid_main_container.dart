@@ -476,8 +476,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
       // never moves when the user scrolls left/right.
 
       // Safe colour helper — never calls resolve() to avoid web JS-null crash.
-      Color safeTrackColor() => Colors.black12;
-      Color safeThumbColor() => Colors.grey;
+      Color safeTrackColor() => Colors.grey[350]!;
+      Color safeThumbColor() => Colors.grey[500]!;
 
       // ── Vertical scrollbar (custom painted, outside horiz scroll) ──────────
       Widget buildVScrollbar() {

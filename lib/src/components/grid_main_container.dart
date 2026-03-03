@@ -442,239 +442,231 @@ class _GridMainContainerState extends State<GridMainContainer> {
       }
 
       // Non-shrinkWrap layout:
-      // - One SingleChildScrollView drives horizontal scrolling for header + body.
-      // - RawScrollbar overlays the right edge of the body via a Stack.
-      // - A custom-painted horizontal scrollbar sits at the very bottom.
+      // ┌─────────────────────────────────┬────┐
+      // │  SingleChildScrollView (horiz)  │    │
+      // │  ┌──────────────────────────┐   │ V  │
+      // │  │ header                   │   │ s  │
+      // │  ├──────────────────────────┤   │ c  │
+      // │  │ body (ListView)          │   │ r  │
+      // │  ├──────────────────────────┤   │ l  │
+      // │  │ aggregation              │   │    │
+      // │  └──────────────────────────┘   │    │
+      // ├─────────────────────────────────┘    │
+      // │  H scrollbar (custom painted)        │
+      // └──────────────────────────────────────┘
       //
-      // The Stack lets the RawScrollbar paint over the body without being
-      // inside the horizontal scroll, so it stays pinned to the viewport edge.
+      // The vertical scrollbar is in the OUTER Stack (right column),
+      // completely outside the horizontal SingleChildScrollView, so it
+      // never moves when the user scrolls left/right.
       const double vScrollbarWidth = 12.0;
+      const double hScrollbarHeight = 12.0;
 
-      final Widget bodyWithVScrollbar = Stack(
+      // Safe colour helper — never calls resolve() to avoid web JS-null crash.
+      Color safeTrackColor() => Colors.black12;
+      Color safeThumbColor() => Colors.black45;
+
+      // ── Vertical scrollbar (custom painted, outside horiz scroll) ──────────
+      Widget buildVScrollbar() {
+        return LayoutBuilder(
+          builder: (context, box) {
+            final double trackH = box.maxHeight;
+            return AnimatedBuilder(
+              animation: widget.verticalScrollController,
+              builder: (context, _) {
+                final vc = widget.verticalScrollController;
+                if (!vc.hasClients) return const SizedBox.shrink();
+                final pos = vc.position;
+                final double viewport = pos.viewportDimension;
+                final double maxExt = pos.maxScrollExtent;
+                if (maxExt <= 0 || viewport <= 0 || trackH <= 0) {
+                  return const SizedBox.shrink();
+                }
+                final double vf = viewport / (maxExt + viewport);
+                if (vf >= 1.0) return const SizedBox.shrink();
+                final double thumbH = (vf * trackH).clamp(30.0, trackH);
+                final double thumbRange = trackH - thumbH;
+                final double thumbTop = (pos.pixels / maxExt) * thumbRange;
+
+                return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onVerticalDragUpdate: (d) {
+                    if (!vc.hasClients) return;
+                    final ratio = vc.position.maxScrollExtent / thumbRange;
+                    vc.jumpTo(
+                      (vc.offset + d.delta.dy * ratio)
+                          .clamp(0.0, vc.position.maxScrollExtent),
+                    );
+                  },
+                  child: SizedBox(
+                    width: vScrollbarWidth,
+                    height: trackH,
+                    child: CustomPaint(
+                      painter: _VerticalScrollbarPainter(
+                        thumbTop: thumbTop,
+                        thumbHeight: thumbH,
+                        trackWidth: vScrollbarWidth,
+                        radius: 6.0,
+                        trackColor: safeTrackColor(),
+                        thumbColor: safeThumbColor(),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      }
+
+      // ── Horizontal scrollbar (custom painted, outside horiz scroll) ─────────
+      Widget buildHScrollbar() {
+        return LayoutBuilder(
+          builder: (context, box) {
+            final double trackW = box.maxWidth;
+            return AnimatedBuilder(
+              animation: widget.horizontalScrollController,
+              builder: (context, _) {
+                final hc = widget.horizontalScrollController;
+                if (!hc.hasClients) return const SizedBox.shrink();
+                final pos = hc.position;
+                final double viewport = pos.viewportDimension;
+                final double maxExt = pos.maxScrollExtent;
+                if (maxExt <= 0 || viewport <= 0 || trackW <= 0) {
+                  return const SizedBox.shrink();
+                }
+                final double vf = viewport / (maxExt + viewport);
+                if (vf >= 1.0) return const SizedBox.shrink();
+                final double thumbW = (vf * trackW).clamp(30.0, trackW);
+                final double thumbRange = trackW - thumbW;
+                final double thumbLeft = (pos.pixels / maxExt) * thumbRange;
+
+                return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onHorizontalDragUpdate: (d) {
+                    if (!hc.hasClients) return;
+                    final ratio = hc.position.maxScrollExtent / thumbRange;
+                    hc.jumpTo(
+                      (hc.offset + d.delta.dx * ratio)
+                          .clamp(0.0, hc.position.maxScrollExtent),
+                    );
+                  },
+                  child: SizedBox(
+                    width: trackW,
+                    height: hScrollbarHeight,
+                    child: CustomPaint(
+                      painter: _HorizontalScrollbarPainter(
+                        thumbLeft: thumbLeft,
+                        thumbWidth: thumbW,
+                        trackHeight: hScrollbarHeight,
+                        radius: 6.0,
+                        trackColor: safeTrackColor(),
+                        thumbColor: safeThumbColor(),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      }
+
+      // ── Main layout ─────────────────────────────────────────────────────────
+      return Stack(
         children: [
-          // Body fills the whole stack area, padded on the right so rows
-          // don't go under the vertical scrollbar thumb.
-          Positioned.fill(
-            child: ScrollConfiguration(
-              behavior: ScrollConfiguration.of(context).copyWith(
-                scrollbars: false,
-              ),
-              child: OmGridBody(
-                flattenedItems: widget.flattenedItems,
-                configuration: config,
-                internalColumns: widget.internalColumns,
-                columnWidths: currentColumnWidths,
-                expandedGroups: widget.expandedGroups,
-                selectedRows: widget.selectedRows,
-                hoveredRowIndex: widget.hoveredRowIndex,
-                controller: widget.verticalScrollController,
-                verticalScrollController: widget.verticalScrollController,
-                horizontalScrollController: widget.horizontalScrollController,
-                onToggleGroup: widget.onToggleGroup,
-                onRowTap: widget.onRowTap,
-                onCellTapDown: widget.onCellTapDown,
-                onCellPanUpdate: widget.onCellPanUpdate,
-                onCellPanEnd: widget.onCellPanEnd,
-                isCellSelected: widget.isCellSelected,
-                onShowContextMenu: widget.onShowContextMenu,
-                onHoverChanged: widget.onHoverChanged,
-                visibleIndicesToRender: middleIndices,
-                showScrollbar: false,
-                globalSearchText: widget.controller.globalSearchText,
-                onRowReorder: widget.onRowReorder,
-                isEditing: widget.isEditing,
-                isScrolling: _isScrolling,
-              ),
-            ),
-          ),
-          // Vertical scrollbar pinned to the right edge of the viewport.
-          PositionedDirectional(
-            end: 0,
-            top: 0,
-            bottom: 0,
-            width: vScrollbarWidth,
-            child: LayoutBuilder(
-              builder: (context, box) {
-                final double trackH = box.maxHeight;
-                Color trackColor = Colors.black12;
-                Color thumbColor = Colors.black38;
-                try {
-                  final st = Theme.of(context).scrollbarTheme;
-                  trackColor =
-                      st.trackColor?.resolve({WidgetState.scrolledUnder}) ??
-                          st.trackColor?.resolve({}) ??
-                          Colors.black12;
-                  thumbColor = st.thumbColor?.resolve({WidgetState.dragged}) ??
-                      st.thumbColor?.resolve({}) ??
-                      Colors.black38;
-                } catch (_) {}
-
-                return AnimatedBuilder(
-                  animation: widget.verticalScrollController,
-                  builder: (context, _) {
-                    final vc = widget.verticalScrollController;
-                    if (!vc.hasClients) return const SizedBox.shrink();
-                    final pos = vc.position;
-                    final double viewport = pos.viewportDimension;
-                    final double maxExt = pos.maxScrollExtent;
-                    if (maxExt <= 0 || viewport <= 0) {
-                      return const SizedBox.shrink();
-                    }
-                    final double viewportFraction =
-                        viewport / (maxExt + viewport);
-                    if (viewportFraction >= 1.0) {
-                      return const SizedBox.shrink();
-                    }
-                    final double thumbH =
-                        (viewportFraction * trackH).clamp(30.0, trackH);
-                    final double thumbRange = trackH - thumbH;
-                    final double thumbTop =
-                        maxExt > 0 ? (pos.pixels / maxExt) * thumbRange : 0.0;
-
-                    return GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onVerticalDragUpdate: (details) {
-                        if (!vc.hasClients) return;
-                        final double ratio =
-                            vc.position.maxScrollExtent / thumbRange;
-                        vc.jumpTo(
-                          (vc.offset + details.delta.dy * ratio)
-                              .clamp(0.0, vc.position.maxScrollExtent),
-                        );
-                      },
-                      child: SizedBox(
-                        width: vScrollbarWidth,
-                        height: trackH,
-                        child: CustomPaint(
-                          painter: _VerticalScrollbarPainter(
-                            thumbTop: thumbTop,
-                            thumbHeight: thumbH,
-                            trackWidth: vScrollbarWidth,
-                            radius: 6.0,
-                            trackColor: trackColor,
-                            thumbColor: thumbColor,
+          // Left part: horizontal scroll area + h-scrollbar below it.
+          // Right part: vertical scrollbar strip.
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Scrollable content (header + body + aggregation).
+                    Expanded(
+                      child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context)
+                            .copyWith(scrollbars: false),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          controller: widget.horizontalScrollController,
+                          child: SizedBox(
+                            width: contentWidth,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                buildHeader(
+                                  indices: middleIndices,
+                                  isMiddle: true,
+                                ),
+                                Expanded(
+                                  child: ScrollConfiguration(
+                                    behavior: ScrollConfiguration.of(context)
+                                        .copyWith(scrollbars: false),
+                                    child: OmGridBody(
+                                      flattenedItems: widget.flattenedItems,
+                                      configuration: config,
+                                      internalColumns: widget.internalColumns,
+                                      columnWidths: currentColumnWidths,
+                                      expandedGroups: widget.expandedGroups,
+                                      selectedRows: widget.selectedRows,
+                                      hoveredRowIndex: widget.hoveredRowIndex,
+                                      controller:
+                                          widget.verticalScrollController,
+                                      verticalScrollController:
+                                          widget.verticalScrollController,
+                                      horizontalScrollController:
+                                          widget.horizontalScrollController,
+                                      onToggleGroup: widget.onToggleGroup,
+                                      onRowTap: widget.onRowTap,
+                                      onCellTapDown: widget.onCellTapDown,
+                                      onCellPanUpdate: widget.onCellPanUpdate,
+                                      onCellPanEnd: widget.onCellPanEnd,
+                                      isCellSelected: widget.isCellSelected,
+                                      onShowContextMenu:
+                                          widget.onShowContextMenu,
+                                      onHoverChanged: widget.onHoverChanged,
+                                      visibleIndicesToRender: middleIndices,
+                                      showScrollbar: false,
+                                      globalSearchText:
+                                          widget.controller.globalSearchText,
+                                      onRowReorder: widget.onRowReorder,
+                                      isEditing: widget.isEditing,
+                                      isScrolling: _isScrolling,
+                                    ),
+                                  ),
+                                ),
+                                GridAggregationRow(
+                                  controller: widget.controller,
+                                  columns: widget.internalColumns,
+                                  columnWidths: currentColumnWidths,
+                                  visibleIndices: middleIndices,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      );
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          // Header + body share ONE horizontal SingleChildScrollView so the
-          // user can scroll horizontally on both, and the controller has only
-          // one ScrollPosition.
-          Expanded(
-            child: Scrollbar(
-              controller: widget.horizontalScrollController,
-              thumbVisibility: false,
-              // We paint our own bar at the bottom; this just acts as driver.
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                controller: widget.horizontalScrollController,
-                child: SizedBox(
-                  width: contentWidth,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      buildHeader(
-                        indices: middleIndices,
-                        isMiddle: true,
-                      ),
-                      Expanded(child: bodyWithVScrollbar),
-                      GridAggregationRow(
-                        controller: widget.controller,
-                        columns: widget.internalColumns,
-                        columnWidths: currentColumnWidths,
-                        visibleIndices: middleIndices,
-                      ),
-                    ],
-                  ),
+                    ),
+                    // Vertical scrollbar — fixed width, outside horiz scroll.
+                    SizedBox(
+                      width: vScrollbarWidth,
+                      child: buildVScrollbar(),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ),
-          // Custom horizontal scrollbar at the very bottom — single
-          // AnimatedBuilder reads the controller without adding a new position.
-          LayoutBuilder(
-            builder: (context, box) {
-              const double trackH = 12.0;
-              const double radius = 6.0;
-              final double trackW = box.maxWidth;
-
-              Color trackColor = Colors.black12;
-              Color thumbColor = Colors.black38;
-              try {
-                final st = Theme.of(context).scrollbarTheme;
-                trackColor =
-                    st.trackColor?.resolve({WidgetState.scrolledUnder}) ??
-                        st.trackColor?.resolve({}) ??
-                        Colors.black12;
-                thumbColor = st.thumbColor?.resolve({WidgetState.dragged}) ??
-                    st.thumbColor?.resolve({}) ??
-                    Colors.black38;
-              } catch (_) {}
-
-              return AnimatedBuilder(
-                animation: widget.horizontalScrollController,
-                builder: (context, _) {
-                  final ScrollController hc = widget.horizontalScrollController;
-                  if (!hc.hasClients) return const SizedBox.shrink();
-                  final ScrollPosition pos = hc.position;
-                  final double viewport = pos.viewportDimension;
-                  final double maxExt = pos.maxScrollExtent;
-                  if (maxExt <= 0 || viewport <= 0) {
-                    return const SizedBox.shrink();
-                  }
-
-                  final double total = maxExt + viewport;
-                  final double viewportFraction = viewport / total;
-                  if (viewportFraction >= 1.0) return const SizedBox.shrink();
-
-                  final double thumbW =
-                      (viewportFraction * trackW).clamp(30.0, trackW);
-                  final double thumbRange = trackW - thumbW;
-                  final double thumbLeft =
-                      maxExt > 0 ? (pos.pixels / maxExt) * thumbRange : 0.0;
-
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onHorizontalDragUpdate: (details) {
-                      if (!hc.hasClients) return;
-                      final double ratio =
-                          hc.position.maxScrollExtent / thumbRange;
-                      hc.jumpTo(
-                        (hc.offset + details.delta.dx * ratio)
-                            .clamp(0.0, hc.position.maxScrollExtent),
-                      );
-                    },
-                    child: SizedBox(
-                      width: trackW,
-                      height: trackH,
-                      child: CustomPaint(
-                        painter: _HorizontalScrollbarPainter(
-                          thumbLeft: thumbLeft,
-                          thumbWidth: thumbW,
-                          trackHeight: trackH,
-                          radius: radius,
-                          trackColor: trackColor,
-                          thumbColor: thumbColor,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
+              // Horizontal scrollbar — full width minus v-scrollbar.
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  end: vScrollbarWidth,
+                ),
+                child: buildHScrollbar(),
+              ),
+            ],
           ),
         ],
       );

@@ -524,7 +524,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
         _handleScrollNotification(notification);
         return false;
       },
-      child: Scrollbar(
+      child: RawScrollbar(
         controller: widget.verticalScrollController,
         thumbVisibility: true,
         trackVisibility: true,

@@ -1,3 +1,11 @@
+## 0.0.20
+
+- **Scrollbar Overhaul**: Fixed vertical scrollbar always appearing at the right edge of scrollable content instead of the viewport edge. The vertical scrollbar is now pinned to the visible viewport and is always accessible without horizontal scrolling.
+- **Dual Custom Scrollbars**: Replaced Flutter's built-in `Scrollbar`/`RawScrollbar` with custom-painted scrollbars (`CustomPainter` + `GestureDetector`) for both axes, eliminating web/wasm `TypeErrorImpl` crashes caused by JS-null coercion on `ScrollPosition` properties.
+- **Horizontal Scrollbar at Bottom**: Horizontal scrollbar now renders below the grid body (not at the header), matching standard data grid UX.
+- **Auto-hide Scrollbars**: Both scrollbars automatically hide when content fits within the viewport (threshold: `maxScrollExtent < 15px` for horizontal).
+- **Suppressed Duplicate Scrollbars**: Wrapped `OmGridBody` with `ScrollConfiguration(scrollbars: false)` to prevent Flutter's desktop `MaterialScrollBehavior` from injecting a second auto-scrollbar on top of the custom one.
+
 ## 0.0.19
 
 - **Filter Normalization**: Fixed an issue where boolean/iosSwitch columns displayed duplicate "false" values in the filter checklist. Improved value normalization for truthy and falsy values to ensure consistent filtering behavior.

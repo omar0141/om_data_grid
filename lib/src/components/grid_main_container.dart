@@ -459,6 +459,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
       // completely outside the horizontal SingleChildScrollView, so it
       // never moves when the user scrolls left/right.
       const double vScrollbarWidth = 12.0;
+      const double hScrollbarHeight = 12.0;
 
       // Safe colour helper — never calls resolve() to avoid web JS-null crash.
       Color safeTrackColor() => Colors.black12;
@@ -530,6 +531,71 @@ class _GridMainContainerState extends State<GridMainContainer> {
         );
       }
 
+      // ── Horizontal scrollbar (custom painted, outside horiz scroll) ─────────
+      Widget buildHScrollbar() {
+        return LayoutBuilder(
+          builder: (context, box) {
+            final double trackW = box.maxWidth;
+            return AnimatedBuilder(
+              animation: widget.horizontalScrollController,
+              builder: (context, _) {
+                try {
+                  final hc = widget.horizontalScrollController;
+                  if (!hc.hasClients) return const SizedBox.shrink();
+                  final pos = hc.position;
+                  final double? viewport = pos.viewportDimension as double?;
+                  final double? maxExt = pos.maxScrollExtent as double?;
+                  final double? pixels = pos.pixels as double?;
+                  if (viewport == null ||
+                      maxExt == null ||
+                      pixels == null ||
+                      maxExt <= 0 ||
+                      viewport <= 0 ||
+                      trackW <= 0) {
+                    return const SizedBox.shrink();
+                  }
+                  final double vf = viewport / (maxExt + viewport);
+                  if (vf >= 1.0) return const SizedBox.shrink();
+                  final double thumbW = (vf * trackW).clamp(30.0, trackW);
+                  final double thumbRange = trackW - thumbW;
+                  final double thumbLeft = (pixels / maxExt) * thumbRange;
+
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onHorizontalDragUpdate: (d) {
+                      try {
+                        if (!hc.hasClients) return;
+                        final curMax =
+                            hc.position.maxScrollExtent as double? ?? 0.0;
+                        final ratio = curMax / thumbRange;
+                        hc.jumpTo(
+                          (hc.offset + d.delta.dx * ratio).clamp(0.0, curMax),
+                        );
+                      } catch (_) {}
+                    },
+                    child: SizedBox(
+                      width: trackW,
+                      height: hScrollbarHeight,
+                      child: CustomPaint(
+                        painter: _HorizontalScrollbarPainter(
+                          thumbLeft: thumbLeft,
+                          thumbWidth: thumbW,
+                          trackHeight: hScrollbarHeight,
+                          radius: 6.0,
+                          trackColor: safeTrackColor(),
+                          thumbColor: safeThumbColor(),
+                        ),
+                      ),
+                    ),
+                  );
+                } catch (_) {
+                  return const SizedBox.shrink();
+                }
+              },
+            );
+          },
+        );
+      }
 
       // ── Main layout ─────────────────────────────────────────────────────────
       return Stack(
@@ -618,6 +684,13 @@ class _GridMainContainerState extends State<GridMainContainer> {
                     ),
                   ],
                 ),
+              ),
+              // Horizontal scrollbar — full width minus v-scrollbar.
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  end: vScrollbarWidth,
+                ),
+                child: buildHScrollbar(),
               ),
             ],
           ),
@@ -755,6 +828,54 @@ class _GridMainContainerState extends State<GridMainContainer> {
     );
   }
 }
+
+/// Paints a horizontal scrollbar track + thumb without requiring a Scrollable
+/// child, so it can share a [ScrollController] that already has one position.
+class _HorizontalScrollbarPainter extends CustomPainter {
+  final double thumbLeft;
+  final double thumbWidth;
+  final double trackHeight;
+  final double radius;
+  final Color trackColor;
+  final Color thumbColor;
+
+  const _HorizontalScrollbarPainter({
+    required this.thumbLeft,
+    required this.thumbWidth,
+    required this.trackHeight,
+    required this.radius,
+    required this.trackColor,
+    required this.thumbColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint trackPaint = Paint()..color = trackColor;
+    final Paint thumbPaint = Paint()..color = thumbColor;
+    canvas.drawRRect(
+      RRect.fromLTRBR(0, 0, size.width, trackHeight, Radius.circular(radius)),
+      trackPaint,
+    );
+    canvas.drawRRect(
+      RRect.fromLTRBR(
+        thumbLeft,
+        0,
+        thumbLeft + thumbWidth,
+        trackHeight,
+        Radius.circular(radius),
+      ),
+      thumbPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_HorizontalScrollbarPainter old) =>
+      old.thumbLeft != thumbLeft ||
+      old.thumbWidth != thumbWidth ||
+      old.trackColor != trackColor ||
+      old.thumbColor != thumbColor;
+}
+
 /// Paints a vertical scrollbar track + thumb without requiring a Scrollable
 /// child, so it can be used as an overlay independent of the scroll tree.
 class _VerticalScrollbarPainter extends CustomPainter {

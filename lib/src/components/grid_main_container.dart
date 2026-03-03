@@ -512,17 +512,76 @@ class _GridMainContainerState extends State<GridMainContainer> {
             columnWidths: currentColumnWidths,
             visibleIndices: middleIndices,
           ),
-          // Horizontal scrollbar strip at the bottom — always visible,
-          // linked to the same horizontalScrollController as the header.
-          Scrollbar(
-            controller: widget.horizontalScrollController,
-            thumbVisibility: true,
-            trackVisibility: true,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: widget.horizontalScrollController,
-              child: SizedBox(width: contentWidth, height: 1),
-            ),
+          // Horizontal scrollbar strip at the bottom — drawn with CustomPaint
+          // so it shares the same ScrollController without creating a second
+          // ScrollPosition (which would crash with "attached to more than one").
+          AnimatedBuilder(
+            animation: widget.horizontalScrollController,
+            builder: (context, _) {
+              final ScrollController hc = widget.horizontalScrollController;
+              double offset = 0;
+              double maxScroll = 1;
+              double viewportFraction = 1;
+              if (hc.hasClients && hc.position.maxScrollExtent > 0) {
+                offset = hc.offset;
+                maxScroll =
+                    hc.position.maxScrollExtent + hc.position.viewportDimension;
+                viewportFraction = hc.position.viewportDimension / maxScroll;
+              }
+              // Don't show if content fits without scrolling.
+              if (viewportFraction >= 1.0) return const SizedBox.shrink();
+              return LayoutBuilder(
+                builder: (context, box) {
+                  final double trackW = box.maxWidth;
+                  const double trackH = 12.0;
+                  const double radius = 6.0;
+                  final double thumbW =
+                      (viewportFraction * trackW).clamp(30.0, trackW);
+                  final double thumbLeft = (maxScroll > 0)
+                      ? (offset / (maxScroll - hc.position.viewportDimension)) *
+                          (trackW - thumbW)
+                      : 0.0;
+
+                  final Color trackColor = Theme.of(context)
+                          .scrollbarTheme
+                          .trackColor
+                          ?.resolve({WidgetState.hovered}) ??
+                      Colors.black12;
+                  final Color thumbColor = Theme.of(context)
+                          .scrollbarTheme
+                          .thumbColor
+                          ?.resolve({WidgetState.hovered}) ??
+                      Colors.black38;
+
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onHorizontalDragUpdate: (details) {
+                      if (!hc.hasClients) return;
+                      final double ratio =
+                          hc.position.maxScrollExtent / (trackW - thumbW);
+                      hc.jumpTo(
+                        (hc.offset + details.delta.dx * ratio)
+                            .clamp(0.0, hc.position.maxScrollExtent),
+                      );
+                    },
+                    child: SizedBox(
+                      width: trackW,
+                      height: trackH,
+                      child: CustomPaint(
+                        painter: _HorizontalScrollbarPainter(
+                          thumbLeft: thumbLeft,
+                          thumbWidth: thumbW,
+                          trackHeight: trackH,
+                          radius: radius,
+                          trackColor: trackColor,
+                          thumbColor: thumbColor,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
           ),
         ],
       );
@@ -657,4 +716,54 @@ class _GridMainContainerState extends State<GridMainContainer> {
       child: gridBody,
     );
   }
+}
+
+/// Paints a horizontal scrollbar track + thumb without requiring a Scrollable
+/// child, so it can share a [ScrollController] that already has one position.
+class _HorizontalScrollbarPainter extends CustomPainter {
+  final double thumbLeft;
+  final double thumbWidth;
+  final double trackHeight;
+  final double radius;
+  final Color trackColor;
+  final Color thumbColor;
+
+  const _HorizontalScrollbarPainter({
+    required this.thumbLeft,
+    required this.thumbWidth,
+    required this.trackHeight,
+    required this.radius,
+    required this.trackColor,
+    required this.thumbColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint trackPaint = Paint()..color = trackColor;
+    final Paint thumbPaint = Paint()..color = thumbColor;
+
+    // Track
+    canvas.drawRRect(
+      RRect.fromLTRBR(0, 0, size.width, trackHeight, Radius.circular(radius)),
+      trackPaint,
+    );
+    // Thumb
+    canvas.drawRRect(
+      RRect.fromLTRBR(
+        thumbLeft,
+        0,
+        thumbLeft + thumbWidth,
+        trackHeight,
+        Radius.circular(radius),
+      ),
+      thumbPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_HorizontalScrollbarPainter old) =>
+      old.thumbLeft != thumbLeft ||
+      old.thumbWidth != thumbWidth ||
+      old.trackColor != trackColor ||
+      old.thumbColor != thumbColor;
 }

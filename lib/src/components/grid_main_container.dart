@@ -216,19 +216,14 @@ class _GridMainContainerState extends State<GridMainContainer> {
       (sum, i) => sum + (currentColumnWidths[i] ?? 0),
     );
 
-    Widget buildPart({
+    // Builds header + optional quick-search row for a given set of column indices.
+    Widget buildHeader({
       required List<int> indices,
-      ScrollController? verticalController,
       bool isMiddle = false,
     }) {
-      if (indices.isEmpty && !isMiddle) {
-        return const SizedBox.shrink();
-      }
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize:
-            config.shrinkWrapRows ? MainAxisSize.min : MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         children: [
           OmGridHeader(
             controller: widget.controller,
@@ -256,6 +251,26 @@ class _GridMainContainerState extends State<GridMainContainer> {
               configuration: config,
               onSearchChanged: widget.onQuickSearchChanged,
             ),
+        ],
+      );
+    }
+
+    // Builds the full column (header + body + aggregation) for frozen segments.
+    Widget buildPart({
+      required List<int> indices,
+      ScrollController? verticalController,
+      bool isMiddle = false,
+    }) {
+      if (indices.isEmpty && !isMiddle) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize:
+            config.shrinkWrapRows ? MainAxisSize.min : MainAxisSize.max,
+        children: [
+          buildHeader(indices: indices, isMiddle: isMiddle),
           if (config.shrinkWrapRows)
             OmGridBody(
               flattenedItems: widget.flattenedItems,
@@ -400,25 +415,100 @@ class _GridMainContainerState extends State<GridMainContainer> {
           ? gridConstraints.maxWidth
           : (gridConstraints.maxWidth - leftWidth - rightWidth);
 
-      return Scrollbar(
-        thumbVisibility: true,
-        controller: widget.horizontalScrollController,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+      final double contentWidth = config.shrinkWrapColumns
+          ? middleTotalWidth
+          : (middleTotalWidth < availableWidth
+              ? availableWidth
+              : middleTotalWidth);
+
+      if (config.shrinkWrapRows) {
+        // shrinkWrap: keep original single-scroll layout
+        return Scrollbar(
+          thumbVisibility: true,
           controller: widget.horizontalScrollController,
-          child: SizedBox(
-            width: config.shrinkWrapColumns
-                ? middleTotalWidth
-                : (middleTotalWidth < availableWidth
-                    ? availableWidth
-                    : middleTotalWidth),
-            child: buildPart(
-              indices: middleIndices,
-              verticalController: widget.verticalScrollController,
-              isMiddle: true,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            controller: widget.horizontalScrollController,
+            child: SizedBox(
+              width: contentWidth,
+              child: buildPart(
+                indices: middleIndices,
+                verticalController: widget.verticalScrollController,
+                isMiddle: true,
+              ),
             ),
           ),
-        ),
+        );
+      }
+
+      // Non-shrinkWrap: split header and body so the vertical RawScrollbar
+      // wraps the ListView directly (making drag and metrics work correctly),
+      // while the header stays inside the horizontal SingleChildScrollView.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          // Header row — scrolls horizontally with content.
+          Scrollbar(
+            thumbVisibility: true,
+            controller: widget.horizontalScrollController,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              controller: widget.horizontalScrollController,
+              child: SizedBox(
+                width: contentWidth,
+                child: buildHeader(
+                  indices: middleIndices,
+                  isMiddle: true,
+                ),
+              ),
+            ),
+          ),
+          // Body rows — RawScrollbar is a direct ancestor of the ListView.
+          Expanded(
+            child: RawScrollbar(
+              controller: widget.verticalScrollController,
+              thumbVisibility: true,
+              trackVisibility: true,
+              thickness: 12.0,
+              radius: const Radius.circular(6),
+              interactive: true,
+              child: OmGridBody(
+                flattenedItems: widget.flattenedItems,
+                configuration: config,
+                internalColumns: widget.internalColumns,
+                columnWidths: currentColumnWidths,
+                expandedGroups: widget.expandedGroups,
+                selectedRows: widget.selectedRows,
+                hoveredRowIndex: widget.hoveredRowIndex,
+                controller: widget.verticalScrollController,
+                verticalScrollController: widget.verticalScrollController,
+                horizontalScrollController: widget.horizontalScrollController,
+                onToggleGroup: widget.onToggleGroup,
+                onRowTap: widget.onRowTap,
+                onCellTapDown: widget.onCellTapDown,
+                onCellPanUpdate: widget.onCellPanUpdate,
+                onCellPanEnd: widget.onCellPanEnd,
+                isCellSelected: widget.isCellSelected,
+                onShowContextMenu: widget.onShowContextMenu,
+                onHoverChanged: widget.onHoverChanged,
+                visibleIndicesToRender: middleIndices,
+                showScrollbar: false,
+                globalSearchText: widget.controller.globalSearchText,
+                onRowReorder: widget.onRowReorder,
+                isEditing: widget.isEditing,
+                isScrolling: _isScrolling,
+              ),
+            ),
+          ),
+          // Aggregation row — outside horizontal scroll, full width.
+          GridAggregationRow(
+            controller: widget.controller,
+            columns: widget.internalColumns,
+            columnWidths: currentColumnWidths,
+            visibleIndices: middleIndices,
+          ),
+        ],
       );
     }
 
@@ -543,45 +633,12 @@ class _GridMainContainerState extends State<GridMainContainer> {
       ],
     );
 
-    // Overlay the vertical scrollbar on top of the full viewport so it is
-    // always visible at the right edge regardless of horizontal scroll position.
-    // The overlay is constrained to the scrollbar width so it never blocks
-    // pointer events on the grid content.
-    const double scrollbarThickness = 12.0;
-    final gridWithScrollbar = config.shrinkWrapRows
-        ? gridBody
-        : Stack(
-            children: [
-              // Pad the grid body so content is never hidden behind the scrollbar.
-              Padding(
-                padding: EdgeInsetsDirectional.only(end: scrollbarThickness),
-                child: gridBody,
-              ),
-              // Scrollbar strip pinned to the end edge — only covers its own width.
-              PositionedDirectional(
-                top: 0,
-                bottom: 0,
-                end: 0,
-                width: scrollbarThickness,
-                child: RawScrollbar(
-                  controller: widget.verticalScrollController,
-                  thumbVisibility: true,
-                  trackVisibility: true,
-                  thickness: scrollbarThickness,
-                  radius: const Radius.circular(6),
-                  interactive: true,
-                  child: const SizedBox.expand(),
-                ),
-              ),
-            ],
-          );
-
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         _handleScrollNotification(notification);
         return false;
       },
-      child: gridWithScrollbar,
+      child: gridBody,
     );
   }
 }

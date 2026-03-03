@@ -524,52 +524,29 @@ class _GridMainContainerState extends State<GridMainContainer> {
         _handleScrollNotification(notification);
         return false;
       },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (!config.shrinkWrapRows)
-                  Expanded(
-                    child: isSticky ? buildStickyBody() : buildNonStickyBody(),
-                  )
-                else
-                  isSticky ? buildStickyBody() : buildNonStickyBody(),
-              ],
-            ),
-          ),
-          // Dedicated vertical scrollbar lane
-          Container(
-            width: 12, // Standard scrollbar width
-            decoration: BoxDecoration(
-              color: config.gridBackgroundColor,
-              border: Border(
-                left: BorderSide(
-                  color: config.gridBorderColor.withOpacity(0.1),
-                  width: 1,
-                ),
+      child: Scrollbar(
+        controller: widget.verticalScrollController,
+        thumbVisibility: true,
+        trackVisibility: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!config.shrinkWrapRows)
+                    Expanded(
+                      child:
+                          isSticky ? buildStickyBody() : buildNonStickyBody(),
+                    )
+                  else
+                    isSticky ? buildStickyBody() : buildNonStickyBody(),
+                ],
               ),
             ),
-            child: Scrollbar(
-              controller: widget.verticalScrollController,
-              thumbVisibility: true,
-              trackVisibility: true,
-              child: SingleChildScrollView(
-                controller: widget.verticalScrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: SizedBox(
-                  // Height MUST be total items * row height + header/extras
-                  // This determines the scrollbar length and range.
-                  height:
-                      (widget.flattenedItems.length * config.rowHeight) + 150,
-                  width: 1,
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

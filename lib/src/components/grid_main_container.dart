@@ -515,50 +515,63 @@ class _GridMainContainerState extends State<GridMainContainer> {
           // Horizontal scrollbar strip at the bottom — drawn with CustomPaint
           // so it shares the same ScrollController without creating a second
           // ScrollPosition (which would crash with "attached to more than one").
-          AnimatedBuilder(
-            animation: widget.horizontalScrollController,
-            builder: (context, _) {
-              final ScrollController hc = widget.horizontalScrollController;
-              double offset = 0;
-              double maxScroll = 1;
-              double viewportFraction = 1;
-              if (hc.hasClients && hc.position.maxScrollExtent > 0) {
-                offset = hc.offset;
-                maxScroll =
-                    hc.position.maxScrollExtent + hc.position.viewportDimension;
-                viewportFraction = hc.position.viewportDimension / maxScroll;
+          LayoutBuilder(
+            builder: (context, box) {
+              const double trackH = 12.0;
+              const double radius = 6.0;
+              final double trackW = box.maxWidth;
+
+              // Resolve scrollbar colours safely (web can return null from
+              // MaterialStateProperty.resolve even with a non-null property).
+              Color trackColor = Colors.black12;
+              Color thumbColor = Colors.black38;
+              try {
+                final st = Theme.of(context).scrollbarTheme;
+                trackColor =
+                    st.trackColor?.resolve({WidgetState.scrolledUnder}) ??
+                        st.trackColor?.resolve({}) ??
+                        Colors.black12;
+                thumbColor = st.thumbColor?.resolve({WidgetState.dragged}) ??
+                    st.thumbColor?.resolve({}) ??
+                    Colors.black38;
+              } catch (_) {
+                // Keep defaults on any platform-level null coercion error.
               }
-              // Don't show if content fits without scrolling.
-              if (viewportFraction >= 1.0) return const SizedBox.shrink();
-              return LayoutBuilder(
-                builder: (context, box) {
-                  final double trackW = box.maxWidth;
-                  const double trackH = 12.0;
-                  const double radius = 6.0;
+
+              return AnimatedBuilder(
+                animation: widget.horizontalScrollController,
+                builder: (context, _) {
+                  final ScrollController hc = widget.horizontalScrollController;
+
+                  // Guard: no clients or position not yet laid out.
+                  if (!hc.hasClients) return const SizedBox.shrink();
+                  final ScrollPosition pos = hc.position;
+                  final double viewport = pos.viewportDimension;
+                  final double maxExt = pos.maxScrollExtent;
+
+                  // Nothing to scroll — hide the bar.
+                  if (maxExt <= 0 || viewport <= 0) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final double total = maxExt + viewport;
+                  final double viewportFraction = viewport / total;
+                  if (viewportFraction >= 1.0) return const SizedBox.shrink();
+
                   final double thumbW =
                       (viewportFraction * trackW).clamp(30.0, trackW);
-                  final double thumbLeft = (maxScroll > 0)
-                      ? (offset / (maxScroll - hc.position.viewportDimension)) *
-                          (trackW - thumbW)
+                  final double scrollRange = maxExt; // == total - viewport
+                  final double thumbRange = trackW - thumbW;
+                  final double thumbLeft = scrollRange > 0
+                      ? (pos.pixels / scrollRange) * thumbRange
                       : 0.0;
-
-                  final Color trackColor = Theme.of(context)
-                          .scrollbarTheme
-                          .trackColor
-                          ?.resolve({WidgetState.hovered}) ??
-                      Colors.black12;
-                  final Color thumbColor = Theme.of(context)
-                          .scrollbarTheme
-                          .thumbColor
-                          ?.resolve({WidgetState.hovered}) ??
-                      Colors.black38;
 
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onHorizontalDragUpdate: (details) {
                       if (!hc.hasClients) return;
                       final double ratio =
-                          hc.position.maxScrollExtent / (trackW - thumbW);
+                          hc.position.maxScrollExtent / thumbRange;
                       hc.jumpTo(
                         (hc.offset + details.delta.dx * ratio)
                             .clamp(0.0, hc.position.maxScrollExtent),

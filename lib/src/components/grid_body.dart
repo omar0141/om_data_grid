@@ -124,8 +124,9 @@ class OmGridBody extends StatelessWidget {
             padding: EdgeInsets.zero,
             buildDefaultDragHandles: false,
             scrollController: controller,
-            // ReorderableListView uses its own physics or inherits
-            // physics: const ClampingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            // Disable internal scrollbar as we provide one externally
+            physics: const ClampingScrollPhysics(),
             itemCount: middleItemsList.length,
             onReorder: (oldIndex, newIndex) {
               if (oldIndex < newIndex) {

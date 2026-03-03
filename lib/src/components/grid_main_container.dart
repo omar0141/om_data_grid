@@ -215,7 +215,6 @@ class _GridMainContainerState extends State<GridMainContainer> {
       required List<int> indices,
       ScrollController? verticalController,
       bool isMiddle = false,
-      bool showVerticalScrollbar = false,
     }) {
       if (indices.isEmpty && !isMiddle) {
         return const SizedBox.shrink();
@@ -274,7 +273,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
               onShowContextMenu: widget.onShowContextMenu,
               onHoverChanged: widget.onHoverChanged,
               visibleIndicesToRender: indices,
-              showScrollbar: showVerticalScrollbar,
+              showScrollbar: false,
               globalSearchText: widget.controller.globalSearchText,
               onRowReorder: widget.onRowReorder,
               isEditing: widget.isEditing,
@@ -303,7 +302,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
                 onShowContextMenu: widget.onShowContextMenu,
                 onHoverChanged: widget.onHoverChanged,
                 visibleIndicesToRender: indices,
-                showScrollbar: showVerticalScrollbar,
+                showScrollbar: false,
                 globalSearchText: widget.controller.globalSearchText,
                 onRowReorder: widget.onRowReorder,
                 isEditing: widget.isEditing,
@@ -322,9 +321,8 @@ class _GridMainContainerState extends State<GridMainContainer> {
 
     Widget buildLeftSegment(
       double width,
-      List<int> indices, {
-      bool showVerticalScrollbar = false,
-    }) {
+      List<int> indices,
+    ) {
       return Container(
         width: width,
         decoration: BoxDecoration(
@@ -350,16 +348,14 @@ class _GridMainContainerState extends State<GridMainContainer> {
         child: buildPart(
           indices: indices,
           verticalController: widget.frozenLeftScrollController,
-          showVerticalScrollbar: showVerticalScrollbar,
         ),
       );
     }
 
     Widget buildRightSegment(
       double width,
-      List<int> indices, {
-      bool showVerticalScrollbar = false,
-    }) {
+      List<int> indices,
+    ) {
       return Container(
         width: width,
         decoration: BoxDecoration(
@@ -385,7 +381,6 @@ class _GridMainContainerState extends State<GridMainContainer> {
         child: buildPart(
           indices: indices,
           verticalController: widget.frozenRightScrollController,
-          showVerticalScrollbar: showVerticalScrollbar,
         ),
       );
     }
@@ -394,14 +389,13 @@ class _GridMainContainerState extends State<GridMainContainer> {
       double leftWidth,
       double rightWidth,
       double middleTotalWidth,
-      List<int> middleIndices, {
-      bool showVerticalScrollbar = false,
-    }) {
+      List<int> middleIndices,
+    ) {
       final double availableWidth = isSticky
           ? gridConstraints.maxWidth
           : (gridConstraints.maxWidth - leftWidth - rightWidth);
 
-      Widget middleContent = Scrollbar(
+      return Scrollbar(
         thumbVisibility: true,
         controller: widget.horizontalScrollController,
         child: SingleChildScrollView(
@@ -417,21 +411,10 @@ class _GridMainContainerState extends State<GridMainContainer> {
               indices: middleIndices,
               verticalController: widget.verticalScrollController,
               isMiddle: true,
-              showVerticalScrollbar:
-                  false, // Internal vertical scrollbar is disabled for middle segment
             ),
           ),
         ),
       );
-
-      if (showVerticalScrollbar) {
-        return Scrollbar(
-          controller: widget.verticalScrollController,
-          thumbVisibility: true,
-          child: middleContent,
-        );
-      }
-      return middleContent;
     }
 
     Widget buildStickyBody() {
@@ -477,9 +460,6 @@ class _GridMainContainerState extends State<GridMainContainer> {
             }
           }
 
-          final bool showInRight =
-              rightIndices.isNotEmpty || stickyRightIndices.isNotEmpty;
-
           return Stack(
             children: [
               buildMiddleSegment(
@@ -487,7 +467,6 @@ class _GridMainContainerState extends State<GridMainContainer> {
                 0,
                 middleTotalWidth,
                 middleIndices,
-                showVerticalScrollbar: !showInRight,
               ),
               if (stickyLeftIndices.isNotEmpty)
                 PositionedDirectional(
@@ -497,7 +476,6 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   child: buildLeftSegment(
                     stickyLeftWidth,
                     stickyLeftIndices,
-                    showVerticalScrollbar: false,
                   ),
                 ),
               if (stickyRightIndices.isNotEmpty)
@@ -508,7 +486,6 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   child: buildRightSegment(
                     stickyRightWidth,
                     stickyRightIndices,
-                    showVerticalScrollbar: true,
                   ),
                 ),
             ],
@@ -518,14 +495,12 @@ class _GridMainContainerState extends State<GridMainContainer> {
     }
 
     Widget buildNonStickyBody() {
-      final bool showInRight = rightIndices.isNotEmpty;
       return Row(
         children: [
           if (leftIndices.isNotEmpty)
             buildLeftSegment(
               leftWidth,
               leftIndices,
-              showVerticalScrollbar: false,
             ),
           Expanded(
             child: buildMiddleSegment(
@@ -533,14 +508,12 @@ class _GridMainContainerState extends State<GridMainContainer> {
               rightWidth,
               middleTotalWidth,
               middleIndices,
-              showVerticalScrollbar: !showInRight,
             ),
           ),
           if (rightIndices.isNotEmpty)
             buildRightSegment(
               rightWidth,
               rightIndices,
-              showVerticalScrollbar: true,
             ),
         ],
       );
@@ -551,14 +524,19 @@ class _GridMainContainerState extends State<GridMainContainer> {
         _handleScrollNotification(notification);
         return false;
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!config.shrinkWrapRows)
-            Expanded(child: isSticky ? buildStickyBody() : buildNonStickyBody())
-          else
-            isSticky ? buildStickyBody() : buildNonStickyBody(),
-        ],
+      child: Scrollbar(
+        controller: widget.verticalScrollController,
+        thumbVisibility: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!config.shrinkWrapRows)
+              Expanded(
+                  child: isSticky ? buildStickyBody() : buildNonStickyBody())
+            else
+              isSticky ? buildStickyBody() : buildNonStickyBody(),
+          ],
+        ),
       ),
     );
   }

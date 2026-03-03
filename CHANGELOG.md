@@ -1,3 +1,7 @@
+## 0.0.21
+
+- **Fix Phantom Padding**: Resolved an issue where a blank 12px gap appeared on the right side of the grid when vertical scrolling was not needed. The vertical scrollbar strip now collapses to zero width when hidden, and the available content width is recalculated accordingly.
+
 ## 0.0.20
 
 - **Scrollbar Overhaul**: Fixed vertical scrollbar always appearing at the right edge of scrollable content instead of the viewport edge. The vertical scrollbar is now pinned to the visible viewport and is always accessible without horizontal scrolling.

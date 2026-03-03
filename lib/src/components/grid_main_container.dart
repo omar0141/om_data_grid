@@ -477,7 +477,7 @@ class _GridMainContainerState extends State<GridMainContainer> {
 
       // Safe colour helper — never calls resolve() to avoid web JS-null crash.
       Color safeTrackColor() => Colors.black12;
-      Color safeThumbColor() => Colors.black45;
+      Color safeThumbColor() => Colors.grey;
 
       // ── Vertical scrollbar (custom painted, outside horiz scroll) ──────────
       Widget buildVScrollbar() {

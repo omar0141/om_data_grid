@@ -491,8 +491,9 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   final vc = widget.verticalScrollController;
                   if (!vc.hasClients) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (_vScrollbarVisible.value)
+                      if (_vScrollbarVisible.value) {
                         _vScrollbarVisible.value = false;
+                      }
                     });
                     return const SizedBox.shrink();
                   }
@@ -507,22 +508,25 @@ class _GridMainContainerState extends State<GridMainContainer> {
                       viewport <= 0 ||
                       trackH <= 0) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (_vScrollbarVisible.value)
+                      if (_vScrollbarVisible.value) {
                         _vScrollbarVisible.value = false;
+                      }
                     });
                     return const SizedBox.shrink();
                   }
                   final double vf = viewport / (maxExt + viewport);
                   if (vf >= 1.0) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (_vScrollbarVisible.value)
+                      if (_vScrollbarVisible.value) {
                         _vScrollbarVisible.value = false;
+                      }
                     });
                     return const SizedBox.shrink();
                   }
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (!_vScrollbarVisible.value)
+                    if (!_vScrollbarVisible.value) {
                       _vScrollbarVisible.value = true;
+                    }
                   });
                   final double thumbH = (vf * trackH).clamp(30.0, trackH);
                   final double thumbRange = trackH - thumbH;
@@ -558,8 +562,9 @@ class _GridMainContainerState extends State<GridMainContainer> {
                   );
                 } catch (_) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (_vScrollbarVisible.value)
+                    if (_vScrollbarVisible.value) {
                       _vScrollbarVisible.value = false;
+                    }
                   });
                   return const SizedBox.shrink();
                 }

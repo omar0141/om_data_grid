@@ -524,31 +524,29 @@ class _GridMainContainerState extends State<GridMainContainer> {
         _handleScrollNotification(notification);
         return false;
       },
-      // Wrapping with Scrollbar here puts it on the absolute right edge of the tree!
-      // Since it shares the controller attached to OmGridBody below, it will work perfectly.
-      child: Scrollbar(
-        controller: widget.verticalScrollController,
-        thumbVisibility: true,
-        trackVisibility: true,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!config.shrinkWrapRows)
-                    Expanded(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (!config.shrinkWrapRows)
+                  Expanded(
+                    child: Scrollbar(
+                      controller: widget.verticalScrollController,
+                      thumbVisibility: true,
+                      trackVisibility: true,
                       child:
                           isSticky ? buildStickyBody() : buildNonStickyBody(),
-                    )
-                  else
-                    isSticky ? buildStickyBody() : buildNonStickyBody(),
-                ],
-              ),
+                    ),
+                  )
+                else
+                  isSticky ? buildStickyBody() : buildNonStickyBody(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

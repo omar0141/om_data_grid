@@ -473,45 +473,58 @@ class _GridMainContainerState extends State<GridMainContainer> {
             return AnimatedBuilder(
               animation: widget.verticalScrollController,
               builder: (context, _) {
-                final vc = widget.verticalScrollController;
-                if (!vc.hasClients) return const SizedBox.shrink();
-                final pos = vc.position;
-                final double viewport = pos.viewportDimension;
-                final double maxExt = pos.maxScrollExtent;
-                if (maxExt <= 0 || viewport <= 0 || trackH <= 0) {
-                  return const SizedBox.shrink();
-                }
-                final double vf = viewport / (maxExt + viewport);
-                if (vf >= 1.0) return const SizedBox.shrink();
-                final double thumbH = (vf * trackH).clamp(30.0, trackH);
-                final double thumbRange = trackH - thumbH;
-                final double thumbTop = (pos.pixels / maxExt) * thumbRange;
+                try {
+                  final vc = widget.verticalScrollController;
+                  if (!vc.hasClients) return const SizedBox.shrink();
+                  final pos = vc.position;
+                  final double? viewport = pos.viewportDimension as double?;
+                  final double? maxExt = pos.maxScrollExtent as double?;
+                  final double? pixels = pos.pixels as double?;
+                  if (viewport == null ||
+                      maxExt == null ||
+                      pixels == null ||
+                      maxExt <= 0 ||
+                      viewport <= 0 ||
+                      trackH <= 0) {
+                    return const SizedBox.shrink();
+                  }
+                  final double vf = viewport / (maxExt + viewport);
+                  if (vf >= 1.0) return const SizedBox.shrink();
+                  final double thumbH = (vf * trackH).clamp(30.0, trackH);
+                  final double thumbRange = trackH - thumbH;
+                  final double thumbTop = (pixels / maxExt) * thumbRange;
 
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onVerticalDragUpdate: (d) {
-                    if (!vc.hasClients) return;
-                    final ratio = vc.position.maxScrollExtent / thumbRange;
-                    vc.jumpTo(
-                      (vc.offset + d.delta.dy * ratio)
-                          .clamp(0.0, vc.position.maxScrollExtent),
-                    );
-                  },
-                  child: SizedBox(
-                    width: vScrollbarWidth,
-                    height: trackH,
-                    child: CustomPaint(
-                      painter: _VerticalScrollbarPainter(
-                        thumbTop: thumbTop,
-                        thumbHeight: thumbH,
-                        trackWidth: vScrollbarWidth,
-                        radius: 6.0,
-                        trackColor: safeTrackColor(),
-                        thumbColor: safeThumbColor(),
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onVerticalDragUpdate: (d) {
+                      try {
+                        if (!vc.hasClients) return;
+                        final curMax =
+                            vc.position.maxScrollExtent as double? ?? 0.0;
+                        final ratio = curMax / thumbRange;
+                        vc.jumpTo(
+                          (vc.offset + d.delta.dy * ratio).clamp(0.0, curMax),
+                        );
+                      } catch (_) {}
+                    },
+                    child: SizedBox(
+                      width: vScrollbarWidth,
+                      height: trackH,
+                      child: CustomPaint(
+                        painter: _VerticalScrollbarPainter(
+                          thumbTop: thumbTop,
+                          thumbHeight: thumbH,
+                          trackWidth: vScrollbarWidth,
+                          radius: 6.0,
+                          trackColor: safeTrackColor(),
+                          thumbColor: safeThumbColor(),
+                        ),
                       ),
                     ),
-                  ),
-                );
+                  );
+                } catch (_) {
+                  return const SizedBox.shrink();
+                }
               },
             );
           },
@@ -526,45 +539,58 @@ class _GridMainContainerState extends State<GridMainContainer> {
             return AnimatedBuilder(
               animation: widget.horizontalScrollController,
               builder: (context, _) {
-                final hc = widget.horizontalScrollController;
-                if (!hc.hasClients) return const SizedBox.shrink();
-                final pos = hc.position;
-                final double viewport = pos.viewportDimension;
-                final double maxExt = pos.maxScrollExtent;
-                if (maxExt <= 0 || viewport <= 0 || trackW <= 0) {
-                  return const SizedBox.shrink();
-                }
-                final double vf = viewport / (maxExt + viewport);
-                if (vf >= 1.0) return const SizedBox.shrink();
-                final double thumbW = (vf * trackW).clamp(30.0, trackW);
-                final double thumbRange = trackW - thumbW;
-                final double thumbLeft = (pos.pixels / maxExt) * thumbRange;
+                try {
+                  final hc = widget.horizontalScrollController;
+                  if (!hc.hasClients) return const SizedBox.shrink();
+                  final pos = hc.position;
+                  final double? viewport = pos.viewportDimension as double?;
+                  final double? maxExt = pos.maxScrollExtent as double?;
+                  final double? pixels = pos.pixels as double?;
+                  if (viewport == null ||
+                      maxExt == null ||
+                      pixels == null ||
+                      maxExt <= 0 ||
+                      viewport <= 0 ||
+                      trackW <= 0) {
+                    return const SizedBox.shrink();
+                  }
+                  final double vf = viewport / (maxExt + viewport);
+                  if (vf >= 1.0) return const SizedBox.shrink();
+                  final double thumbW = (vf * trackW).clamp(30.0, trackW);
+                  final double thumbRange = trackW - thumbW;
+                  final double thumbLeft = (pixels / maxExt) * thumbRange;
 
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onHorizontalDragUpdate: (d) {
-                    if (!hc.hasClients) return;
-                    final ratio = hc.position.maxScrollExtent / thumbRange;
-                    hc.jumpTo(
-                      (hc.offset + d.delta.dx * ratio)
-                          .clamp(0.0, hc.position.maxScrollExtent),
-                    );
-                  },
-                  child: SizedBox(
-                    width: trackW,
-                    height: hScrollbarHeight,
-                    child: CustomPaint(
-                      painter: _HorizontalScrollbarPainter(
-                        thumbLeft: thumbLeft,
-                        thumbWidth: thumbW,
-                        trackHeight: hScrollbarHeight,
-                        radius: 6.0,
-                        trackColor: safeTrackColor(),
-                        thumbColor: safeThumbColor(),
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onHorizontalDragUpdate: (d) {
+                      try {
+                        if (!hc.hasClients) return;
+                        final curMax =
+                            hc.position.maxScrollExtent as double? ?? 0.0;
+                        final ratio = curMax / thumbRange;
+                        hc.jumpTo(
+                          (hc.offset + d.delta.dx * ratio).clamp(0.0, curMax),
+                        );
+                      } catch (_) {}
+                    },
+                    child: SizedBox(
+                      width: trackW,
+                      height: hScrollbarHeight,
+                      child: CustomPaint(
+                        painter: _HorizontalScrollbarPainter(
+                          thumbLeft: thumbLeft,
+                          thumbWidth: thumbW,
+                          trackHeight: hScrollbarHeight,
+                          radius: 6.0,
+                          trackColor: safeTrackColor(),
+                          thumbColor: safeThumbColor(),
+                        ),
                       ),
                     ),
-                  ),
-                );
+                  );
+                } catch (_) {
+                  return const SizedBox.shrink();
+                }
               },
             );
           },

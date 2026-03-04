@@ -351,7 +351,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
         ),
         Divider(color: widget.configuration.rowBorderColor),
         saveCancelButtons(context),
-        SizedBox(height: mySize(xs: 10, md: 0)),
+        SizedBox(height: mySize(xs: 36, md: 0)),
       ],
     );
     if (widget.contentPadding != null) {

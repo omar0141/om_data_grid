@@ -145,7 +145,7 @@ class OmMobileChipsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final config = configuration;
     final primary = config.primaryColor;
-    final bg = config.menuBackgroundColor ?? Colors.white;
+    final bg = config.rowBackgroundColor;
     final textColor = config.gridForegroundColor;
     final secondaryText = config.secondaryTextColor;
     final labels = config.labels;

@@ -719,6 +719,11 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                     : widget.configuration.labels.search,
                 filled: true,
                 fillColor: widget.configuration.inputFillColor,
+                errorBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
                 hintStyle: TextStyle(
                   color: widget.configuration.secondaryTextColor,
                   fontSize: 13,
@@ -823,6 +828,11 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   hintText: widget.configuration.labels.to,
                   filled: true,
                   fillColor: widget.configuration.inputFillColor,
+                  errorBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  focusedErrorBorder: InputBorder.none,
                   hintStyle: TextStyle(
                     color: widget.configuration.secondaryTextColor,
                     fontSize: 13,

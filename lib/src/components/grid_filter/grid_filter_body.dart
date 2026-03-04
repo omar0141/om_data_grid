@@ -717,6 +717,8 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                 hintText: isBetween
                     ? widget.configuration.labels.from
                     : widget.configuration.labels.search,
+                filled: true,
+                fillColor: widget.configuration.inputFillColor,
                 hintStyle: TextStyle(
                   color: widget.configuration.secondaryTextColor,
                   fontSize: 13,
@@ -819,6 +821,8 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                 },
                 decoration: InputDecoration(
                   hintText: widget.configuration.labels.to,
+                  filled: true,
+                  fillColor: widget.configuration.inputFillColor,
                   hintStyle: TextStyle(
                     color: widget.configuration.secondaryTextColor,
                     fontSize: 13,

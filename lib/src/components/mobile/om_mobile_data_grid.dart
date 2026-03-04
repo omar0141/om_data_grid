@@ -195,11 +195,20 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
       oldWidget.controller.removeListener(_handleControllerChange);
       widget.controller.addListener(_handleControllerChange);
       _syncFromController(resetSort: true);
+      return;
     }
     if (widget.controller.configuration.rowsPerPage !=
         oldWidget.controller.configuration.rowsPerPage) {
       _rowsPerPage = widget.controller.configuration.rowsPerPage;
       _rebuildDisplay();
+    }
+    // Re-sort in-place when the external sort key or direction changes.
+    if (widget.externalSortKey != oldWidget.externalSortKey ||
+        widget.externalSortAscending != oldWidget.externalSortAscending) {
+      setState(() {
+        _currentPage = 0;
+        _applySort();
+      });
     }
   }
 
@@ -228,9 +237,9 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
         _sortColumnKey = null;
         _sortAscending = true;
       }
-      _applySort();
-      _currentPage = 0;
+      _currentPage = 0; // reset page BEFORE rebuilding display data
       _selectedRows.clear();
+      _applySort();
       widget.onSearch?.call(_sortedData);
     });
   }
@@ -239,11 +248,20 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
 
   void _applySort() {
     _sortedData = List.from(_filteredData);
-    if (_sortColumnKey != null) {
-      final col = _internalColumns.firstWhere(
-        (c) => c.key == _sortColumnKey,
-        orElse: () => _internalColumns.first,
-      );
+
+    // Determine the effective sort key: internal first, then external.
+    final effectiveKey = _sortColumnKey ?? widget.externalSortKey;
+    final effectiveAscending =
+        _sortColumnKey != null ? _sortAscending : widget.externalSortAscending;
+
+    if (effectiveKey != null) {
+      final colMatches =
+          _internalColumns.where((c) => c.key == effectiveKey).toList();
+      if (colMatches.isEmpty) {
+        _rebuildDisplay();
+        return;
+      }
+      final col = colMatches.first;
       final bool isDateOrTime = [
         OmGridRowTypeEnum.date,
         OmGridRowTypeEnum.time,
@@ -252,11 +270,11 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
       final bool isTime = col.type == OmGridRowTypeEnum.time;
 
       _sortedData.sort((a, b) {
-        dynamic valA = a[_sortColumnKey!];
-        dynamic valB = b[_sortColumnKey!];
+        dynamic valA = a[effectiveKey];
+        dynamic valB = b[effectiveKey];
         if (valA == null && valB == null) return 0;
-        if (valA == null) return _sortAscending ? 1 : -1;
-        if (valB == null) return _sortAscending ? -1 : 1;
+        if (valA == null) return effectiveAscending ? 1 : -1;
+        if (valB == null) return effectiveAscending ? -1 : 1;
         int result;
         if (isDateOrTime) {
           final dA = OmGridDateTimeUtils.tryParse(valA, isTime: isTime);
@@ -271,7 +289,7 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
         } else {
           result = valA.toString().compareTo(valB.toString());
         }
-        return _sortAscending ? result : -result;
+        return effectiveAscending ? result : -result;
       });
     }
     _rebuildDisplay();

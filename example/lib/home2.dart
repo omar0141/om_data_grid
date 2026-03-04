@@ -252,37 +252,18 @@ class _HomeScreen2State extends State<HomeScreen2> {
 
   // ── Standalone sort helper ─────────────────────────────────────────────────
 
-  /// Sorts [_controller.filteredData] by [key] manually and pushes it back
-  /// into the controller so the grid reflects the custom-toolbar selection.
   void _applyCustomSort(String key, bool ascending) {
     setState(() {
       _customSortKey = key;
       _customSortAscending = ascending;
     });
-    final sorted = List<Map<String, dynamic>>.from(_controller.filteredData);
-    sorted.sort((a, b) {
-      final av = a[key];
-      final bv = b[key];
-      if (av == null && bv == null) return 0;
-      if (av == null) return ascending ? -1 : 1;
-      if (bv == null) return ascending ? 1 : -1;
-      int cmp;
-      if (av is num && bv is num) {
-        cmp = av.compareTo(bv);
-      } else if (av is DateTime && bv is DateTime) {
-        cmp = av.compareTo(bv);
-      } else {
-        cmp = av.toString().compareTo(bv.toString());
-      }
-      return ascending ? cmp : -cmp;
-    });
-    _controller.updateFilteredData(sorted);
+    // No manual data manipulation needed — the grid reads externalSortKey
+    // via didUpdateWidget and re-sorts its internal _filteredData.
   }
 
   void _clearCustomSort() {
     setState(() => _customSortKey = null);
-    // Restore original order by re-pushing the full data set.
-    _controller.updateFilteredData(List<Map<String, dynamic>>.from(data));
+    // Grid will re-run _applySort with no sort key, restoring original order.
   }
 
   // ── Mobile layout ──────────────────────────────────────────────────────────

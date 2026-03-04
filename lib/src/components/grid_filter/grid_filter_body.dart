@@ -21,6 +21,7 @@ class GridFilterBody extends StatefulWidget {
     required this.allAttributes,
     required this.configuration,
     this.globalSearchText,
+    this.contentPadding,
   });
 
   final List<dynamic> dataSource;
@@ -30,6 +31,10 @@ class GridFilterBody extends StatefulWidget {
   final void Function(List<dynamic>) onSearch;
   final OmDataGridConfiguration configuration;
   final String? globalSearchText;
+
+  /// Optional padding applied around the entire filter body content.
+  /// Useful on mobile to add horizontal breathing room.
+  final EdgeInsetsGeometry? contentPadding;
 
   static void clearSearch({
     OmGridColumnModel? attribute,
@@ -128,7 +133,7 @@ class _GridFilterBodyState extends State<GridFilterBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (attributes.type == OmGridRowTypeEnum.comboBox &&
@@ -177,7 +182,8 @@ class _GridFilterBodyState extends State<GridFilterBody> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(widget.attributes.title),
+            if (MediaQuery.of(context).size.width > 768)
+              Text(widget.attributes.title),
             if (selectAll != true ||
                 (widget.attributes.advancedFilter != null &&
                     widget.attributes.advancedFilter!.conditions.any(
@@ -263,8 +269,9 @@ class _GridFilterBodyState extends State<GridFilterBody> {
           ],
         ),
         Expanded(
-          child: ListView(
-            children: List.generate(dataSource.length, (i) {
+          child: ListView.builder(
+            itemCount: dataSource.length,
+            itemBuilder: (context, i) {
               Map<String, dynamic> item =
                   Map<String, dynamic>.from(dataSource[i]);
               String text = getTextFromValue(item);
@@ -339,13 +346,18 @@ class _GridFilterBodyState extends State<GridFilterBody> {
                   ),
                 ),
               );
-            }),
+            },
           ),
         ),
         Divider(color: widget.configuration.rowBorderColor),
         saveCancelButtons(context),
+        SizedBox(height: mySize(xs: 10, md: 0)),
       ],
     );
+    if (widget.contentPadding != null) {
+      return Padding(padding: widget.contentPadding!, child: body);
+    }
+    return body;
   }
 
   void keepTheSelectedItemsWhileSearching(Map<String, dynamic> item) {

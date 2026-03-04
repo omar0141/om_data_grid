@@ -13,6 +13,10 @@ class _HomeScreen2State extends State<HomeScreen2> {
   late OmDataGridController _controller;
   List<Map<String, dynamic>> data = [];
 
+  // ── Standalone sort state (used by custom toolbar demo) ────────────────────
+  String? _customSortKey;
+  bool _customSortAscending = true;
+
   @override
   void initState() {
     super.initState();
@@ -237,69 +241,280 @@ class _HomeScreen2State extends State<HomeScreen2> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        margin: const EdgeInsets.all(36),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Standalone OmQuickFilterBar taking only the controller
-            OmQuickFilterBar(
-              title: "Employees",
-              controller: _controller,
-              onAddPressed: () async {
-                final result = await showDialog<Map<String, dynamic>>(
-                  context: context,
-                  builder: (context) => EmployeeDialog(
-                    primaryColor: _controller.configuration.primaryColor,
-                  ),
-                );
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          return isMobile ? _buildMobile() : _buildDesktop();
+        },
+      ),
+    );
+  }
 
-                if (result != null) {
-                  setState(() {
-                    final nextId = data.isEmpty
-                        ? 1
-                        : (data
-                                  .map((e) => e['ID'] as int)
-                                  .reduce((a, b) => a > b ? a : b) +
-                              1);
-                    result['ID'] = nextId;
-                    data.insert(0, result);
-                    _controller.updateData(data);
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey.withAlpha(51),
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withAlpha(51),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  borderRadius: BorderRadius.circular(12),
-                  child: OmDataGrid(
-                    controller: _controller,
-                    onRowTap: _editEmployee,
+  // ── Standalone sort helper ─────────────────────────────────────────────────
+
+  /// Sorts [_controller.filteredData] by [key] manually and pushes it back
+  /// into the controller so the grid reflects the custom-toolbar selection.
+  void _applyCustomSort(String key, bool ascending) {
+    setState(() {
+      _customSortKey = key;
+      _customSortAscending = ascending;
+    });
+    final sorted = List<Map<String, dynamic>>.from(_controller.filteredData);
+    sorted.sort((a, b) {
+      final av = a[key];
+      final bv = b[key];
+      if (av == null && bv == null) return 0;
+      if (av == null) return ascending ? -1 : 1;
+      if (bv == null) return ascending ? 1 : -1;
+      int cmp;
+      if (av is num && bv is num) {
+        cmp = av.compareTo(bv);
+      } else if (av is DateTime && bv is DateTime) {
+        cmp = av.compareTo(bv);
+      } else {
+        cmp = av.toString().compareTo(bv.toString());
+      }
+      return ascending ? cmp : -cmp;
+    });
+    _controller.updateFilteredData(sorted);
+  }
+
+  void _clearCustomSort() {
+    setState(() => _customSortKey = null);
+    // Restore original order by re-pushing the full data set.
+    _controller.updateFilteredData(List<Map<String, dynamic>>.from(data));
+  }
+
+  // ── Mobile layout ──────────────────────────────────────────────────────────
+
+  Widget _buildMobile() {
+    final config = _controller.configuration;
+    final primary = config.primaryColor;
+    final hasSortActive = _customSortKey != null;
+    final hasFilterActive = _controller.columnModels.any((c) => c.isFiltered);
+
+    return Column(
+      children: [
+        // ── Custom toolbar: your own widgets calling the static methods ──────
+        Container(
+          color: config.menuBackgroundColor ?? Colors.white,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          child: Row(
+            children: [
+              // Title
+              Expanded(
+                child: Text(
+                  'Employees',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: config.gridForegroundColor,
                   ),
                 ),
               ),
-            ),
-          ],
+
+              // ── Sort button ── calls OmMobileSortSheet.show() directly ──
+              _CustomToolbarButton(
+                icon: Icons.sort_rounded,
+                isActive: hasSortActive,
+                primaryColor: primary,
+                borderColor: config.gridBorderColor,
+                onTap: () async {
+                  final result = await OmMobileSortSheet.show(
+                    context: context,
+                    columns: _controller.columnModels,
+                    configuration: config,
+                    currentSortKey: _customSortKey,
+                    currentAscending: _customSortAscending,
+                  );
+                  if (result == null) return; // user cancelled
+                  if (result.isClear) {
+                    _clearCustomSort();
+                  } else {
+                    _applyCustomSort(result.columnKey, result.ascending);
+                  }
+                },
+              ),
+
+              const SizedBox(width: 8),
+
+              // ── Filter button ── calls OmMobileFilterSheet.show() directly ─
+              _CustomToolbarButton(
+                icon: Icons.filter_list_rounded,
+                isActive: hasFilterActive,
+                primaryColor: primary,
+                borderColor: config.gridBorderColor,
+                onTap: () async {
+                  await OmMobileFilterSheet.show(
+                    context: context,
+                    columns: _controller.columnModels,
+                    data: _controller.data,
+                    filteredData: _controller.filteredData,
+                    configuration: config,
+                    onSearch: (filtered) {
+                      _controller.updateFilteredData(
+                        filtered.cast<Map<String, dynamic>>(),
+                      );
+                      // Re-apply sort on top of the new filtered set.
+                      if (_customSortKey != null) {
+                        _applyCustomSort(_customSortKey!, _customSortAscending);
+                      }
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
+
+        // ── Grid: toolbar hidden because we drive it from above ──────────────
+        Expanded(
+          child: OmMobileDataGrid(
+            controller: _controller,
+            viewType: OmMobileViewType.list,
+            scrollMode: OmMobileScrollMode.pagination,
+            showToolbar: true,
+            stickyPagination: false,
+            stickyToolbar: false,
+            showFilterButton: false,
+            showSortButton: false,
+            showEntriesBar: false,
+            stickyChips: false,
+            externalSortKey: _customSortKey,
+            externalSortAscending: _customSortAscending,
+            onExternalSortClear: _clearCustomSort,
+            onRowTap: _editEmployee,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Desktop layout ─────────────────────────────────────────────────────────
+
+  Widget _buildDesktop() {
+    return Container(
+      margin: const EdgeInsets.all(36),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OmQuickFilterBar(
+            title: "Employees",
+            controller: _controller,
+            onAddPressed: () async {
+              final result = await showDialog<Map<String, dynamic>>(
+                context: context,
+                builder: (context) => EmployeeDialog(
+                  primaryColor: _controller.configuration.primaryColor,
+                ),
+              );
+
+              if (result != null) {
+                setState(() {
+                  final nextId = data.isEmpty
+                      ? 1
+                      : (data
+                                .map((e) => e['ID'] as int)
+                                .reduce((a, b) => a > b ? a : b) +
+                            1);
+                  result['ID'] = nextId;
+                  data.insert(0, result);
+                  _controller.updateData(data);
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.withAlpha(51), width: 1),
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withAlpha(51),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                borderRadius: BorderRadius.circular(12),
+                child: OmDataGrid(
+                  controller: _controller,
+                  onRowTap: _editEmployee,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Helper widget used only in HomeScreen2 mobile custom toolbar ─────────────
+
+class _CustomToolbarButton extends StatelessWidget {
+  final IconData icon;
+  final bool isActive;
+  final Color primaryColor;
+  final Color borderColor;
+  final VoidCallback? onTap;
+
+  const _CustomToolbarButton({
+    required this.icon,
+    required this.isActive,
+    required this.primaryColor,
+    required this.borderColor,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? primaryColor.withOpacity(0.1)
+                  : borderColor.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isActive
+                    ? primaryColor.withOpacity(0.4)
+                    : borderColor.withOpacity(0.25),
+              ),
+            ),
+            child: Icon(
+              icon,
+              size: 22,
+              color: isActive ? primaryColor : borderColor,
+            ),
+          ),
+          if (isActive)
+            Positioned(
+              top: -3,
+              right: -3,
+              child: Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1.5),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

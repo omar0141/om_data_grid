@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:om_data_grid/src/components/grid_substring_highlight.dart';
 import 'package:om_data_grid/src/enums/mobile_view_type_enum.dart';
 import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
@@ -20,6 +21,10 @@ class OmMobileDefaultCard extends StatelessWidget {
   final VoidCallback? onTap;
   final void Function(Map<String, dynamic> row)? onLongPress;
 
+  /// Active global search term. When non-empty the matching substring inside
+  /// each cell value is highlighted with the primary colour.
+  final String searchTerm;
+
   const OmMobileDefaultCard({
     super.key,
     required this.row,
@@ -29,6 +34,7 @@ class OmMobileDefaultCard extends StatelessWidget {
     this.isSelected = false,
     this.onTap,
     this.onLongPress,
+    this.searchTerm = '',
   });
 
   @override
@@ -119,9 +125,9 @@ class OmMobileDefaultCard extends StatelessWidget {
                           const SizedBox(width: 8),
                           // Value
                           Expanded(
-                            child: Text(
+                            child: _highlighted(
                               display,
-                              style: TextStyle(
+                              TextStyle(
                                 fontSize: 13,
                                 color: configuration.rowForegroundColor,
                                 fontWeight: FontWeight.w600,
@@ -194,10 +200,10 @@ class OmMobileDefaultCard extends StatelessWidget {
                 children: [
                   // Title field
                   if (firstCol != null) ...[
-                    Text(
+                    _highlighted(
                       omMobileCellDisplay(
                           row[firstCol.key], firstCol, configuration),
-                      style: TextStyle(
+                      TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: configuration.rowForegroundColor,
@@ -222,10 +228,10 @@ class OmMobileDefaultCard extends StatelessWidget {
                             ),
                           ),
                           Expanded(
-                            child: Text(
+                            child: _highlighted(
                               omMobileCellDisplay(
                                   row[col.key], col, configuration),
-                              style: TextStyle(
+                              TextStyle(
                                 fontSize: 11,
                                 color: configuration.rowForegroundColor,
                                 fontWeight: FontWeight.w500,
@@ -290,10 +296,10 @@ class OmMobileDefaultCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (firstCol != null)
-                    Text(
+                    _highlighted(
                       omMobileCellDisplay(
                           row[firstCol.key], firstCol, configuration),
-                      style: TextStyle(
+                      TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: configuration.rowForegroundColor,
@@ -301,10 +307,10 @@ class OmMobileDefaultCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   if (secondCol != null)
-                    Text(
+                    _highlighted(
                       omMobileCellDisplay(
                           row[secondCol.key], secondCol, configuration),
-                      style: TextStyle(
+                      TextStyle(
                         fontSize: 12,
                         color: configuration.secondaryTextColor,
                       ),
@@ -330,6 +336,37 @@ class OmMobileDefaultCard extends StatelessWidget {
           c.key != '__reorder_column__' &&
           c.column.key.isNotEmpty)
       .toList();
+
+  /// Returns a [GridSubstringHighlight] when [searchTerm] is active,
+  /// otherwise a plain [Text].
+  Widget _highlighted(
+    String display,
+    TextStyle style, {
+    int? maxLines,
+    TextOverflow overflow = TextOverflow.ellipsis,
+  }) {
+    final term = searchTerm.trim();
+    if (term.isEmpty) {
+      return Text(
+        display,
+        style: style,
+        overflow: overflow,
+        maxLines: maxLines,
+      );
+    }
+    final highlightStyle = style.copyWith(
+      fontWeight: FontWeight.bold,
+      backgroundColor: configuration.primaryColor.withOpacity(0.28),
+    );
+    return GridSubstringHighlight(
+      text: display,
+      terms: [term],
+      textStyle: style,
+      textStyleHighlight: highlightStyle,
+      overflow: overflow,
+      maxLines: maxLines,
+    );
+  }
 }
 
 /// A shimmer/skeleton placeholder that mimics a card.

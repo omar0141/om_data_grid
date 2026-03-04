@@ -712,6 +712,7 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
       configuration: widget.controller.configuration,
       viewType: widget.viewType,
       isSelected: isSelected,
+      searchTerm: widget.controller.globalSearchText,
       onTap: () => _handleRowTap(row),
       onLongPress:
           widget.controller.configuration.selectionMode != OmSelectionMode.none

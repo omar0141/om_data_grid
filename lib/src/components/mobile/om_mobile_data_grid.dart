@@ -52,9 +52,12 @@ class OmMobileDataGrid extends StatefulWidget {
   final OmMobileScrollMode scrollMode;
 
   /// Custom card builder. When provided, replaces the default card UI.
+  /// The third argument [searchTerm] is the current global search string —
+  /// use it to highlight matching text in your custom card.
   final Widget Function(
     Map<String, dynamic> row,
     List<OmGridColumnModel> columns,
+    String searchTerm,
   )? cardBuilder;
 
   /// Show skeleton loading animation.
@@ -78,6 +81,11 @@ class OmMobileDataGrid extends StatefulWidget {
 
   /// **Infinite scroll only.** Whether there are more items to load.
   final bool hasMoreData;
+
+  /// Called when the user pulls down to refresh. When provided a
+  /// [RefreshIndicator] is added around the card list. Your callback should
+  /// reload the data and call [OmDataGridController.updateData].
+  final Future<void> Function()? onRefresh;
 
   /// Scroll physics for the card list.
   final ScrollPhysics? physics;
@@ -141,6 +149,7 @@ class OmMobileDataGrid extends StatefulWidget {
     this.onSearch,
     this.onLoadMore,
     this.hasMoreData = false,
+    this.onRefresh,
     this.physics,
     this.contentPadding,
     this.stickyToolbar = true,
@@ -610,7 +619,7 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
     }
 
     // ─ CustomScrollView with optional non-sticky header/footer slivers ─
-    return CustomScrollView(
+    final scrollView = CustomScrollView(
       controller: widget.scrollMode == OmMobileScrollMode.infiniteScroll
           ? _scrollController
           : null,
@@ -673,10 +682,18 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
           ),
       ],
     );
+    if (widget.onRefresh != null) {
+      return RefreshIndicator(
+        onRefresh: widget.onRefresh!,
+        color: config.primaryColor,
+        child: scrollView,
+      );
+    }
+    return scrollView;
   }
 
   Widget _buildListView(OmDataGridConfiguration config, EdgeInsets padding) {
-    return ListView.builder(
+    final list = ListView.builder(
       controller: widget.scrollMode == OmMobileScrollMode.infiniteScroll
           ? _scrollController
           : null,
@@ -694,10 +711,18 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
         return _buildCard(_displayData[index]);
       },
     );
+    if (widget.onRefresh != null) {
+      return RefreshIndicator(
+        onRefresh: widget.onRefresh!,
+        color: config.primaryColor,
+        child: list,
+      );
+    }
+    return list;
   }
 
   Widget _buildGridView(OmDataGridConfiguration config, EdgeInsets extraPad) {
-    return GridView.builder(
+    final grid = GridView.builder(
       controller: widget.scrollMode == OmMobileScrollMode.infiniteScroll
           ? _scrollController
           : null,
@@ -714,6 +739,14 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
       itemCount: _displayData.length,
       itemBuilder: (context, index) => _buildCard(_displayData[index]),
     );
+    if (widget.onRefresh != null) {
+      return RefreshIndicator(
+        onRefresh: widget.onRefresh!,
+        color: config.primaryColor,
+        child: grid,
+      );
+    }
+    return grid;
   }
 
   Widget _buildCard(Map<String, dynamic> row) {
@@ -721,7 +754,11 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
     if (widget.cardBuilder != null) {
       return GestureDetector(
         onTap: () => _handleRowTap(row),
-        child: widget.cardBuilder!(row, _internalColumns),
+        child: widget.cardBuilder!(
+          row,
+          _internalColumns,
+          widget.controller.globalSearchText,
+        ),
       );
     }
     return OmMobileDefaultCard(

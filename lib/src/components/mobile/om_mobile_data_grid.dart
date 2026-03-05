@@ -839,26 +839,40 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
   }
 
   Widget _buildSkeletonList(bool isGrid) {
-    final skeletons = List.generate(
-      widget.skeletonCount,
-      (i) => OmMobileSkeletonCard(viewType: widget.viewType),
+    final config = widget.controller.configuration;
+    final effect = ShimmerEffect(
+      baseColor: config.rowBackgroundColor.withOpacity(0.9),
+      highlightColor: config.rowBackgroundColor,
+      duration: const Duration(milliseconds: 1000),
     );
+
     if (isGrid) {
       return Skeletonizer(
         enabled: true,
-        child: GridView.count(
-          crossAxisCount: 2,
-          childAspectRatio: 1.0,
+        effect: effect,
+        child: GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-          children: skeletons,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.0,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+          ),
+          itemCount: widget.skeletonCount,
+          itemBuilder: (_, __) =>
+              OmMobileSkeletonCard(viewType: widget.viewType),
         ),
       );
     }
     return Skeletonizer(
       enabled: true,
-      child: ListView(
+      effect: effect,
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 6, bottom: 12),
-        children: skeletons,
+        itemCount: widget.skeletonCount,
+        itemBuilder: (_, __) => OmMobileSkeletonCard(viewType: widget.viewType),
       ),
     );
   }

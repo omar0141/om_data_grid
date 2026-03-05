@@ -369,7 +369,12 @@ class OmMobileDefaultCard extends StatelessWidget {
   }
 }
 
-/// A shimmer/skeleton placeholder that mimics a card.
+/// A skeleton placeholder that mimics a real card so that [Skeletonizer]
+/// can animate it with a proper sweep shimmer.
+///
+/// Each layout variant replicates the real card's visual structure using
+/// plain [Text]/[Container] widgets; the surrounding [Skeletonizer] widget
+/// replaces them with animated shimmer bones.
 class OmMobileSkeletonCard extends StatelessWidget {
   final OmMobileViewType viewType;
 
@@ -377,132 +382,213 @@ class OmMobileSkeletonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (viewType == OmMobileViewType.compact) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            _Shimmer(width: 36, height: 36, borderRadius: 18),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Shimmer(width: double.infinity, height: 14, borderRadius: 6),
-                  const SizedBox(height: 6),
-                  _Shimmer(width: 120, height: 11, borderRadius: 6),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+    if (viewType == OmMobileViewType.compact) return _buildCompact();
+    if (viewType == OmMobileViewType.grid) return _buildGrid();
+    return _buildList();
+  }
 
-    if (viewType == OmMobileViewType.grid) {
-      return Container(
-        margin: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[200]!),
-        ),
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _Shimmer(width: double.infinity, height: 14, borderRadius: 6),
-            const SizedBox(height: 8),
-            _Shimmer(width: double.infinity, height: 11, borderRadius: 6),
-            const SizedBox(height: 4),
-            _Shimmer(width: 80, height: 11, borderRadius: 6),
-          ],
-        ),
-      );
-    }
+  // ── List ────────────────────────────────────────────────────────────────
 
-    // List view
+  Widget _buildList() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       child: Column(
-        children: List.generate(
-          3,
-          (i) => Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row: bold title + trailing badge
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Full Name Placeholder',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  'Status',
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 14),
+          // Field rows
+          _fieldRow('Label one', 'Value placeholder here', 0.6),
+          const SizedBox(height: 6),
+          _fieldRow('Label two', 'Another value text', 0.75),
+          const SizedBox(height: 6),
+          _fieldRow('Label three', 'Third value', 0.45),
+        ],
+      ),
+    );
+  }
+
+  Widget _fieldRow(String label, String value, double valueFraction) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 88,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 1,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 12),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Grid ────────────────────────────────────────────────────────────────
+
+  Widget _buildGrid() {
+    return Container(
+      margin: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Avatar + name
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.grey.shade200,
+                child: const Text('AB',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Full Name',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 13),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Department Name',
+            style: const TextStyle(fontSize: 12),
+            maxLines: 1,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Position title here',
+            style: const TextStyle(fontSize: 11),
+            maxLines: 1,
+          ),
+          const Spacer(),
+          // Bottom row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Label', style: const TextStyle(fontSize: 11)),
+              Text('Value', style: const TextStyle(fontSize: 11)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Compact ─────────────────────────────────────────────────────────────
+
+  Widget _buildCompact() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 19,
+            backgroundColor: Colors.grey.shade200,
+            child: const Text('AB',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _Shimmer(width: 90, height: 12, borderRadius: 6),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _Shimmer(
-                    width: double.infinity,
-                    height: 12,
-                    borderRadius: 6,
-                  ),
+                Text(
+                  'Employee Full Name',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  'Department — Position',
+                  style: const TextStyle(fontSize: 12),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A simple animated shimmer block.
-class _Shimmer extends StatefulWidget {
-  final double width;
-  final double height;
-  final double borderRadius;
-
-  const _Shimmer({
-    required this.width,
-    required this.height,
-    required this.borderRadius,
-  });
-
-  @override
-  State<_Shimmer> createState() => _ShimmerState();
-}
-
-class _ShimmerState extends State<_Shimmer>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.4, end: 0.9).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (_, __) => Container(
-        width: widget.width,
-        height: widget.height,
-        decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(_animation.value * 0.3),
-          borderRadius: BorderRadius.circular(widget.borderRadius),
-        ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              'Active',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
       ),
     );
   }

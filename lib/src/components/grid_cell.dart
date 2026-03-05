@@ -87,10 +87,21 @@ class _GridCellState extends State<GridCell> {
       case OmGridRowTypeEnum.state:
         return _buildState();
 
+      case OmGridRowTypeEnum.widget:
+        return _buildCustomWidget();
+
       case OmGridRowTypeEnum.text:
       default:
         return _buildText(widget.value?.toString() ?? '');
     }
+  }
+
+  Widget _buildCustomWidget() {
+    final builder = widget.column.widgetBuilder;
+    if (builder == null) {
+      return _buildText(widget.value?.toString() ?? '');
+    }
+    return builder(widget.value, widget.row);
   }
 
   Widget _buildText(String text) {

@@ -182,6 +182,10 @@ class OmGridColumn {
   /// is not rendered when this is `false`.
   final bool visible;
 
+  /// Custom widget builder for columns with type [OmGridRowTypeEnum.widget].
+  /// Receives the cell value and the full row data and returns a [Widget].
+  final Widget Function(dynamic value, Map<String, dynamic> row)? widgetBuilder;
+
   /// Creates a [OmGridColumn] configuration.
   OmGridColumn({
     required this.key,
@@ -212,6 +216,7 @@ class OmGridColumn {
     this.contextMenuOptions,
     this.showPlaceholderWhileScrolling = true,
     this.visible = true,
+    this.widgetBuilder,
   });
 
   OmGridColumn copyWith({
@@ -243,6 +248,7 @@ class OmGridColumn {
     List<OmRowContextMenuItem>? contextMenuOptions,
     bool? showPlaceholderWhileScrolling,
     bool? visible,
+    Widget Function(dynamic value, Map<String, dynamic> row)? widgetBuilder,
   }) {
     return OmGridColumn(
       key: key ?? this.key,
@@ -274,6 +280,7 @@ class OmGridColumn {
       showPlaceholderWhileScrolling:
           showPlaceholderWhileScrolling ?? this.showPlaceholderWhileScrolling,
       visible: visible ?? this.visible,
+      widgetBuilder: widgetBuilder ?? this.widgetBuilder,
     );
   }
 }
@@ -377,6 +384,8 @@ class OmGridColumnModel {
   bool get isCalculated => column.formula != null;
   bool get showPlaceholderWhileScrolling =>
       column.showPlaceholderWhileScrolling;
+  Widget Function(dynamic value, Map<String, dynamic> row)? get widgetBuilder =>
+      column.widgetBuilder;
 }
 
 /// Data used during column dragging operations.

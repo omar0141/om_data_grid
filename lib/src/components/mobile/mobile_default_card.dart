@@ -372,13 +372,17 @@ class OmMobileDefaultCard extends StatelessWidget {
 /// A skeleton placeholder that mimics a real card so that [Skeletonizer]
 /// can animate it with a proper sweep shimmer.
 ///
-/// Each layout variant replicates the real card's visual structure using
-/// plain [Text]/[Container] widgets; the surrounding [Skeletonizer] widget
-/// replaces them with animated shimmer bones.
+/// Uses [configuration] colours so the skeleton background always matches
+/// the real cards regardless of the app's theme.
 class OmMobileSkeletonCard extends StatelessWidget {
   final OmMobileViewType viewType;
+  final OmDataGridConfiguration configuration;
 
-  const OmMobileSkeletonCard({super.key, required this.viewType});
+  const OmMobileSkeletonCard({
+    super.key,
+    required this.viewType,
+    required this.configuration,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -390,75 +394,43 @@ class OmMobileSkeletonCard extends StatelessWidget {
   // ── List ────────────────────────────────────────────────────────────────
 
   Widget _buildList() {
+    final bg = configuration.rowBackgroundColor;
+    final border = configuration.rowBorderColor.withOpacity(0.35);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: bg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: border),
       ),
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row: bold title + trailing badge
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Full Name Placeholder',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 14),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'Status',
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
-                ),
-              ),
-            ],
+          Text(
+            'Full name placeholder text',
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            maxLines: 1,
           ),
-          const Divider(height: 14),
-          // Field rows
-          _fieldRow('Label one', 'Value placeholder here', 0.6),
+          const SizedBox(height: 10),
+          _fieldRow('Label one', 'Value placeholder'),
           const SizedBox(height: 6),
-          _fieldRow('Label two', 'Another value text', 0.75),
+          _fieldRow('Label two', 'Another value'),
           const SizedBox(height: 6),
-          _fieldRow('Label three', 'Third value', 0.45),
+          _fieldRow('Label three', 'Third value text'),
         ],
       ),
     );
   }
 
-  Widget _fieldRow(String label, String value, double valueFraction) {
+  Widget _fieldRow(String label, String value) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 88,
+          width: 90,
           child: Text(
             label,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             maxLines: 1,
           ),
         ),
@@ -478,60 +450,33 @@ class OmMobileSkeletonCard extends StatelessWidget {
   // ── Grid ────────────────────────────────────────────────────────────────
 
   Widget _buildGrid() {
+    final bg = configuration.rowBackgroundColor;
+    final border = configuration.rowBorderColor.withOpacity(0.35);
     return Container(
       margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: bg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: border),
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar + name
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.grey.shade200,
-                child: const Text('AB',
-                    style:
-                        TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Full Name',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 13),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
           Text(
-            'Department Name',
-            style: const TextStyle(fontSize: 12),
+            'Full Name',
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             maxLines: 1,
           ),
+          const SizedBox(height: 8),
+          Text('Department name',
+              style: const TextStyle(fontSize: 12), maxLines: 1),
           const SizedBox(height: 4),
-          Text(
-            'Position title here',
-            style: const TextStyle(fontSize: 11),
-            maxLines: 1,
-          ),
+          Text('Position title',
+              style: const TextStyle(fontSize: 11), maxLines: 1),
           const Spacer(),
-          // Bottom row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Label', style: const TextStyle(fontSize: 11)),
-              Text('Value', style: const TextStyle(fontSize: 11)),
-            ],
-          ),
+          Text('Extra field value',
+              style: const TextStyle(fontSize: 11), maxLines: 1),
         ],
       ),
     );
@@ -540,20 +485,14 @@ class OmMobileSkeletonCard extends StatelessWidget {
   // ── Compact ─────────────────────────────────────────────────────────────
 
   Widget _buildCompact() {
+    final border = configuration.rowBorderColor.withOpacity(0.2);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
+        border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 19,
-            backgroundColor: Colors.grey.shade200,
-            child: const Text('AB',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-          ),
-          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -568,7 +507,7 @@ class OmMobileSkeletonCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Department — Position',
+                  'Department — Position title',
                   style: const TextStyle(fontSize: 12),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -577,17 +516,7 @@ class OmMobileSkeletonCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'Active',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
-            ),
-          ),
+          Text('Value', style: const TextStyle(fontSize: 12)),
         ],
       ),
     );

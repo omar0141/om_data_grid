@@ -860,8 +860,10 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
             mainAxisSpacing: 4,
           ),
           itemCount: widget.skeletonCount,
-          itemBuilder: (_, __) =>
-              OmMobileSkeletonCard(viewType: widget.viewType),
+          itemBuilder: (_, __) => OmMobileSkeletonCard(
+            viewType: widget.viewType,
+            configuration: widget.controller.configuration,
+          ),
         ),
       );
     }
@@ -872,7 +874,10 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
         physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 6, bottom: 12),
         itemCount: widget.skeletonCount,
-        itemBuilder: (_, __) => OmMobileSkeletonCard(viewType: widget.viewType),
+        itemBuilder: (_, __) => OmMobileSkeletonCard(
+          viewType: widget.viewType,
+          configuration: widget.controller.configuration,
+        ),
       ),
     );
   }

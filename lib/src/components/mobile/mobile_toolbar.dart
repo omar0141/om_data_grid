@@ -58,7 +58,7 @@ class _OmMobileToolbarState extends State<OmMobileToolbar> {
   @override
   Widget build(BuildContext context) {
     final config = widget.configuration;
-    final bg = config.menuBackgroundColor ?? Colors.white;
+    final bg = config.rowBackgroundColor;
     final borderColor = config.gridBorderColor;
     final secondaryText = config.secondaryTextColor;
     final textColor = config.gridForegroundColor;

@@ -53,6 +53,7 @@ class _ColumnsTabState extends State<ColumnsTab> {
   Widget build(BuildContext context) {
     final allColumns = widget.controller.columnModels;
     final filteredColumns = allColumns.where((col) {
+      if (!col.column.visible) return false;
       if (_columnSearchText.isEmpty) return true;
       return col.column.title.toLowerCase().contains(
             _columnSearchText.toLowerCase(),

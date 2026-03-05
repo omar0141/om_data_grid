@@ -102,7 +102,9 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
                 child: ListenableBuilder(
                   listenable: widget.controller,
                   builder: (context, child) {
-                    final columns = widget.controller.columnModels;
+                    final columns = widget.controller.columnModels
+                        .where((c) => c.column.visible)
+                        .toList();
                     return ReorderableListView.builder(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       itemCount: columns.length,

@@ -90,7 +90,6 @@ class OmRowContextMenuItem {
     required this.label,
     this.icon,
     required this.value,
-
     this.onTap,
   });
 }
@@ -178,6 +177,11 @@ class OmGridColumn {
   /// Whether to show a placeholder while scrolling.
   final bool showPlaceholderWhileScrolling;
 
+  /// Whether the column is visible in the grid.
+  /// The column data is still present in the data source but the column
+  /// is not rendered when this is `false`.
+  final bool visible;
+
   /// Creates a [OmGridColumn] configuration.
   OmGridColumn({
     required this.key,
@@ -207,6 +211,7 @@ class OmGridColumn {
     this.stateConfig,
     this.contextMenuOptions,
     this.showPlaceholderWhileScrolling = true,
+    this.visible = true,
   });
 
   OmGridColumn copyWith({
@@ -237,6 +242,7 @@ class OmGridColumn {
     Map<dynamic, OmStateConfig>? stateConfig,
     List<OmRowContextMenuItem>? contextMenuOptions,
     bool? showPlaceholderWhileScrolling,
+    bool? visible,
   }) {
     return OmGridColumn(
       key: key ?? this.key,
@@ -267,6 +273,7 @@ class OmGridColumn {
       contextMenuOptions: contextMenuOptions ?? this.contextMenuOptions,
       showPlaceholderWhileScrolling:
           showPlaceholderWhileScrolling ?? this.showPlaceholderWhileScrolling,
+      visible: visible ?? this.visible,
     );
   }
 }
@@ -296,7 +303,7 @@ class OmGridColumnModel {
 
   /// Advanced filter UI state.
   OmAdvancedFilterModel?
-  advancedFilterUI; // For UI persistence in popups (keeping condition type)
+      advancedFilterUI; // For UI persistence in popups (keeping condition type)
 
   /// Whether the column is visible.
   bool isVisible;
@@ -314,6 +321,9 @@ class OmGridColumnModel {
   int originalIndex;
 
   /// Creates a [OmGridColumnModel].
+  ///
+  /// When [isVisible] is not provided it defaults to [OmGridColumn.visible]
+  /// so that columns with `visible: false` start hidden automatically.
   OmGridColumnModel({
     required this.column,
     this.width,
@@ -323,12 +333,12 @@ class OmGridColumnModel {
     this.quickFilterText,
     this.advancedFilter,
     this.advancedFilterUI,
-    this.isVisible = true,
+    bool? isVisible,
     this.savedWidth,
     this.aggregation = OmAggregationType.none,
     this.pinning = OmColumnPinning.none,
     this.originalIndex = 0,
-  });
+  }) : isVisible = isVisible ?? column.visible;
 
   /// The Unique key from [OmGridColumn].
   String get key => column.key;
@@ -357,7 +367,8 @@ class OmGridColumnModel {
   bool? get readonlyInView => column.readonlyInView;
   Future<void> Function(dynamic)? get onDelete => column.onDelete;
   Map<dynamic, OmStateConfig>? get stateConfig => column.stateConfig;
-  List<OmRowContextMenuItem>? get contextMenuOptions => column.contextMenuOptions;
+  List<OmRowContextMenuItem>? get contextMenuOptions =>
+      column.contextMenuOptions;
 
   bool get isFiltered =>
       filter ||

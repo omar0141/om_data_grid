@@ -56,7 +56,9 @@ class _FiltersTabState extends State<FiltersTab> {
     final filterableColumns = widget.controller.columnModels
         .where(
           (c) =>
-              c.column.allowFiltering && !_activeFilterColumns.contains(c.key),
+              c.column.visible &&
+              c.column.allowFiltering &&
+              !_activeFilterColumns.contains(c.key),
         )
         .toList();
 

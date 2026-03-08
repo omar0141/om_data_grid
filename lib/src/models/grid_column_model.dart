@@ -182,9 +182,16 @@ class OmGridColumn {
   /// is not rendered when this is `false`.
   final bool visible;
 
-  /// Custom widget builder for columns with type [OmGridRowTypeEnum.widget].
-  /// Receives the cell value and the full row data and returns a [Widget].
-  final Widget Function(dynamic value, Map<String, dynamic> row)? widgetBuilder;
+  /// Optional widget builder that works for **all** column types.
+  /// Receives the cell value, the full row data, and the **default widget**
+  /// that would normally be rendered by the grid.
+  /// The callback can return [defaultWidget] to keep the default appearance,
+  /// or return a completely new widget based on the row values.
+  final Widget Function(
+    dynamic value,
+    Map<String, dynamic> row,
+    Widget defaultWidget,
+  )? widgetBuilder;
 
   /// Creates a [OmGridColumn] configuration.
   OmGridColumn({
@@ -248,7 +255,9 @@ class OmGridColumn {
     List<OmRowContextMenuItem>? contextMenuOptions,
     bool? showPlaceholderWhileScrolling,
     bool? visible,
-    Widget Function(dynamic value, Map<String, dynamic> row)? widgetBuilder,
+    Widget Function(
+            dynamic value, Map<String, dynamic> row, Widget defaultWidget)?
+        widgetBuilder,
   }) {
     return OmGridColumn(
       key: key ?? this.key,
@@ -384,8 +393,9 @@ class OmGridColumnModel {
   bool get isCalculated => column.formula != null;
   bool get showPlaceholderWhileScrolling =>
       column.showPlaceholderWhileScrolling;
-  Widget Function(dynamic value, Map<String, dynamic> row)? get widgetBuilder =>
-      column.widgetBuilder;
+  Widget Function(
+          dynamic value, Map<String, dynamic> row, Widget defaultWidget)?
+      get widgetBuilder => column.widgetBuilder;
 }
 
 /// Data used during column dragging operations.

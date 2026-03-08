@@ -1,3 +1,7 @@
+## 0.0.22
+
+- **Universal `widgetBuilder`**: The `widgetBuilder` callback on `OmGridColumn` now works for **all** column types, not just `widget`. The callback signature has been updated to `Widget Function(dynamic value, Map<String, dynamic> row, Widget defaultWidget)`. The third argument is the default widget the grid would normally render, allowing you to return it unchanged, wrap it, or replace it entirely based on row values.
+
 ## 0.0.21
 
 - **Fix Phantom Padding**: Resolved an issue where a blank 12px gap appeared on the right side of the grid when vertical scrolling was not needed. The vertical scrollbar strip now collapses to zero width when hidden, and the available content width is recalculated accordingly.

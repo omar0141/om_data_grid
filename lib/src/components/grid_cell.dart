@@ -50,6 +50,19 @@ class _GridCellState extends State<GridCell> {
           color: widget.configuration.secondaryTextColor);
     }
 
+    final Widget defaultWidget = _buildDefaultWidget(context);
+
+    final builder = widget.column.widgetBuilder;
+    if (builder != null) {
+      return builder(widget.value, widget.row, defaultWidget);
+    }
+
+    return defaultWidget;
+  }
+
+  /// Builds the default widget for the current column type, used as the
+  /// [defaultWidget] argument passed to [OmGridColumn.widgetBuilder].
+  Widget _buildDefaultWidget(BuildContext context) {
     switch (widget.column.type) {
       case OmGridRowTypeEnum.integer:
         return _buildInt();
@@ -88,20 +101,12 @@ class _GridCellState extends State<GridCell> {
         return _buildState();
 
       case OmGridRowTypeEnum.widget:
-        return _buildCustomWidget();
-
+      case OmGridRowTypeEnum.button:
+      case OmGridRowTypeEnum.code:
+      case OmGridRowTypeEnum.reordable:
       case OmGridRowTypeEnum.text:
-      default:
         return _buildText(widget.value?.toString() ?? '');
     }
-  }
-
-  Widget _buildCustomWidget() {
-    final builder = widget.column.widgetBuilder;
-    if (builder == null) {
-      return _buildText(widget.value?.toString() ?? '');
-    }
-    return builder(widget.value, widget.row);
   }
 
   Widget _buildText(String text) {

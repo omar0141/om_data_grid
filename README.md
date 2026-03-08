@@ -56,6 +56,7 @@ Check out the interactive demo: **[Live Web Demo](https://omar0141.github.io/om_
   - Freeze columns/rows to the left, right, top, or bottom.
   - Intuitive drag-and-drop for column and row reordering.
 - **💾 Professional Exporting**: Seamlessly export current or filtered views to **Excel (.xlsx)** and **PDF**.
+- **🎨 Universal Cell Builder**: Override the rendered widget for any column type via `widgetBuilder`, receiving the default widget so you can wrap or replace it.
 
 ---
 
@@ -65,7 +66,7 @@ Add `om_data_grid` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  om_data_grid: ^0.0.14
+  om_data_grid: ^0.0.22
 ```
 
 Then run:
@@ -127,6 +128,50 @@ OmDataGrid(controller: controller)
 - `OmGridRowTypeEnum.iosSwitch`: Interactive boolean toggle.
 - `OmGridRowTypeEnum.date`: Date picker integration with customizable formatting.
 - `OmGridRowTypeEnum.state`: Conditional status indicators with icons.
+
+### Universal Cell Widget Builder
+
+The `widgetBuilder` property works on **every** column type. The callback receives the cell value, the full row map, and the **default widget** the grid would have rendered. You can return the default widget as-is, wrap it, or replace it completely:
+
+```dart
+// Wrap the default state badge with an urgency indicator
+OmGridColumn(
+  key: 'status',
+  title: 'Status',
+  type: OmGridRowTypeEnum.state,
+  stateConfig: {
+    'active': OmStateConfig(style: OmStateStyle.tinted, color: Colors.green, label: 'Active'),
+    'inactive': OmStateConfig(style: OmStateStyle.outlined, color: Colors.grey, label: 'Inactive'),
+  },
+  widgetBuilder: (value, row, defaultWidget) {
+    if (row['urgent'] == true) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.warning_amber, color: Colors.orange, size: 14),
+          const SizedBox(width: 4),
+          defaultWidget, // reuse the default state chip
+        ],
+      );
+    }
+    return defaultWidget;
+  },
+)
+
+// Colorize a number cell based on its value
+OmGridColumn(
+  key: 'salary',
+  title: 'Salary',
+  type: OmGridRowTypeEnum.double,
+  widgetBuilder: (value, row, defaultWidget) {
+    final salary = (value as num?)?.toDouble() ?? 0;
+    return DefaultTextStyle.merge(
+      style: TextStyle(color: salary > 90000 ? Colors.green : null),
+      child: defaultWidget,
+    );
+  },
+)
+```
 
 ### Calculated Columns (Formulas)
 
@@ -300,35 +345,37 @@ When `isEditing` is true, cells become interactive:
 
 ### `OmGridColumn` Configuration
 
-| Property                        | Type                              | Default                  | Description                                                                    |
-| :------------------------------ | :-------------------------------- | :----------------------- | :----------------------------------------------------------------------------- |
-| `key`                           | `String`                          | -                        | Unique key identifying the column in the data source.                          |
-| `title`                         | `String`                          | -                        | The title displayed in the column header.                                      |
-| `width`                         | `double?`                         | `null`                   | Initial width of the column.                                                   |
-| `textAlign`                     | `TextAlign?`                      | `TextAlign.center`       | Alignment of the text within the cell.                                         |
-| `resizable`                     | `bool`                            | `true`                   | Whether the column width can be adjusted by the user.                          |
-| `allowFiltering`                | `bool`                            | `true`                   | Enables filtering for this column.                                             |
-| `allowSorting`                  | `bool`                            | `true`                   | Enables sorting for this column.                                               |
-| `type`                          | `OmGridRowTypeEnum`               | `OmGridRowTypeEnum.text` | The type of data in the column (e.g., text, number, date, image).              |
-| `comboBoxSettings`              | `OmGridComboBoxSettings?`         | `null`                   | Configuration for `comboBox` column types.                                     |
-| `numberType`                    | `String?`                         | `null`                   | Specific number formatting type.                                               |
-| `showInChart`                   | `bool`                            | `true`                   | Whether this column represents data in charts.                                 |
-| `canBeXAxis`                    | `bool`                            | `true`                   | Whether this column can be used as the X-axis in charts.                       |
-| `canBeYAxis`                    | `bool`                            | `true`                   | Whether this column can be used as the Y-axis in charts.                       |
-| `formula`                       | `String?`                         | `null`                   | Formula for calculated columns (e.g., `"price * quantity"`).                   |
-| `decimalSeparator`              | `String?`                         | `null`                   | Character used as decimal separator.                                           |
-| `thousandsSeparator`            | `String?`                         | `null`                   | Character used as thousands separator.                                         |
-| `decimalDigits`                 | `int?`                            | `null`                   | Number of decimal places to display.                                           |
-| `customDateFormat`              | `String?`                         | `null`                   | Custom format string for date columns.                                         |
-| `imageBorderRadius`             | `double?`                         | `null`                   | Border radius for image cells.                                                 |
-| `multiSelect`                   | `bool?`                           | `null`                   | Enables multi-selection for relevant types.                                    |
-| `displayKey`                    | `String?`                         | `null`                   | Key to display in the cell (for object-based values).                          |
-| `valueKey`                      | `String?`                         | `null`                   | Key for the underlying value (for object-based values).                        |
-| `readonlyInView`                | `bool?`                           | `null`                   | If true, the column cannot be edited in the grid view.                         |
-| `onDelete`                      | `Future<void> Function(dynamic)?` | `null`                   | Callback triggered when a specialized item (like a file) is deleted.           |
-| `stateConfig`                   | `Map<dynamic, OmStateConfig>?`    | `null`                   | Configuration for state-based styling (background/text colors based on value). |
-| `contextMenuOptions`            | `List<OmRowContextMenuItem>?`     | `null`                   | Custom context menu options for this column.                                   |
-| `showPlaceholderWhileScrolling` | `bool`                            | `true`                   | Shows a placeholder for performance optimization during scrolling.             |
+| Property                        | Type                                          | Default                  | Description                                                                                                                                                                                   |
+| :------------------------------ | :-------------------------------------------- | :----------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`                           | `String`                                      | -                        | Unique key identifying the column in the data source.                                                                                                                                         |
+| `title`                         | `String`                                      | -                        | The title displayed in the column header.                                                                                                                                                     |
+| `width`                         | `double?`                                     | `null`                   | Initial width of the column.                                                                                                                                                                  |
+| `textAlign`                     | `TextAlign?`                                  | `TextAlign.center`       | Alignment of the text within the cell.                                                                                                                                                        |
+| `resizable`                     | `bool`                                        | `true`                   | Whether the column width can be adjusted by the user.                                                                                                                                         |
+| `allowFiltering`                | `bool`                                        | `true`                   | Enables filtering for this column.                                                                                                                                                            |
+| `allowSorting`                  | `bool`                                        | `true`                   | Enables sorting for this column.                                                                                                                                                              |
+| `type`                          | `OmGridRowTypeEnum`                           | `OmGridRowTypeEnum.text` | The type of data in the column (e.g., text, number, date, image).                                                                                                                             |
+| `comboBoxSettings`              | `OmGridComboBoxSettings?`                     | `null`                   | Configuration for `comboBox` column types.                                                                                                                                                    |
+| `numberType`                    | `String?`                                     | `null`                   | Specific number formatting type.                                                                                                                                                              |
+| `showInChart`                   | `bool`                                        | `true`                   | Whether this column represents data in charts.                                                                                                                                                |
+| `canBeXAxis`                    | `bool`                                        | `true`                   | Whether this column can be used as the X-axis in charts.                                                                                                                                      |
+| `canBeYAxis`                    | `bool`                                        | `true`                   | Whether this column can be used as the Y-axis in charts.                                                                                                                                      |
+| `formula`                       | `String?`                                     | `null`                   | Formula for calculated columns (e.g., `"price * quantity"`).                                                                                                                                  |
+| `decimalSeparator`              | `String?`                                     | `null`                   | Character used as decimal separator.                                                                                                                                                          |
+| `thousandsSeparator`            | `String?`                                     | `null`                   | Character used as thousands separator.                                                                                                                                                        |
+| `decimalDigits`                 | `int?`                                        | `null`                   | Number of decimal places to display.                                                                                                                                                          |
+| `customDateFormat`              | `String?`                                     | `null`                   | Custom format string for date columns.                                                                                                                                                        |
+| `imageBorderRadius`             | `double?`                                     | `null`                   | Border radius for image cells.                                                                                                                                                                |
+| `multiSelect`                   | `bool?`                                       | `null`                   | Enables multi-selection for relevant types.                                                                                                                                                   |
+| `displayKey`                    | `String?`                                     | `null`                   | Key to display in the cell (for object-based values).                                                                                                                                         |
+| `valueKey`                      | `String?`                                     | `null`                   | Key for the underlying value (for object-based values).                                                                                                                                       |
+| `readonlyInView`                | `bool?`                                       | `null`                   | If true, the column cannot be edited in the grid view.                                                                                                                                        |
+| `onDelete`                      | `Future<void> Function(dynamic)?`             | `null`                   | Callback triggered when a specialized item (like a file) is deleted.                                                                                                                          |
+| `stateConfig`                   | `Map<dynamic, OmStateConfig>?`                | `null`                   | Configuration for state-based styling (background/text colors based on value).                                                                                                                |
+| `contextMenuOptions`            | `List<OmRowContextMenuItem>?`                 | `null`                   | Custom context menu options for this column.                                                                                                                                                  |
+| `showPlaceholderWhileScrolling` | `bool`                                        | `true`                   | Shows a placeholder for performance optimization during scrolling.                                                                                                                            |
+| `visible`                       | `bool`                                        | `true`                   | Whether the column is rendered (data is still present in the source).                                                                                                                         |
+| `widgetBuilder`                 | `Widget Function(value, row, defaultWidget)?` | `null`                   | Override the cell widget for **any** column type. Receives the cell value, the full row, and the default widget. Return `defaultWidget` to keep default rendering, or return a custom widget. |
 
 ### `OmDataGridConfiguration`
 

@@ -1,3 +1,7 @@
+## 0.0.23
+
+- **RTL Dragging Support**: Fixed an issue where dragging popups (`OmChartPopup` and `OmColumnChooserPopup`) moved in the opposite direction when the application was in RTL (Right-to-Left) mode.
+
 ## 0.0.22
 
 - **Universal `widgetBuilder`**: The `widgetBuilder` callback on `OmGridColumn` now works for **all** column types, not just `widget`. The callback signature has been updated to `Widget Function(dynamic value, Map<String, dynamic> row, Widget defaultWidget)`. The third argument is the default widget the grid would normally render, allowing you to return it unchanged, wrap it, or replace it entirely based on row values.

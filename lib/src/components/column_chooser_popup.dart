@@ -51,8 +51,12 @@ class _ColumnChooserPopupState extends State<OmColumnChooserPopup> {
               // Header / Drag Handle
               GestureDetector(
                 onPanUpdate: (details) {
+                  final isRTL = Directionality.of(context) == TextDirection.rtl;
                   setState(() {
-                    _position += details.delta;
+                    final delta = isRTL
+                        ? Offset(-details.delta.dx, details.delta.dy)
+                        : details.delta;
+                    _position += delta;
                   });
                 },
                 child: Container(

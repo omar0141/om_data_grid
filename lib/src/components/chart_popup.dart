@@ -540,10 +540,16 @@ class _ChartPopupState extends State<OmChartPopup> {
   }
 
   Widget _buildHeader({required bool fullScreen, required bool isMobile}) {
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
     return GestureDetector(
       onPanUpdate: (details) {
         if (!fullScreen) {
-          setState(() => _position += details.delta);
+          setState(() {
+            final delta = isRTL
+                ? Offset(-details.delta.dx, details.delta.dy)
+                : details.delta;
+            _position += delta;
+          });
         }
       },
       child: Container(

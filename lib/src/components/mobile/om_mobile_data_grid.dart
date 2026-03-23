@@ -636,7 +636,7 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
         // Cards
         if (isGrid) ...[
           SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6)
+            padding: widget.contentPadding ?? EdgeInsets.symmetric(horizontal: 6, vertical: 6)
                 .copyWith(bottom: 6 + fabPad),
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
@@ -653,7 +653,7 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
           ),
         ] else ...[
           SliverPadding(
-            padding: EdgeInsets.only(top: 6, bottom: 12 + fabPad),
+            padding: widget.contentPadding ?? EdgeInsets.only(top: 6, bottom: 12 + fabPad),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (ctx, i) {

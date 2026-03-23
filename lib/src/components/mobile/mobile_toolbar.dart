@@ -86,9 +86,9 @@ class _OmMobileToolbarState extends State<OmMobileToolbar> {
                 onChanged: widget.onSearchChanged,
               ),
             ),
-            const SizedBox(width: 8),
           ],
-          if (widget.showSort)
+          if (widget.showSort) ...[
+            const SizedBox(width: 8),
             _ActionButton(
               icon: Icons.sort_rounded,
               badgeActive: hasActiveSort,
@@ -97,6 +97,7 @@ class _OmMobileToolbarState extends State<OmMobileToolbar> {
               bg: bg,
               onTap: widget.onSortTap,
             ),
+          ],
           if (widget.showSort && widget.showFilter) const SizedBox(width: 8),
           if (widget.showFilter)
             _ActionButton(

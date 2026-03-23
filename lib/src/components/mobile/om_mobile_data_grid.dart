@@ -136,6 +136,11 @@ class OmMobileDataGrid extends StatefulWidget {
   /// Defaults to `true`.
   final bool showEntriesBar;
 
+  /// Optional external [ScrollController].
+  /// When provided, the grid uses it instead of creating its own so that the
+  /// caller can listen to scroll position changes (e.g. to hide/show UI chrome).
+  final ScrollController? scrollController;
+
   const OmMobileDataGrid({
     super.key,
     required this.controller,
@@ -162,6 +167,7 @@ class OmMobileDataGrid extends StatefulWidget {
     this.externalSortAscending = true,
     this.onExternalSortClear,
     this.showEntriesBar = true,
+    this.scrollController,
   });
 
   @override
@@ -182,13 +188,23 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
   bool _isLoadingMore = false;
 
   final Set<Map<String, dynamic>> _selectedRows = {};
-  final ScrollController _scrollController = ScrollController();
+  // When the caller supplies a scrollController we use it directly; otherwise
+  // we own (and dispose) an internal one.
+  late final ScrollController _scrollController;
+  bool _ownsScrollController = false;
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
 
   @override
   void initState() {
     super.initState();
+    if (widget.scrollController != null) {
+      _scrollController = widget.scrollController!;
+      _ownsScrollController = false;
+    } else {
+      _scrollController = ScrollController();
+      _ownsScrollController = true;
+    }
     _rowsPerPage = widget.controller.configuration.rowsPerPage;
     _syncFromController();
     widget.controller.addListener(_handleControllerChange);
@@ -224,7 +240,10 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
   @override
   void dispose() {
     widget.controller.removeListener(_handleControllerChange);
-    _scrollController.dispose();
+    if (widget.scrollMode == OmMobileScrollMode.infiniteScroll) {
+      _scrollController.removeListener(_onScroll);
+    }
+    if (_ownsScrollController) _scrollController.dispose();
     super.dispose();
   }
 
@@ -636,8 +655,9 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
         // Cards
         if (isGrid) ...[
           SliverPadding(
-            padding: widget.contentPadding ?? EdgeInsets.symmetric(horizontal: 6, vertical: 6)
-                .copyWith(bottom: 6 + fabPad),
+            padding: widget.contentPadding ??
+                EdgeInsets.symmetric(horizontal: 6, vertical: 6)
+                    .copyWith(bottom: 6 + fabPad),
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (ctx, i) => _buildCard(_displayData[i]),
@@ -653,7 +673,8 @@ class _OmMobileDataGridState extends State<OmMobileDataGrid> {
           ),
         ] else ...[
           SliverPadding(
-            padding: widget.contentPadding ?? EdgeInsets.only(top: 6, bottom: 12 + fabPad),
+            padding: widget.contentPadding ??
+                EdgeInsets.only(top: 6, bottom: 12 + fabPad),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (ctx, i) {

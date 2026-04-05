@@ -45,6 +45,9 @@ enum OmGridRowTypeEnum {
   /// Display multiple images.
   multiImage,
 
+  /// Display a profile image (typically circular).
+  profileImage,
+
   /// Display multiple files.
   multiFile,
 

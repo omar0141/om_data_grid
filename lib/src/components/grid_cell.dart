@@ -84,6 +84,9 @@ class _GridCellState extends State<GridCell> {
       case OmGridRowTypeEnum.image:
         return _buildImage(isFile: false);
 
+      case OmGridRowTypeEnum.profileImage:
+        return _buildProfileImage();
+
       case OmGridRowTypeEnum.file:
         return _buildImage(isFile: true);
 
@@ -107,6 +110,67 @@ class _GridCellState extends State<GridCell> {
       case OmGridRowTypeEnum.text:
         return _buildText(widget.value?.toString() ?? '');
     }
+  }
+
+  Widget _buildProfileImage() {
+    final bool hasValue =
+        widget.value != null && widget.value.toString().isNotEmpty;
+    final bool canEdit =
+        (widget.column.readonlyInView != true) || widget.isEditing;
+
+    if (!hasValue) {
+      if (canEdit && widget.isEditing) {
+        return IconButton(
+          onPressed: _pickImage,
+          icon: const Icon(Icons.add_a_photo, size: 20),
+          tooltip: 'Add Profile Photo',
+        );
+      }
+      return CircleAvatar(
+        radius: 16,
+        backgroundColor:
+            widget.configuration.secondaryTextColor.withOpacity(0.1),
+        child: Icon(Icons.person,
+            color: widget.configuration.secondaryTextColor, size: 20),
+      );
+    }
+
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        GestureDetector(
+          onTap: () {
+            GridFileViewerUtils.showViewer(
+              context: context,
+              url: widget.value.toString(),
+              title: widget.column.title,
+              configuration: widget.configuration,
+              isImage: true,
+            );
+          },
+          child: CircleAvatar(
+            radius: 16,
+            backgroundImage: NetworkImage(widget.value.toString()),
+            onBackgroundImageError: (exception, stackTrace) {},
+          ),
+        ),
+        if (canEdit && widget.isEditing)
+          Positioned(
+            right: -10,
+            bottom: -10,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const CircleAvatar(
+                radius: 8,
+                backgroundColor: Colors.blue,
+                child: Icon(Icons.edit, color: Colors.white, size: 10),
+              ),
+              onPressed: _pickImage,
+            ),
+          ),
+      ],
+    );
   }
 
   Widget _buildText(String text) {

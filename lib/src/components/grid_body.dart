@@ -2,6 +2,7 @@ import 'package:om_data_grid/src/components/grid_group_header.dart';
 import 'package:om_data_grid/src/components/grid_row.dart';
 import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
+import 'package:om_data_grid/src/models/cell_position.dart';
 import 'package:flutter/material.dart';
 
 class OmGridBody extends StatelessWidget {
@@ -22,6 +23,10 @@ class OmGridBody extends StatelessWidget {
   final String globalSearchText;
   final bool isEditing;
   final bool isScrolling;
+  final OmCellPosition? activeEditCell;
+  final void Function(Map<String, dynamic> row, String key, dynamic value)?
+      onCellValueChange;
+  final void Function(bool forward)? onNavigateCell;
 
   final void Function(String groupId) onToggleGroup;
   final void Function(Map<String, dynamic> row) onRowTap;
@@ -64,6 +69,9 @@ class OmGridBody extends StatelessWidget {
     this.showScrollbar = false,
     this.isEditing = false,
     this.isScrolling = false,
+    this.activeEditCell,
+    this.onCellValueChange,
+    this.onNavigateCell,
   });
 
   @override
@@ -377,6 +385,10 @@ class OmGridBody extends StatelessWidget {
         isCellSelected: (colIndex) => isCellSelected(colIndex, index),
         isEditing: isEditing,
         isScrolling: isScrolling,
+        activeEditCell: activeEditCell,
+        onNavigateCell: onNavigateCell,
+        onValueChange: (key, value) =>
+            onCellValueChange?.call(row, key, value),
         level: level,
         horizontalScrollController: horizontalScrollController,
         visibleIndicesToRender: visibleIndicesToRender,

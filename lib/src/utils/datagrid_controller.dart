@@ -45,6 +45,11 @@ class OmDataGridController extends ChangeNotifier {
   /// Callback when a column is reordered.
   void Function(int oldIndex, int newIndex)? onColumnReorder;
 
+  /// Callback when a cell value is changed in edit mode.
+  /// Receives the row data map, the column key, and the new value.
+  void Function(Map<String, dynamic> row, String key, dynamic value)?
+      onCellValueChange;
+
   /// Creates a [OmDataGridController].
   ///
   /// [data] - The initial list of data rows.

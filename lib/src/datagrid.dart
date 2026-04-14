@@ -53,6 +53,9 @@ class OmDataGrid extends StatefulWidget {
     /// Whether the grid is currently in editing mode.
     this.isEditing = false,
 
+    /// Called when Shift+Enter is pressed in edit mode to add a new row.
+    this.onAddRow,
+
     /// The controller for the Data Grid.
     /// Manages state, configuration, and data operations.
     required this.controller,
@@ -70,6 +73,9 @@ class OmDataGrid extends StatefulWidget {
   final void Function(int oldIndex, int newIndex)? onColumnReorder;
   final OmDataGridController controller;
   final bool isEditing;
+
+  /// Called when Shift+Enter is pressed in edit mode to add a new row.
+  final VoidCallback? onAddRow;
 
   @override
   State<OmDataGrid> createState() => _DatagridState();
@@ -102,6 +108,7 @@ class _DatagridState extends State<OmDataGrid> {
   bool _isInternalUpdate = false;
   bool _isSidePanelExpanded = false;
   bool _isColumnChooserVisible = false;
+  OmCellPosition? _activeEditCell;
 
   @override
   void initState() {
@@ -523,6 +530,34 @@ class _DatagridState extends State<OmDataGrid> {
   }
 
   void _handleCellTapDown(int colIndex, int rowIndex) {
+    // Activate edit mode for the tapped cell when editing is enabled
+    if (widget.isEditing &&
+        colIndex < internalColumns.length &&
+        internalColumns[colIndex].key != '__reorder_column__') {
+      final col = internalColumns[colIndex];
+      const editableTypes = {
+        OmGridRowTypeEnum.text,
+        OmGridRowTypeEnum.integer,
+        OmGridRowTypeEnum.double,
+        OmGridRowTypeEnum.comboBox,
+        OmGridRowTypeEnum.iosSwitch,
+        OmGridRowTypeEnum.date,
+        OmGridRowTypeEnum.dateTime,
+        OmGridRowTypeEnum.time,
+        OmGridRowTypeEnum.image,
+        OmGridRowTypeEnum.profileImage,
+        OmGridRowTypeEnum.file,
+        OmGridRowTypeEnum.multiImage,
+        OmGridRowTypeEnum.multiFile,
+      };
+      if (editableTypes.contains(col.type)) {
+        setState(() {
+          _activeEditCell =
+              OmCellPosition(rowIndex: rowIndex, columnIndex: colIndex);
+        });
+      }
+    }
+
     if (widget.controller.configuration.selectionMode != OmSelectionMode.cell) {
       return;
     }
@@ -605,6 +640,81 @@ class _DatagridState extends State<OmDataGrid> {
       }
       _selectionStart = null;
       _selectionEnd = null;
+    });
+  }
+
+  /// Returns the list of column indices that are navigable in edit mode (Tab).
+  List<int> _editableColumnIndices() {
+    const nonEditable = {
+      OmGridRowTypeEnum.delete,
+      OmGridRowTypeEnum.contextMenu,
+      OmGridRowTypeEnum.state,
+      OmGridRowTypeEnum.button,
+      OmGridRowTypeEnum.code,
+      OmGridRowTypeEnum.reordable,
+      OmGridRowTypeEnum.widget,
+    };
+    final result = <int>[];
+    for (int i = 0; i < internalColumns.length; i++) {
+      final col = internalColumns[i];
+      if (col.key == '__reorder_column__') continue;
+      if (nonEditable.contains(col.type)) continue;
+      result.add(i);
+    }
+    return result;
+  }
+
+  /// Returns the actual indices (positions in [_flattenedItems]) of data rows,
+  /// excluding group headers.
+  List<int> _dataRowIndices() {
+    final result = <int>[];
+    for (int i = 0; i < _flattenedItems.length; i++) {
+      final item = _flattenedItems[i];
+      if (item is Map<String, dynamic> && item['isGroup'] != true) {
+        result.add(i);
+      }
+    }
+    return result;
+  }
+
+  /// Moves [_activeEditCell] forward (Tab) or backward (Shift+Tab) through
+  /// editable columns, wrapping to the next/previous data row.
+  void _moveActiveEditCell(bool forward) {
+    final cols = _editableColumnIndices();
+    if (cols.isEmpty) return;
+
+    final rowIndices = _dataRowIndices();
+    if (rowIndices.isEmpty) return;
+
+    final current = _activeEditCell;
+    // Find current position within real row indices
+    int rowPos = current != null
+        ? rowIndices.indexOf(current.rowIndex)
+        : -1;
+    if (rowPos == -1) rowPos = 0;
+
+    int colIdx = current != null ? cols.indexOf(current.columnIndex) : -1;
+    if (colIdx == -1) colIdx = 0;
+
+    if (forward) {
+      colIdx++;
+      if (colIdx >= cols.length) {
+        colIdx = 0;
+        rowPos = (rowPos + 1) % rowIndices.length;
+      }
+    } else {
+      colIdx--;
+      if (colIdx < 0) {
+        colIdx = cols.length - 1;
+        rowPos = (rowPos - 1 + rowIndices.length) % rowIndices.length;
+      }
+    }
+
+    setState(() {
+      _activeEditCell = OmCellPosition(
+        rowIndex: rowIndices[rowPos],
+        columnIndex: cols[colIdx],
+      );
     });
   }
 
@@ -1123,17 +1233,31 @@ class _DatagridState extends State<OmDataGrid> {
 
     return Focus(
       onKeyEvent: (node, event) {
-        if (event is KeyDownEvent &&
-            event.logicalKey == LogicalKeyboardKey.escape) {
+        if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+          return KeyEventResult.ignored;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.escape) {
           setState(() {
             _selectionStart = null;
             _selectionEnd = null;
             _selectedRows.clear();
+            _activeEditCell = null;
           });
           if (widget.onSelectionChanged != null) {
             widget.onSelectionChanged!([]);
           }
           return KeyEventResult.handled;
+        }
+        if (widget.isEditing) {
+          final shiftPressed = HardwareKeyboard.instance.isShiftPressed;
+          if (event.logicalKey == LogicalKeyboardKey.tab) {
+            _moveActiveEditCell(!shiftPressed);
+            return KeyEventResult.handled;
+          }
+          if (event.logicalKey == LogicalKeyboardKey.enter && shiftPressed) {
+            widget.onAddRow?.call();
+            return KeyEventResult.handled;
+          }
         }
         return KeyEventResult.ignored;
       },
@@ -1227,6 +1351,10 @@ class _DatagridState extends State<OmDataGrid> {
                               sortColumnKey: _sortColumnKey,
                               sortAscending: _sortAscending,
                               isEditing: widget.isEditing,
+                              activeEditCell: _activeEditCell,
+                              onCellValueChange:
+                                  widget.controller.onCellValueChange,
+                              onNavigateCell: _moveActiveEditCell,
                             ),
                           ),
                         ],

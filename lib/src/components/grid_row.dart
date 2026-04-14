@@ -5,6 +5,7 @@ import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/enums/grid_border_visibility_enum.dart';
 import 'package:om_data_grid/src/models/advanced_filter_model.dart';
 import 'package:om_data_grid/src/enums/selection_mode_enum.dart';
+import 'package:om_data_grid/src/models/cell_position.dart';
 
 class OmGridRow extends StatefulWidget {
   const OmGridRow({
@@ -28,6 +29,8 @@ class OmGridRow extends StatefulWidget {
     this.onValueChange,
     this.isEditing = false,
     this.isScrolling = false,
+    this.activeEditCell,
+    this.onNavigateCell,
     this.onSecondaryTapDown,
   });
 
@@ -50,6 +53,8 @@ class OmGridRow extends StatefulWidget {
   final Function(String key, dynamic value)? onValueChange;
   final bool isEditing;
   final bool isScrolling;
+  final OmCellPosition? activeEditCell;
+  final void Function(bool forward)? onNavigateCell;
   final Function(int columnIndex, TapDownDetails details)? onSecondaryTapDown;
 
   @override
@@ -275,24 +280,41 @@ class _GridRowState extends State<OmGridRow> {
     final double startPadding =
         isFirstVisible ? 12.0 + (widget.level * 20.0) : 12.0;
 
+    final bool isThisActiveEditCell = widget.activeEditCell != null &&
+        widget.activeEditCell!.rowIndex == widget.rowIndex &&
+        widget.activeEditCell!.columnIndex == index;
+
+    final bool showVerticalCellBorder = !isFirstVisible &&
+        (widget.configuration.rowBorderVisibility ==
+                OmGridBorderVisibility.vertical ||
+            widget.configuration.rowBorderVisibility ==
+                OmGridBorderVisibility.both);
+
     return Container(
       height: widget.configuration.rowHeight,
       padding: EdgeInsetsDirectional.fromSTEB(startPadding, 4.0, 12.0, 4.0),
-      decoration: BoxDecoration(
-        color: cellSelected ? widget.configuration.selectedRowColor : null,
-        border: BorderDirectional(
-          start: !isFirstVisible &&
-                  (widget.configuration.rowBorderVisibility ==
-                          OmGridBorderVisibility.vertical ||
-                      widget.configuration.rowBorderVisibility ==
-                          OmGridBorderVisibility.both)
-              ? BorderSide(
-                  width: widget.configuration.rowBorderWidth,
-                  color: widget.configuration.rowBorderColor,
-                )
-              : BorderSide.none,
-        ),
-      ),
+      decoration: isThisActiveEditCell
+          ? BoxDecoration(
+              color: cellSelected
+                  ? widget.configuration.selectedRowColor
+                  : widget.configuration.gridBackgroundColor,
+              border: Border.all(
+                color: widget.configuration.primaryColor,
+                width: 1.5,
+              ),
+            )
+          : BoxDecoration(
+              color:
+                  cellSelected ? widget.configuration.selectedRowColor : null,
+              border: BorderDirectional(
+                start: showVerticalCellBorder
+                    ? BorderSide(
+                        width: widget.configuration.rowBorderWidth,
+                        color: widget.configuration.rowBorderColor,
+                      )
+                    : BorderSide.none,
+              ),
+            ),
       width: widget.columnWidths[index],
       child: Center(
         child: Builder(
@@ -357,6 +379,8 @@ class _GridRowState extends State<OmGridRow> {
               row: widget.row,
               onValueChange: widget.onValueChange,
               isEditing: widget.isEditing,
+              isActiveEditCell: isThisActiveEditCell,
+              onNavigateCell: widget.onNavigateCell,
               configuration: widget.configuration,
             );
           },

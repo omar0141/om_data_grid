@@ -8,6 +8,7 @@ import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/models/grid_column_model.dart';
 import 'package:om_data_grid/src/utils/datagrid_controller.dart';
 import 'package:om_data_grid/src/utils/datagrid_utils.dart';
+import 'package:om_data_grid/src/models/cell_position.dart';
 import 'package:flutter/material.dart';
 
 class GridMainContainer extends StatefulWidget {
@@ -49,6 +50,10 @@ class GridMainContainer extends StatefulWidget {
   final String? sortColumnKey;
   final bool? sortAscending;
   final bool isEditing;
+  final OmCellPosition? activeEditCell;
+  final void Function(Map<String, dynamic> row, String key, dynamic value)?
+      onCellValueChange;
+  final void Function(bool forward)? onNavigateCell;
 
   const GridMainContainer({
     super.key,
@@ -83,6 +88,9 @@ class GridMainContainer extends StatefulWidget {
     this.sortColumnKey,
     this.sortAscending,
     this.isEditing = false,
+    this.activeEditCell,
+    this.onCellValueChange,
+    this.onNavigateCell,
   });
 
   @override
@@ -299,6 +307,9 @@ class _GridMainContainerState extends State<GridMainContainer> {
               globalSearchText: widget.controller.globalSearchText,
               onRowReorder: widget.onRowReorder,
               isEditing: widget.isEditing,
+              activeEditCell: widget.activeEditCell,
+              onCellValueChange: widget.onCellValueChange,
+              onNavigateCell: widget.onNavigateCell,
               isScrolling: _isScrolling,
             )
           else
@@ -328,6 +339,9 @@ class _GridMainContainerState extends State<GridMainContainer> {
                 globalSearchText: widget.controller.globalSearchText,
                 onRowReorder: widget.onRowReorder,
                 isEditing: widget.isEditing,
+                activeEditCell: widget.activeEditCell,
+                onCellValueChange: widget.onCellValueChange,
+                onNavigateCell: widget.onNavigateCell,
                 isScrolling: _isScrolling,
               ),
             ),
@@ -721,6 +735,12 @@ class _GridMainContainerState extends State<GridMainContainer> {
                                                   .controller.globalSearchText,
                                               onRowReorder: widget.onRowReorder,
                                               isEditing: widget.isEditing,
+                                              activeEditCell:
+                                                  widget.activeEditCell,
+                                              onCellValueChange:
+                                                  widget.onCellValueChange,
+                                              onNavigateCell:
+                                                  widget.onNavigateCell,
                                               isScrolling: _isScrolling,
                                             ),
                                           ),

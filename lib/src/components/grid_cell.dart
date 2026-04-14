@@ -7,6 +7,7 @@ import 'package:om_data_grid/src/models/datagrid_configuration.dart';
 import 'package:om_data_grid/src/utils/general_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:om_data_grid/src/utils/file_picker_wrapper/file_picker_wrapper.dart';
 import 'dart:ui' as ui;
@@ -19,6 +20,8 @@ class GridCell extends StatefulWidget {
   final Map<String, dynamic> row;
   final void Function(String key, dynamic value)? onValueChange;
   final bool isEditing;
+  final bool isActiveEditCell;
+  final void Function(bool forward)? onNavigateCell;
   final OmDataGridConfiguration configuration;
 
   const GridCell({
@@ -30,6 +33,8 @@ class GridCell extends StatefulWidget {
     required this.row,
     this.onValueChange,
     this.isEditing = false,
+    this.isActiveEditCell = false,
+    this.onNavigateCell,
     required this.configuration,
   });
 
@@ -42,6 +47,64 @@ class _GridCellState extends State<GridCell> {
   final MenuController _menuController = MenuController();
   bool _menuOpenedAbove = false;
   Offset _menuOffset = Offset.zero;
+
+  // For inline text/number editing
+  TextEditingController? _textEditingController;
+  FocusNode? _editFocusNode;
+
+  bool get _isInlineTextType =>
+      widget.column.type == OmGridRowTypeEnum.text ||
+      widget.column.type == OmGridRowTypeEnum.integer ||
+      widget.column.type == OmGridRowTypeEnum.double;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isActiveEditCell && _isInlineTextType) {
+      _initEditingResources();
+    }
+  }
+
+  void _initEditingResources() {
+    _textEditingController ??= TextEditingController(
+      text: widget.value?.toString() ?? '',
+    );
+    _editFocusNode ??= FocusNode();
+  }
+
+  @override
+  void didUpdateWidget(GridCell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_isInlineTextType) {
+      if (widget.isActiveEditCell) {
+        _initEditingResources();
+        // Sync controller value if external value changed while not editing
+        if (!oldWidget.isActiveEditCell) {
+          final newText = widget.value?.toString() ?? '';
+          _textEditingController!.text = newText;
+        }
+        // Request focus when this cell becomes the active edit cell
+        if (!oldWidget.isActiveEditCell) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              _editFocusNode!.requestFocus();
+              _textEditingController!.selection = TextSelection(
+                baseOffset: 0,
+                extentOffset: _textEditingController!.text.length,
+              );
+            }
+          });
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _textEditingController?.dispose();
+    _editFocusNode?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +128,10 @@ class _GridCellState extends State<GridCell> {
   Widget _buildDefaultWidget(BuildContext context) {
     switch (widget.column.type) {
       case OmGridRowTypeEnum.integer:
-        return _buildInt();
+        return widget.isActiveEditCell ? _buildTextEditor() : _buildInt();
 
       case OmGridRowTypeEnum.double:
-        return _buildDouble();
+        return widget.isActiveEditCell ? _buildTextEditor() : _buildDouble();
 
       case OmGridRowTypeEnum.date:
       case OmGridRowTypeEnum.dateTime:
@@ -76,7 +139,9 @@ class _GridCellState extends State<GridCell> {
         return _buildDate();
 
       case OmGridRowTypeEnum.comboBox:
-        return widget.isEditing ? _buildComboBoxEditor() : _buildComboBoxView();
+        return widget.isActiveEditCell
+            ? _buildComboBoxEditor()
+            : _buildComboBoxView();
 
       case OmGridRowTypeEnum.iosSwitch:
         return _buildSwitch();
@@ -107,8 +172,12 @@ class _GridCellState extends State<GridCell> {
       case OmGridRowTypeEnum.button:
       case OmGridRowTypeEnum.code:
       case OmGridRowTypeEnum.reordable:
-      case OmGridRowTypeEnum.text:
         return _buildText(widget.value?.toString() ?? '');
+
+      case OmGridRowTypeEnum.text:
+        return widget.isActiveEditCell
+            ? _buildTextEditor()
+            : _buildText(widget.value?.toString() ?? '');
     }
   }
 
@@ -170,6 +239,35 @@ class _GridCellState extends State<GridCell> {
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildTextEditor() {
+    _initEditingResources();
+    return Focus(
+      // Intercept Tab/Shift+Tab before Flutter's focus traversal handles it
+      onKeyEvent: (node, event) {
+        if ((event is KeyDownEvent || event is KeyRepeatEvent) &&
+            event.logicalKey == LogicalKeyboardKey.tab) {
+          final forward = !HardwareKeyboard.instance.isShiftPressed;
+          widget.onNavigateCell?.call(forward);
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: TextField(
+        focusNode: _editFocusNode,
+        controller: _textEditingController,
+        style: widget.style,
+        decoration: const InputDecoration.collapsed(hintText: ''),
+        keyboardType: widget.column.type == OmGridRowTypeEnum.integer
+            ? TextInputType.number
+            : widget.column.type == OmGridRowTypeEnum.double
+                ? const TextInputType.numberWithOptions(decimal: true)
+                : TextInputType.text,
+        textAlign: widget.column.textAlign,
+        onChanged: (val) => widget.onValueChange?.call(widget.column.key, val),
+      ),
     );
   }
 
@@ -275,13 +373,30 @@ class _GridCellState extends State<GridCell> {
   }
 
   Widget _buildComboBoxEditor() {
-    return GridComboBox(
-      initialValue: widget.value?.toString() ?? '',
-      items: widget.column.comboBoxSettings?.items ?? [],
-      onChange: (newVal) {
-        widget.onValueChange?.call(widget.column.key, newVal);
-      },
-      configuration: widget.configuration,
+    final rowH = widget.configuration.rowHeight;
+    // ClipRect prevents the transparent border from causing a 0.5px overflow
+    return ClipRect(
+      child: SizedBox(
+        height: rowH - 8,
+        child: GridComboBox(
+          initialValue: widget.value?.toString() ?? '',
+          items: widget.column.comboBoxSettings?.items ?? [],
+          onChange: (newVal) {
+            widget.onValueChange?.call(widget.column.key, newVal);
+          },
+          configuration: widget.configuration,
+          // Grid-specific styling: no border/background, fit cell height
+          height: rowH - 8,
+          contentPadding: EdgeInsets.zero,
+          borderColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          borderRadius: 0,
+          showClearButton: false,
+          fontSize: 14,
+          autoOpen: true,
+          onTabPressed: widget.onNavigateCell,
+        ),
+      ),
     );
   }
 

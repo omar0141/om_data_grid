@@ -424,9 +424,9 @@ class _HomeScreen2State extends State<HomeScreen2> {
               child: ClipRRect(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 borderRadius: BorderRadius.circular(12),
-                child: OmDataGrid(
+                child: OmDataGrid(isEditing: true,
                   controller: _controller,
-                  onRowTap: _editEmployee,
+                  // onRowTap: _editEmployee,
                 ),
               ),
             ),

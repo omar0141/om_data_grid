@@ -56,6 +56,7 @@ class GridComboBox extends FormField<String> {
     double height = 50,
     bool showClearButton = true,
     OmDataGridConfiguration? configuration,
+    void Function(bool forward)? onTabPressed,
   }) : super(
          initialValue: value ?? initialValue,
          builder: (FormFieldState<String> field) {
@@ -104,6 +105,7 @@ class GridComboBox extends FormField<String> {
                  height: height,
                  showClearButton: showClearButton,
                  configuration: configuration,
+                 onTabPressed: onTabPressed,
                ),
                if (state.hasError)
                  Padding(
@@ -177,6 +179,7 @@ class _ComboBoxInput extends StatefulWidget {
   final double height;
   final bool showClearButton;
   final OmDataGridConfiguration? configuration;
+  final void Function(bool forward)? onTabPressed;
 
   const _ComboBoxInput({
     required this.state,
@@ -215,6 +218,7 @@ class _ComboBoxInput extends StatefulWidget {
     this.height = 50,
     this.showClearButton = true,
     this.configuration,
+    this.onTabPressed,
   });
 
   @override
@@ -617,8 +621,10 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                     return KeyEventResult.handled;
                   } else if (keyEvent.logicalKey == LogicalKeyboardKey.tab) {
                     _hideOverlay();
-                    // Don't handle the event, let it propagate naturally
-                    return KeyEventResult.ignored;
+                    final forward =
+                        !HardwareKeyboard.instance.isShiftPressed;
+                    widget.onTabPressed?.call(forward);
+                    return KeyEventResult.handled;
                   }
                 }
                 return KeyEventResult.ignored;

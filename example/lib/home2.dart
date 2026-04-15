@@ -196,7 +196,6 @@ class _HomeScreen2State extends State<HomeScreen2> {
         frozenPaneElevation: 0.5,
         allowRowReordering: false,
         showAddButton: true,
-        
         labels: OmDataGridLabels.en(),
         rowsPerPageOptions: [
           10,
@@ -425,9 +424,9 @@ class _HomeScreen2State extends State<HomeScreen2> {
               child: ClipRRect(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 borderRadius: BorderRadius.circular(12),
-                child: OmDataGrid(isEditing: true,
+                child: OmDataGrid(
                   controller: _controller,
-                  // onRowTap: _editEmployee,
+                  onRowTap: _editEmployee,
                 ),
               ),
             ),

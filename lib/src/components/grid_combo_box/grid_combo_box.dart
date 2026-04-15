@@ -865,17 +865,30 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
   }
 
   void _hideOverlay() {
+    // In grid mode (onTabPressed is set) let the grid manage focus entirely.
+    final bool isGridMode = widget.onTabPressed != null;
+
+    if (isGridMode && _overlayEntry != null) {
+      // Move focus to the nearest ancestor in the grid widget tree BEFORE
+      // removing the overlay. When the overlay's FocusNode is detached,
+      // Flutter would otherwise auto-move focus to whatever is first
+      // reachable (usually the global search field). By pre-focusing a node
+      // that is already in the grid's tree we prevent that escape.
+      Focus.maybeOf(context, scopeOk: true)?.requestFocus();
+    }
+
     if (_overlayEntry != null) {
       _overlayEntry!.remove();
       _overlayEntry = null;
     }
 
-    // Cancel any pending focus requests
-    WidgetsBinding.instance.focusManager.primaryFocus?.unfocus(
-      disposition: UnfocusDisposition.scope,
-    );
+    if (!isGridMode) {
+      // Cancel any pending focus requests
+      WidgetsBinding.instance.focusManager.primaryFocus?.unfocus(
+        disposition: UnfocusDisposition.scope,
+      );
+    }
 
-    // Force focus traversal to the next element
     Future.microtask(() {
       if (!mounted) return;
       isOpen = false;
@@ -883,8 +896,8 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
       if (!widget.autoOpen) searchController.clear();
       widget.state.validate();
       searchMethod("");
-      // This helps ensure focus traversal moves to the next element
-      if (widget.autoOpen) FocusScope.of(context).nextFocus();
+      // Only advance focus automatically outside of grid mode
+      if (!isGridMode && widget.autoOpen) FocusScope.of(context).nextFocus();
     });
   }
 

@@ -32,6 +32,7 @@ class OmGridRow extends StatefulWidget {
     this.activeEditCell,
     this.onNavigateCell,
     this.onSecondaryTapDown,
+    this.cellValidationError,
   });
 
   final int rowIndex;
@@ -56,6 +57,7 @@ class OmGridRow extends StatefulWidget {
   final OmCellPosition? activeEditCell;
   final void Function(bool forward)? onNavigateCell;
   final Function(int columnIndex, TapDownDetails details)? onSecondaryTapDown;
+  final String? cellValidationError;
 
   @override
   State<OmGridRow> createState() => _GridRowState();
@@ -295,9 +297,7 @@ class _GridRowState extends State<OmGridRow> {
       padding: EdgeInsetsDirectional.fromSTEB(startPadding, 4.0, 12.0, 4.0),
       decoration: isThisActiveEditCell
           ? BoxDecoration(
-              color: cellSelected
-                  ? widget.configuration.selectedRowColor
-                  : widget.configuration.gridBackgroundColor,
+              color: widget.configuration.editCellBackgroundColor,
               border: Border.all(
                 color: widget.configuration.primaryColor,
                 width: 1.5,

@@ -54,6 +54,7 @@ class OmDataGrid extends StatefulWidget {
     this.isEditing = false,
 
     /// Called when Shift+Enter is pressed in edit mode to add a new row.
+    /// Receives the current row's data and its index.
     this.onAddRow,
 
     /// The controller for the Data Grid.
@@ -75,7 +76,8 @@ class OmDataGrid extends StatefulWidget {
   final bool isEditing;
 
   /// Called when Shift+Enter is pressed in edit mode to add a new row.
-  final VoidCallback? onAddRow;
+  /// Receives the current row's data map and its index.
+  final void Function(Map<String, dynamic> item, int index)? onAddRow;
 
   @override
   State<OmDataGrid> createState() => _DatagridState();
@@ -549,6 +551,7 @@ class _DatagridState extends State<OmDataGrid> {
         OmGridRowTypeEnum.file,
         OmGridRowTypeEnum.multiImage,
         OmGridRowTypeEnum.multiFile,
+        OmGridRowTypeEnum.state,
       };
       if (editableTypes.contains(col.type)) {
         setState(() {
@@ -648,7 +651,6 @@ class _DatagridState extends State<OmDataGrid> {
     const nonEditable = {
       OmGridRowTypeEnum.delete,
       OmGridRowTypeEnum.contextMenu,
-      OmGridRowTypeEnum.state,
       OmGridRowTypeEnum.button,
       OmGridRowTypeEnum.code,
       OmGridRowTypeEnum.reordable,
@@ -1255,7 +1257,11 @@ class _DatagridState extends State<OmDataGrid> {
             return KeyEventResult.handled;
           }
           if (event.logicalKey == LogicalKeyboardKey.enter && shiftPressed) {
-            widget.onAddRow?.call();
+            if (widget.onAddRow != null && _activeEditCell != null) {
+              final rowIndex = _activeEditCell!.rowIndex;
+              final item = filterDatasource[rowIndex];
+              widget.onAddRow!(item, rowIndex);
+            }
             return KeyEventResult.handled;
           }
         }

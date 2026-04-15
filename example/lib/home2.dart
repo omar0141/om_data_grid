@@ -149,7 +149,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         key: "Avatar",
         title: "Avatar",
         type: OmGridRowTypeEnum.image,
-        width: 100,
+        width: 200,
         imageBorderRadius: 100,
       ),
       OmGridColumn(
@@ -196,6 +196,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
         frozenPaneElevation: 0.5,
         allowRowReordering: false,
         showAddButton: true,
+        
         labels: OmDataGridLabels.en(),
         rowsPerPageOptions: [
           10,

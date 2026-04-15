@@ -193,6 +193,17 @@ class OmGridColumn {
     Widget defaultWidget,
   )? widgetBuilder;
 
+  /// Called when the user submits an edited cell value (by navigating away
+  /// via Tab, Shift+Tab, or clicking another cell). Receives the submitted
+  /// value so the caller can persist or react to it.
+  final void Function(dynamic value)? onCellSubmit;
+
+  /// Validates the cell value before allowing the user to navigate away.
+  /// Return `null` (or an empty string) to allow submission, or return a
+  /// non-empty error string to block navigation and display the error
+  /// below the active cell — identical to Flutter's [FormField.validator].
+  final String? Function(dynamic value)? canCellSubmit;
+
   /// Creates a [OmGridColumn] configuration.
   OmGridColumn({
     required this.key,
@@ -224,6 +235,8 @@ class OmGridColumn {
     this.showPlaceholderWhileScrolling = true,
     this.visible = true,
     this.widgetBuilder,
+    this.onCellSubmit,
+    this.canCellSubmit,
   });
 
   OmGridColumn copyWith({
@@ -258,6 +271,8 @@ class OmGridColumn {
     Widget Function(
             dynamic value, Map<String, dynamic> row, Widget defaultWidget)?
         widgetBuilder,
+    void Function(dynamic value)? onCellSubmit,
+    String? Function(dynamic value)? canCellSubmit,
   }) {
     return OmGridColumn(
       key: key ?? this.key,
@@ -290,6 +305,8 @@ class OmGridColumn {
           showPlaceholderWhileScrolling ?? this.showPlaceholderWhileScrolling,
       visible: visible ?? this.visible,
       widgetBuilder: widgetBuilder ?? this.widgetBuilder,
+      onCellSubmit: onCellSubmit ?? this.onCellSubmit,
+      canCellSubmit: canCellSubmit ?? this.canCellSubmit,
     );
   }
 }
@@ -396,6 +413,8 @@ class OmGridColumnModel {
   Widget Function(
           dynamic value, Map<String, dynamic> row, Widget defaultWidget)?
       get widgetBuilder => column.widgetBuilder;
+  void Function(dynamic value)? get onCellSubmit => column.onCellSubmit;
+  String? Function(dynamic value)? get canCellSubmit => column.canCellSubmit;
 }
 
 /// Data used during column dragging operations.

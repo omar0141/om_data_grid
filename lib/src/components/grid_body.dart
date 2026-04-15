@@ -27,6 +27,7 @@ class OmGridBody extends StatelessWidget {
   final void Function(Map<String, dynamic> row, String key, dynamic value)?
       onCellValueChange;
   final void Function(bool forward)? onNavigateCell;
+  final String? cellValidationError;
 
   final void Function(String groupId) onToggleGroup;
   final void Function(Map<String, dynamic> row) onRowTap;
@@ -72,6 +73,7 @@ class OmGridBody extends StatelessWidget {
     this.activeEditCell,
     this.onCellValueChange,
     this.onNavigateCell,
+    this.cellValidationError,
   });
 
   @override
@@ -387,8 +389,11 @@ class OmGridBody extends StatelessWidget {
         isScrolling: isScrolling,
         activeEditCell: activeEditCell,
         onNavigateCell: onNavigateCell,
-        onValueChange: (key, value) =>
-            onCellValueChange?.call(row, key, value),
+        cellValidationError: cellValidationError,
+        onValueChange: (key, value) {
+          row[key] = value; // Keep row data in-sync so validation reads current value
+          onCellValueChange?.call(row, key, value);
+        },
         level: level,
         horizontalScrollController: horizontalScrollController,
         visibleIndicesToRender: visibleIndicesToRender,

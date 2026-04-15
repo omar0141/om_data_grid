@@ -130,6 +130,7 @@ class OmDataGridConfiguration {
   final Color keyboardHideButtonForegroundColor;
   final Color primaryColor;
   final Color errorColor;
+  final Color editCellBackgroundColor;
   final Color inputFillColor;
   final Color inputBorderColor;
   final Color inputFocusBorderColor;
@@ -287,6 +288,7 @@ class OmDataGridConfiguration {
     Color? keyboardHideButtonForegroundColor,
     Color? primaryColor,
     this.errorColor = const Color(0xFFF44242),
+    Color? editCellBackgroundColor,
     Color? inputFillColor,
     Color? inputBorderColor,
     Color? inputFocusBorderColor,
@@ -420,6 +422,8 @@ class OmDataGridConfiguration {
         gridForegroundColor = gridForegroundColor ?? const Color(0xFF1E293B),
         gridBorderColor = gridBorderColor ?? const Color(0xFFE2E8F0),
         primaryColor = primaryColor ?? const Color(0xFF1E293B),
+        editCellBackgroundColor =
+            editCellBackgroundColor ?? const Color(0xFFEFF6FF),
         headerBackgroundColor = headerBackgroundColor ??
             (gridBackgroundColor ?? const Color(0xFFFAFAFA)),
         headerForegroundColor = headerForegroundColor ??
@@ -962,6 +966,7 @@ class OmDataGridConfiguration {
     Color? keyboardHideButtonForegroundColor,
     Color? primaryColor,
     Color? errorColor,
+    Color? editCellBackgroundColor,
     Color? inputFillColor,
     Color? inputBorderColor,
     Color? inputFocusBorderColor,
@@ -1125,6 +1130,8 @@ class OmDataGridConfiguration {
           this.keyboardHideButtonForegroundColor,
       primaryColor: primaryColor ?? this.primaryColor,
       errorColor: errorColor ?? this.errorColor,
+      editCellBackgroundColor:
+          editCellBackgroundColor ?? this.editCellBackgroundColor,
       inputFillColor: inputFillColor ?? this.inputFillColor,
       inputBorderColor: inputBorderColor ?? this.inputBorderColor,
       inputFocusBorderColor:

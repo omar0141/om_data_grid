@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:om_data_grid/src/utils/file_picker_wrapper/file_picker_wrapper.dart';
 import 'dart:ui' as ui;
+import 'package:om_data_grid/src/components/default_button.dart';
 
 class GridCell extends StatefulWidget {
   final OmGridColumnModel column;
@@ -55,7 +56,50 @@ class _GridCellState extends State<GridCell> {
   bool get _isInlineTextType =>
       widget.column.type == OmGridRowTypeEnum.text ||
       widget.column.type == OmGridRowTypeEnum.integer ||
-      widget.column.type == OmGridRowTypeEnum.double;
+      widget.column.type == OmGridRowTypeEnum.double ||
+      widget.column.type == OmGridRowTypeEnum.date ||
+      widget.column.type == OmGridRowTypeEnum.dateTime ||
+      widget.column.type == OmGridRowTypeEnum.time;
+
+  bool get _isDateType =>
+      widget.column.type == OmGridRowTypeEnum.date ||
+      widget.column.type == OmGridRowTypeEnum.dateTime ||
+      widget.column.type == OmGridRowTypeEnum.time;
+
+  String _getDefaultDateMask() {
+    switch (widget.column.type) {
+      case OmGridRowTypeEnum.time:
+        return 'HH:mm';
+      case OmGridRowTypeEnum.dateTime:
+        return 'dd/MM/yyyy HH:mm';
+      default:
+        return 'dd/MM/yyyy';
+    }
+  }
+
+  String _getEditMask() =>
+      widget.column.customDateFormat ?? _getDefaultDateMask();
+
+  /// Formats [value] into the masked display string for the date editor.
+  /// Returns the empty mask (e.g. "__/__/____") when the value cannot be parsed.
+  String _formatValueForMask(dynamic value, String mask) {
+    final emptyMask = _MaskedDateInputFormatter.buildEmptyMask(mask);
+    if (value == null) return emptyMask;
+    final bool isTimeType = widget.column.type == OmGridRowTypeEnum.time;
+    // Pass [mask] as an additional pattern so previously-saved masked strings
+    // (e.g. "15/04/2024") are recognised even when ISO parsing fails.
+    final DateTime? date = OmGridDateTimeUtils.tryParse(
+      value,
+      isTime: isTimeType,
+      pattern: mask,
+    );
+    if (date == null) return emptyMask;
+    try {
+      return OmGridCellFormatters.getDateFormat(mask).format(date);
+    } catch (_) {
+      return emptyMask;
+    }
+  }
 
   @override
   void initState() {
@@ -66,10 +110,23 @@ class _GridCellState extends State<GridCell> {
   }
 
   void _initEditingResources() {
-    _textEditingController ??= TextEditingController(
-      text: widget.value?.toString() ?? '',
-    );
     _editFocusNode ??= FocusNode();
+    if (_textEditingController == null) {
+      final String initialText = _isDateType
+          ? _formatValueForMask(widget.value, _getEditMask())
+          : (widget.value?.toString() ?? '');
+      if (_isDateType) {
+        final fg = widget.configuration.rowForegroundColor;
+        _textEditingController = _MaskedDateTextController(
+          mask: _getEditMask(),
+          placeholderColor: fg.withOpacity(0.20),
+          separatorColor: fg.withOpacity(0.40),
+          initialText: initialText,
+        );
+      } else {
+        _textEditingController = TextEditingController(text: initialText);
+      }
+    }
   }
 
   @override
@@ -80,7 +137,9 @@ class _GridCellState extends State<GridCell> {
         _initEditingResources();
         // Sync controller value if external value changed while not editing
         if (!oldWidget.isActiveEditCell) {
-          final newText = widget.value?.toString() ?? '';
+          final newText = _isDateType
+              ? _formatValueForMask(widget.value, _getEditMask())
+              : (widget.value?.toString() ?? '');
           _textEditingController!.text = newText;
         }
         // Request focus when this cell becomes the active edit cell
@@ -136,7 +195,7 @@ class _GridCellState extends State<GridCell> {
       case OmGridRowTypeEnum.date:
       case OmGridRowTypeEnum.dateTime:
       case OmGridRowTypeEnum.time:
-        return _buildDate();
+        return widget.isActiveEditCell ? _buildDateEditor() : _buildDate();
 
       case OmGridRowTypeEnum.comboBox:
         return widget.isActiveEditCell
@@ -166,7 +225,7 @@ class _GridCellState extends State<GridCell> {
         return _buildContextMenu(context);
 
       case OmGridRowTypeEnum.state:
-        return _buildState();
+        return widget.isActiveEditCell ? _buildStateEditor() : _buildState();
 
       case OmGridRowTypeEnum.widget:
       case OmGridRowTypeEnum.button:
@@ -315,13 +374,42 @@ class _GridCellState extends State<GridCell> {
     );
   }
 
+  Widget _buildDateEditor() {
+    _initEditingResources();
+    final mask = _getEditMask();
+    return Focus(
+      onKeyEvent: (node, event) {
+        if ((event is KeyDownEvent || event is KeyRepeatEvent) &&
+            event.logicalKey == LogicalKeyboardKey.tab) {
+          final forward = !HardwareKeyboard.instance.isShiftPressed;
+          widget.onNavigateCell?.call(forward);
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: TextField(
+        focusNode: _editFocusNode,
+        controller: _textEditingController,
+        style: widget.style,
+        decoration: const InputDecoration.collapsed(hintText: ''),
+        keyboardType: TextInputType.number,
+        inputFormatters: [_MaskedDateInputFormatter(mask)],
+        textAlign: widget.column.textAlign,
+        onChanged: (val) => widget.onValueChange?.call(widget.column.key, val),
+      ),
+    );
+  }
+
   Widget _buildDate() {
     if (widget.value == null) return _buildText('');
 
     final bool isTimeType = widget.column.type == OmGridRowTypeEnum.time;
+    // Also try the edit-mask pattern so that values typed via the masked editor
+    // (e.g. "15/04/2024") are parsed and displayed correctly.
     final DateTime? date = OmGridDateTimeUtils.tryParse(
       widget.value,
       isTime: isTimeType,
+      pattern: _getEditMask(),
     );
 
     if (date == null) return _buildText(widget.value.toString());
@@ -373,30 +461,55 @@ class _GridCellState extends State<GridCell> {
   }
 
   Widget _buildComboBoxEditor() {
-    final rowH = widget.configuration.rowHeight;
-    // ClipRect prevents the transparent border from causing a 0.5px overflow
-    return ClipRect(
-      child: SizedBox(
-        height: rowH - 8,
-        child: GridComboBox(
-          initialValue: widget.value?.toString() ?? '',
-          items: widget.column.comboBoxSettings?.items ?? [],
-          onChange: (newVal) {
-            widget.onValueChange?.call(widget.column.key, newVal);
-          },
-          configuration: widget.configuration,
-          // Grid-specific styling: no border/background, fit cell height
-          height: rowH - 8,
-          contentPadding: EdgeInsets.zero,
-          borderColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
-          borderRadius: 0,
-          showClearButton: false,
-          fontSize: 14,
-          autoOpen: true,
-          onTabPressed: widget.onNavigateCell,
-        ),
-      ),
+    // Resolve initialValue: use the stored value if it already matches a
+    // combobox item's .value; otherwise look up by .text (handles the common
+    // case where row data stores the display label instead of the raw value).
+    final items = widget.column.comboBoxSettings?.items ?? [];
+    final rawValue = widget.value?.toString() ?? '';
+    String resolvedInitialValue = rawValue;
+    if (rawValue.isNotEmpty) {
+      final matchesByValue = items.any(
+        (item) => item.value.toString() == rawValue,
+      );
+      if (!matchesByValue) {
+        final byText = items.where((item) => item.text == rawValue);
+        if (byText.isNotEmpty) {
+          resolvedInitialValue = byText.first.value.toString();
+        }
+      }
+    }
+
+    // LayoutBuilder reads the actual available height after border + padding
+    // are applied by the parent cell container, so we never overflow regardless
+    // of whether the active-cell border is present (3px) or not.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final h = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : widget.configuration.rowHeight - 8;
+        return ClipRect(
+          child: SizedBox(
+            height: h,
+            child: GridComboBox(
+              initialValue: resolvedInitialValue,
+              items: widget.column.comboBoxSettings?.items ?? [],
+              onChange: (newVal) {
+                widget.onValueChange?.call(widget.column.key, newVal);
+              },
+              configuration: widget.configuration,
+              height: h,
+              contentPadding: EdgeInsets.zero,
+              borderColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              borderRadius: 0,
+              showClearButton: false,
+              fontSize: 14,
+              autoOpen: true,
+              onTabPressed: widget.onNavigateCell,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -439,74 +552,135 @@ class _GridCellState extends State<GridCell> {
         widget.value != null && widget.value.toString().isNotEmpty;
     final bool canEdit =
         (widget.column.readonlyInView != true) || widget.isEditing;
+    final double radius = widget.column.imageBorderRadius ?? (isFile ? 4 : 8);
 
     if (!hasValue) {
       if (canEdit && widget.isEditing) {
-        return TextButton.icon(
-          onPressed: () => isFile ? _pickFile() : _pickImage(),
-          icon: const Icon(Icons.add_a_photo, size: 16),
-          label: const Text('Add', style: TextStyle(fontSize: 12)),
+        return Center(
+          child: OmDefaultButton(
+            configuration: widget.configuration,
+            height: 28,
+            width: 110,
+            text: isFile ? 'Upload file' : 'Upload image',
+            leadingIcon: Icon(
+              isFile ? Icons.upload_file : Icons.add_photo_alternate,
+              size: 13,
+              color: widget.configuration.primaryForegroundColor,
+            ),
+            fontsize: 11,
+            fontWeight: FontWeight.w500,
+            press: () async => isFile ? _pickFile() : _pickImage(),
+          ),
         );
       }
-      return isFile
-          ? Icon(Icons.insert_drive_file,
-              color: widget.configuration.secondaryTextColor)
-          : Icon(Icons.image_not_supported,
-              color: widget.configuration.secondaryTextColor);
+      return Center(
+        child: Icon(
+          isFile ? Icons.insert_drive_file : Icons.image,
+          color: widget.configuration.secondaryTextColor.withOpacity(0.4),
+          size: 22,
+        ),
+      );
     }
 
-    return Stack(
-      alignment: AlignmentDirectional.topEnd,
-      children: [
-        GestureDetector(
-          onTap: () {
-            GridFileViewerUtils.showViewer(
-              context: context,
-              url: widget.value.toString(),
-              title: widget.column.title,
-              configuration: widget.configuration,
-              isImage: !isFile,
-            );
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(
-              widget.column.imageBorderRadius ?? (isFile ? 0 : 8),
-            ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: Stack(
+        clipBehavior: Clip.none,
+        fit: StackFit.expand,
+        children: [
+          GestureDetector(
+            onTap: () {
+              GridFileViewerUtils.showViewer(
+                context: context,
+                url: widget.value.toString(),
+                title: widget.column.title,
+                configuration: widget.configuration,
+                isImage: !isFile,
+              );
+            },
             child: isFile
-                ? const Icon(Icons.insert_drive_file, size: 30)
+                ? Container(
+                    color: widget.configuration.secondaryTextColor
+                        .withOpacity(0.06),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.insert_drive_file,
+                            size: 26,
+                            color: widget.configuration.secondaryTextColor),
+                        const SizedBox(height: 2),
+                        Text(
+                          _fileExtension(widget.value.toString()),
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: widget.configuration.secondaryTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 : Image.network(
                     widget.value.toString(),
-                    errorBuilder: (ctx, err, stack) =>
-                        const Icon(Icons.broken_image),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
+                    errorBuilder: (ctx, err, stack) => Container(
+                      color: widget.configuration.secondaryTextColor
+                          .withOpacity(0.06),
+                      child: Icon(Icons.broken_image,
+                          color: widget.configuration.secondaryTextColor
+                              .withOpacity(0.4)),
+                    ),
                   ),
           ),
-        ),
-        if (canEdit && widget.isEditing)
-          PositionedDirectional(
-            top: 0,
-            end: 0,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              icon: const Icon(Icons.cancel, color: Colors.red, size: 16),
-              onPressed: () =>
-                  widget.onValueChange?.call(widget.column.key, null),
+          if (canEdit && widget.isEditing)
+            PositionedDirectional(
+              top: -5,
+              end: -35,
+              start: 0,
+              child: GestureDetector(
+                onTap: () =>
+                    widget.onValueChange?.call(widget.column.key, null),
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  margin: const EdgeInsets.all(3),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 12),
+                ),
+              ),
             ),
-          ),
-        if (canEdit && widget.isEditing)
-          PositionedDirectional(
-            bottom: 0,
-            end: 0,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              icon: const Icon(Icons.edit, color: Colors.blue, size: 16),
-              onPressed: () => isFile ? _pickFile() : _pickImage(),
+          if (canEdit && widget.isEditing)
+            PositionedDirectional(
+              bottom: -5,
+              start: -35,
+              end: 0,
+              child: GestureDetector(
+                onTap: () => isFile ? _pickFile() : _pickImage(),
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  margin: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: widget.configuration.primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(isFile ? Icons.upload_file : Icons.photo_camera,
+                      color: widget.configuration.primaryForegroundColor,
+                      size: 12),
+                ),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
+  }
+
+  String _fileExtension(String path) {
+    final parts = path.split('.');
+    return parts.length > 1 ? '.${parts.last.toUpperCase()}' : 'FILE';
   }
 
   Future<void> _pickImage() async {
@@ -739,6 +913,47 @@ class _GridCellState extends State<GridCell> {
     );
   }
 
+  Widget _buildStateEditor() {
+    final items = (widget.column.stateConfig?.entries ?? [])
+        .map(
+          (e) => OmGridComboBoxItem(
+            value: e.key.toString(),
+            text: e.value.label,
+          ),
+        )
+        .toList();
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final h = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : widget.configuration.rowHeight - 8;
+        return ClipRect(
+          child: SizedBox(
+            height: h,
+            child: GridComboBox(
+              initialValue: widget.value?.toString() ?? '',
+              items: items,
+              onChange: (newVal) {
+                widget.onValueChange?.call(widget.column.key, newVal);
+              },
+              configuration: widget.configuration,
+              height: h,
+              contentPadding: EdgeInsets.zero,
+              borderColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              borderRadius: 0,
+              showClearButton: false,
+              fontSize: 14,
+              autoOpen: true,
+              onTabPressed: widget.onNavigateCell,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildState() {
     final config = widget.column.stateConfig?[widget.value];
     if (config == null) return _buildText(widget.value?.toString() ?? '');
@@ -829,6 +1044,213 @@ class _GridCellState extends State<GridCell> {
         decimalSeparator: widget.column.decimalSeparator,
         thousandsSeparator: widget.column.thousandsSeparator,
       ),
+    );
+  }
+}
+
+/// A [TextEditingController] that renders the three character categories of a
+/// masked date/time string with distinct colours:
+///   • filled digits   → normal text colour (inherited from the [TextField] style)
+///   • placeholder '_' → very faint (the digit position is empty)
+///   • separator chars → muted (e.g. '/', '-', ':', ' ')
+class _MaskedDateTextController extends TextEditingController {
+  final String mask;
+  final Color placeholderColor;
+  final Color separatorColor;
+
+  static const Set<String> _maskDigitChars = {
+    'd',
+    'M',
+    'y',
+    'H',
+    'h',
+    'm',
+    's',
+    'S',
+  };
+
+  _MaskedDateTextController({
+    required this.mask,
+    required this.placeholderColor,
+    required this.separatorColor,
+    String? initialText,
+  }) : super(text: initialText);
+
+  @override
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    final txt = text;
+    if (txt.isEmpty) return TextSpan(style: style);
+
+    final spans = <InlineSpan>[];
+    for (int i = 0; i < txt.length && i < mask.length; i++) {
+      final ch = txt[i];
+      final isDigitPos = _maskDigitChars.contains(mask[i]);
+
+      final Color color;
+      if (isDigitPos) {
+        color = ch == '_' ? placeholderColor : (style?.color ?? Colors.black);
+      } else {
+        color = separatorColor;
+      }
+
+      spans.add(
+        TextSpan(
+          text: ch,
+          style: (style ?? const TextStyle()).copyWith(color: color),
+        ),
+      );
+    }
+
+    return TextSpan(style: style, children: spans);
+  }
+}
+
+/// A [TextInputFormatter] that enforces a date/time mask such as "dd/MM/yyyy"
+/// or "HH:mm". Separator characters (anything that is not a mask-letter) are
+/// kept fixed; only the digit positions (d, M, y, H, h, m, s, S) are editable.
+///
+/// The user types plain digits; the formatter places them into the next
+/// available mask position and auto-advances the cursor past separators.
+/// Backspace clears the digit immediately before the cursor.
+class _MaskedDateInputFormatter extends TextInputFormatter {
+  final String mask;
+
+  static const Set<String> _maskDigitChars = {
+    'd',
+    'M',
+    'y',
+    'H',
+    'h',
+    'm',
+    's',
+    'S',
+  };
+
+  _MaskedDateInputFormatter(this.mask);
+
+  bool _isDigitPos(int i) =>
+      i >= 0 && i < mask.length && _maskDigitChars.contains(mask[i]);
+
+  /// Builds the "empty" version of the mask, e.g. "__/__/____" for "dd/MM/yyyy".
+  static String buildEmptyMask(String mask) =>
+      mask.split('').map((c) => _maskDigitChars.contains(c) ? '_' : c).join();
+
+  String get _emptyMask => buildEmptyMask(mask);
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Ensure the base is always a full-length masked string.
+    final base =
+        oldValue.text.length == mask.length ? oldValue.text : _emptyMask;
+    final oldCursor = oldValue.selection.baseOffset.clamp(0, mask.length);
+    final lengthDiff = newValue.text.length - oldValue.text.length;
+
+    if (lengthDiff > 0) {
+      // ── Insertion ──────────────────────────────────────────────────────────
+      if (lengthDiff == 1) {
+        // Single character typed.
+        final insertedAt = newValue.selection.baseOffset - 1;
+        if (insertedAt < 0 || insertedAt >= newValue.text.length)
+          return oldValue;
+        final ch = newValue.text[insertedAt];
+        if (!RegExp(r'\d').hasMatch(ch)) return oldValue; // reject non-digits
+
+        int pos = oldCursor;
+        while (pos < mask.length && !_isDigitPos(pos)) {
+          pos++;
+        }
+        if (pos >= mask.length) return oldValue; // mask fully filled
+
+        final chars = base.split('');
+        chars[pos] = ch;
+        final result = chars.join();
+
+        int nextCursor = pos + 1;
+        while (nextCursor < mask.length && !_isDigitPos(nextCursor)) {
+          nextCursor++;
+        }
+
+        return TextEditingValue(
+          text: result,
+          selection: TextSelection.collapsed(
+            offset: nextCursor.clamp(0, mask.length),
+          ),
+        );
+      } else {
+        // Paste: extract every digit and refill from left.
+        return _refillFromDigits(newValue.text);
+      }
+    } else if (lengthDiff < 0) {
+      // ── Deletion ───────────────────────────────────────────────────────────
+      if (lengthDiff == -1) {
+        // Single backspace.
+        int clearPos = oldCursor - 1;
+        while (clearPos >= 0 && !_isDigitPos(clearPos)) {
+          clearPos--;
+        }
+
+        if (clearPos < 0) {
+          return TextEditingValue(
+            text: base,
+            selection: const TextSelection.collapsed(offset: 0),
+          );
+        }
+
+        final chars = base.split('');
+        chars[clearPos] = '_';
+
+        return TextEditingValue(
+          text: chars.join(),
+          selection: TextSelection.collapsed(offset: clearPos),
+        );
+      } else {
+        // Multi-char deletion (e.g. select-all + delete): keep empty mask.
+        return TextEditingValue(
+          text: _emptyMask,
+          selection: const TextSelection.collapsed(offset: 0),
+        );
+      }
+    }
+
+    // No length change — cursor move or same content; keep the base text.
+    final newCursor = newValue.selection.baseOffset.clamp(0, mask.length);
+    return TextEditingValue(
+      text: base,
+      selection: TextSelection.collapsed(offset: newCursor),
+    );
+  }
+
+  /// Extracts all digits from [raw] and fills them into the mask left-to-right.
+  TextEditingValue _refillFromDigits(String raw) {
+    final digits = raw.replaceAll(RegExp(r'\D'), '');
+    final buf = StringBuffer();
+    int digitIdx = 0;
+    for (int i = 0; i < mask.length; i++) {
+      if (_isDigitPos(i)) {
+        buf.write(digitIdx < digits.length ? digits[digitIdx++] : '_');
+      } else {
+        buf.write(mask[i]);
+      }
+    }
+    // Place cursor just after the last filled digit position.
+    int cursor = 0;
+    final result = buf.toString();
+    for (int i = 0; i < mask.length; i++) {
+      if (_isDigitPos(i) && result[i] != '_') cursor = i + 1;
+    }
+    while (cursor < mask.length && !_isDigitPos(cursor)) {
+      cursor++;
+    }
+    return TextEditingValue(
+      text: result,
+      selection: TextSelection.collapsed(offset: cursor.clamp(0, mask.length)),
     );
   }
 }

@@ -21,7 +21,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
   void initState() {
     super.initState();
     data = List.generate(10000, (index) {
-      final departments = ['Development', 'Design', 'Marketing', 'Sales', 'HR'];
+      final departments = ['1', '2', '3', '4', '5'];
       final names = [
         'John Doe',
         'Jane Smith',
@@ -382,6 +382,7 @@ class _HomeScreen2State extends State<HomeScreen2> {
           OmQuickFilterBar(
             title: "Employees",
             controller: _controller,
+            isEditing: true,
             onAddPressed: () async {
               final result = await showDialog<Map<String, dynamic>>(
                 context: context,
@@ -424,7 +425,8 @@ class _HomeScreen2State extends State<HomeScreen2> {
               child: ClipRRect(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 borderRadius: BorderRadius.circular(12),
-                child: OmDataGrid(isEditing: true,
+                child: OmDataGrid(
+                  isEditing: true,
                   controller: _controller,
                   // onRowTap: _editEmployee,
                 ),

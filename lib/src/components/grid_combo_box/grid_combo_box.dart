@@ -58,72 +58,77 @@ class GridComboBox extends FormField<String> {
     OmDataGridConfiguration? configuration,
     void Function(bool forward)? onTabPressed,
   }) : super(
-         initialValue: value ?? initialValue,
-         builder: (FormFieldState<String> field) {
-           final _ComboBoxFormFieldState state =
-               field as _ComboBoxFormFieldState;
-           return Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
-               _ComboBoxInput(
-                 state: state,
-                 selectedItems: selectedItems,
-                 items: items,
-                 enabled: enabled,
-                 multipleSelect: multipleSelect,
-                 initialText: initialText,
-                 labelText: labelText,
-                 icon: icon,
-                 enableSearch: enableSearch,
-                 isNumericType: isNumericType,
-                 showInput: showInput,
-                 inputLabel: inputLabel,
-                 defaultInputValue: defaultInputValue,
-                 loading: loading,
-                 onChange: (value) {
-                   field.didChange(value);
-                   if (onChange != null) onChange(value);
-                 },
-                 onTouchOutSide: onTouchOutSide,
-                 borderRadius: borderRadius,
-                 borderColor: borderColor,
-                 searchFieldFillColor: searchFieldFillColor,
-                 searchFieldBorderColor: searchFieldBorderColor,
-                 itemFontSize: itemFontSize,
-                 itemBorderRadius: itemBorderRadius,
-                 fontSize: fontSize,
-                 multiSelectChipColor: multiSelectChipColor,
-                 backgroundColor: backgroundColor,
-                 contentPadding: contentPadding,
-                 textAlign: textAlign,
-                 autoOpen: autoOpen,
-                 hintText: hintText,
-                 onAddNewItem: onAddNewItem,
-                 focusNode: focusNode,
-                 overlayWidth: overlayWidth,
-                 headers: headers,
-                 height: height,
-                 showClearButton: showClearButton,
-                 configuration: configuration,
-                 onTabPressed: onTabPressed,
-               ),
-               if (state.hasError)
-                 Padding(
-                   padding: const EdgeInsetsDirectional.only(start: 20, top: 4),
-                   child: Text(
-                     state.errorText!,
-                     style: TextStyle(
-                       color:
-                           configuration?.errorColor ?? const Color(0xFFF44336),
-                       fontSize: 10,
-                       fontWeight: FontWeight.w400,
-                     ),
-                   ),
-                 ),
-             ],
-           );
-         },
-       );
+          initialValue: value ?? initialValue,
+          builder: (FormFieldState<String> field) {
+            final _ComboBoxFormFieldState state =
+                field as _ComboBoxFormFieldState;
+            return SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ComboBoxInput(
+                    state: state,
+                    selectedItems: selectedItems,
+                    items: items,
+                    enabled: enabled,
+                    multipleSelect: multipleSelect,
+                    initialText: initialText,
+                    labelText: labelText,
+                    icon: icon,
+                    enableSearch: enableSearch,
+                    isNumericType: isNumericType,
+                    showInput: showInput,
+                    inputLabel: inputLabel,
+                    defaultInputValue: defaultInputValue,
+                    loading: loading,
+                    onChange: (value) {
+                      field.didChange(value);
+                      if (onChange != null) onChange(value);
+                    },
+                    onTouchOutSide: onTouchOutSide,
+                    borderRadius: borderRadius,
+                    borderColor: borderColor,
+                    searchFieldFillColor: searchFieldFillColor,
+                    searchFieldBorderColor: searchFieldBorderColor,
+                    itemFontSize: itemFontSize,
+                    itemBorderRadius: itemBorderRadius,
+                    fontSize: fontSize,
+                    multiSelectChipColor: multiSelectChipColor,
+                    backgroundColor: backgroundColor,
+                    contentPadding: contentPadding,
+                    textAlign: textAlign,
+                    autoOpen: autoOpen,
+                    hintText: hintText,
+                    onAddNewItem: onAddNewItem,
+                    focusNode: focusNode,
+                    overlayWidth: overlayWidth,
+                    headers: headers,
+                    height: height,
+                    showClearButton: showClearButton,
+                    configuration: configuration,
+                    onTabPressed: onTabPressed,
+                  ),
+                  if (state.hasError)
+                    Padding(
+                      padding:
+                          const EdgeInsetsDirectional.only(start: 20, top: 4),
+                      child: Text(
+                        state.errorText!,
+                        style: TextStyle(
+                          color: configuration?.errorColor ??
+                              const Color(0xFFF44336),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
 
   @override
   FormFieldState<String> createState() => _ComboBoxFormFieldState();
@@ -543,16 +548,14 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
         }
         return Theme(
           data: ThemeData(
-            disabledColor:
-                (widget.configuration?.secondaryTextColor ??
-                        const Color(0xFF6B6B6B))
-                    .withOpacityNew(0.3),
+            disabledColor: (widget.configuration?.secondaryTextColor ??
+                    const Color(0xFF6B6B6B))
+                .withOpacityNew(0.3),
             primaryColor:
                 widget.configuration?.primaryColor ?? const Color(0xFF2196F3),
-            hintColor:
-                (widget.configuration?.secondaryTextColor ??
-                        const Color(0xFF6B6B6B))
-                    .withOpacityNew(0.6),
+            hintColor: (widget.configuration?.secondaryTextColor ??
+                    const Color(0xFF6B6B6B))
+                .withOpacityNew(0.6),
             canvasColor:
                 widget.configuration?.gridBackgroundColor ?? Colors.white,
             scaffoldBackgroundColor:
@@ -621,8 +624,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                     return KeyEventResult.handled;
                   } else if (keyEvent.logicalKey == LogicalKeyboardKey.tab) {
                     _hideOverlay();
-                    final forward =
-                        !HardwareKeyboard.instance.isShiftPressed;
+                    final forward = !HardwareKeyboard.instance.isShiftPressed;
                     widget.onTabPressed?.call(forward);
                     return KeyEventResult.handled;
                   }
@@ -655,16 +657,14 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                           children: [
                             Icon(
                               Icons.add,
-                              color:
-                                  widget.configuration?.primaryColor ??
+                              color: widget.configuration?.primaryColor ??
                                   const Color(0xFF2196F3),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               "add-new-item",
                               style: TextStyle(
-                                color:
-                                    widget.configuration?.primaryColor ??
+                                color: widget.configuration?.primaryColor ??
                                     const Color(0xFF2196F3),
                                 fontSize: 14,
                               ),
@@ -674,10 +674,9 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                       ),
                     ),
                     Divider(
-                      color:
-                          (widget.configuration?.secondaryTextColor ??
-                                  const Color(0xFF6B6B6B))
-                              .withOpacityNew(0.1),
+                      color: (widget.configuration?.secondaryTextColor ??
+                              const Color(0xFF6B6B6B))
+                          .withOpacityNew(0.1),
                       height: 0.5,
                     ),
                   ],
@@ -688,24 +687,22 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                         controller: searchController,
                         focusNode: _searchFocusNode,
                         decoration: InputDecoration(
-                          fillColor:
-                              widget.configuration?.inputFillColor ??
+                          fillColor: widget.configuration?.inputFillColor ??
                               const Color(0xFFF5F5F5),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(6),
                             borderSide: BorderSide(
                               color:
                                   widget.configuration?.inputFocusBorderColor ??
-                                  widget.configuration?.primaryColor ??
-                                  const Color(0xFF2196F3),
+                                      widget.configuration?.primaryColor ??
+                                      const Color(0xFF2196F3),
                               width: 1,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(6),
                             borderSide: BorderSide(
-                              color:
-                                  widget.configuration?.inputBorderColor ??
+                              color: widget.configuration?.inputBorderColor ??
                                   const Color(0xFFE0E0E0),
                               width: 1,
                             ),
@@ -714,18 +711,15 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                           suffixIcon: searchController.text.isEmpty
                               ? Icon(
                                   Iconsax.search_normal_1_copy,
-                                  color:
-                                      widget
-                                          .configuration
-                                          ?.secondaryTextColor ??
+                                  color: widget
+                                          .configuration?.secondaryTextColor ??
                                       const Color(0xFF6B6B6B),
                                   size: 20,
                                 )
                               : IconButton(
                                   icon: Icon(
                                     Icons.clear,
-                                    color:
-                                        widget.configuration?.errorColor ??
+                                    color: widget.configuration?.errorColor ??
                                         const Color(0xFFF44336),
                                   ),
                                   onPressed: () {
@@ -768,10 +762,9 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                             vertical: 2,
                           ),
                           child: Divider(
-                            color:
-                                (widget.configuration?.secondaryTextColor ??
-                                        const Color(0xFF6B6B6B))
-                                    .withOpacityNew(0.1),
+                            color: (widget.configuration?.secondaryTextColor ??
+                                    const Color(0xFF6B6B6B))
+                                .withOpacityNew(0.1),
                             height: 0.5,
                           ),
                         );
@@ -828,8 +821,8 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
               return widget.headers.any((header) {
                 final headerValue = itemData[header.key] ?? '';
                 return headerValue.toString().toLowerCase().contains(
-                  value.toString().toLowerCase(),
-                );
+                      value.toString().toLowerCase(),
+                    );
               });
             })
             .map(
@@ -884,7 +877,9 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
       widget.state.validate();
       searchMethod("");
       // This helps ensure focus traversal moves to the next element
-      if (widget.autoOpen) FocusScope.of(context).nextFocus();
+      if (widget.autoOpen && widget.onTabPressed == null) {
+        FocusScope.of(context).nextFocus();
+      }
     });
   }
 
@@ -923,8 +918,8 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                 decoration: BoxDecoration(
                   color: selectedIndex == index
                       ? (widget.configuration?.primaryColor ??
-                                const Color(0xFF2196F3))
-                            .withOpacityNew(0.1)
+                              const Color(0xFF2196F3))
+                          .withOpacityNew(0.1)
                       : null,
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -941,8 +936,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                       width: 4,
                       height: selectedIndex == index ? 18 : 0,
                       decoration: BoxDecoration(
-                        color:
-                            widget.configuration?.primaryColor ??
+                        color: widget.configuration?.primaryColor ??
                             const Color(0xFF2196F3),
                         borderRadius: BorderRadius.circular(5),
                       ),
@@ -1006,7 +1000,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
         decoration: BoxDecoration(
           color: selectedIndex == index
               ? (widget.configuration?.primaryColor ?? const Color(0xFF2196F3))
-                    .withOpacityNew(0.1)
+                  .withOpacityNew(0.1)
               : null,
           borderRadius: BorderRadius.circular(4),
         ),
@@ -1041,8 +1035,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                   children: [
                     Checkbox(
                       value: isSelected,
-                      activeColor:
-                          widget.configuration?.primaryColor ??
+                      activeColor: widget.configuration?.primaryColor ??
                           const Color(0xFF2196F3),
                       onChanged: (bool? value) {
                         if (mounted) {
@@ -1071,8 +1064,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                               dataSource[index].text,
                               style: TextStyle(
                                 fontSize: widget.itemFontSize ?? 14,
-                                color:
-                                    dataSource[index].color ??
+                                color: dataSource[index].color ??
                                     widget.configuration?.secondaryTextColor ??
                                     const Color(0xFF6B6B6B),
                               ),
@@ -1085,15 +1077,13 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                               overflow: TextOverflow.ellipsis,
                               textStyle: TextStyle(
                                 fontSize: widget.itemFontSize ?? 14,
-                                color:
-                                    dataSource[index].color ??
+                                color: dataSource[index].color ??
                                     widget.configuration?.secondaryTextColor ??
                                     const Color(0xFF6B6B6B),
                               ),
                               textStyleHighlight: TextStyle(
                                 fontSize: widget.itemFontSize ?? 14,
-                                color:
-                                    dataSource[index].color ??
+                                color: dataSource[index].color ??
                                     widget.configuration?.secondaryTextColor ??
                                     const Color(0xFF6B6B6B),
                                 fontWeight: FontWeight.bold,
@@ -1117,15 +1107,13 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                   style: const TextStyle(fontSize: 14),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor:
-                        widget.configuration?.inputFillColor ??
+                    fillColor: widget.configuration?.inputFillColor ??
                         const Color(0xFFF5F5F5),
                     labelText: widget.inputLabel,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(6),
                       borderSide: BorderSide(
-                        color:
-                            widget.borderColor ??
+                        color: widget.borderColor ??
                             widget.configuration?.inputBorderColor ??
                             const Color(0xFFE0E0E0),
                         width: 1,
@@ -1134,8 +1122,7 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(6),
                       borderSide: BorderSide(
-                        color:
-                            widget.configuration?.inputFocusBorderColor ??
+                        color: widget.configuration?.inputFocusBorderColor ??
                             widget.configuration?.primaryColor ??
                             const Color(0xFF2196F3),
                         width: 1,
@@ -1186,16 +1173,15 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
       padding:
           widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color:
-            widget.backgroundColor ??
+        color: widget.backgroundColor ??
             widget.configuration?.inputFillColor ??
             const Color(0xFFF5F5F5),
         border: Border.all(
           color: widget.state.hasError
               ? (widget.configuration?.errorColor ?? const Color(0xFFF44336))
               : widget.borderColor ??
-                    widget.configuration?.inputBorderColor ??
-                    const Color(0xFFE0E0E0),
+                  widget.configuration?.inputBorderColor ??
+                  const Color(0xFFE0E0E0),
           width: mySize(xs: 0.5, lg: 0),
         ),
         borderRadius: BorderRadius.circular(widget.borderRadius ?? 6),
@@ -1219,11 +1205,10 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color:
-                                  (widget.multiSelectChipColor ??
-                                          widget.configuration?.primaryColor ??
-                                          const Color(0xFF2196F3))
-                                      .withOpacityNew(0.2),
+                              color: (widget.multiSelectChipColor ??
+                                      widget.configuration?.primaryColor ??
+                                      const Color(0xFF2196F3))
+                                  .withOpacityNew(0.2),
                               borderRadius: BorderRadius.circular(
                                 widget.itemBorderRadius ?? 6,
                               ),
@@ -1240,12 +1225,11 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                     text.isEmpty ? widget.hintText ?? "" : text,
                     textAlign: widget.textAlign,
                     style: TextStyle(
-                      color:
-                          myColor ??
+                      color: myColor ??
                           (text.isEmpty
                               ? (widget.configuration?.secondaryTextColor ??
-                                        const Color(0xFF6B6B6B))
-                                    .withOpacityNew(0.6)
+                                      const Color(0xFF6B6B6B))
+                                  .withOpacityNew(0.6)
                               : widget.configuration?.rowForegroundColor),
                       fontSize: widget.fontSize ?? 12,
                       fontWeight: FontWeight.w500,
@@ -1281,15 +1265,13 @@ class _ComboBoxInputState extends State<_ComboBoxInput> {
                 icon: Icon(
                   Icons.close,
                   size: 20,
-                  color:
-                      widget.configuration?.errorColor ??
+                  color: widget.configuration?.errorColor ??
                       const Color(0xFFF44336),
                 ),
               ),
           Icon(
             isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-            color:
-                widget.configuration?.secondaryTextColor ??
+            color: widget.configuration?.secondaryTextColor ??
                 const Color(0xFF6B6B6B),
           ),
         ],

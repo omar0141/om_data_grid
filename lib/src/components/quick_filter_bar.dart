@@ -22,6 +22,7 @@ class OmQuickFilterBar extends StatefulWidget {
   final bool showBackButton;
   final VoidCallback? onBackPress;
   final Widget? leading;
+  final bool isEditing;
 
   const OmQuickFilterBar({
     super.key,
@@ -37,6 +38,7 @@ class OmQuickFilterBar extends StatefulWidget {
     this.showBackButton = false,
     this.onBackPress,
     this.leading,
+    this.isEditing = false,
   });
 
   @override
@@ -175,11 +177,6 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (leadingWidget != null && _configs.isNotEmpty) ...[
-            const SizedBox(width: 8),
-            leadingWidget,
-            const SizedBox(width: 8),
-          ],
           Row(
             children: [
               if (leadingWidget != null && _configs.isEmpty) ...[
@@ -188,28 +185,31 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                 const SizedBox(width: 8),
               ],
               Expanded(
-                child: Scrollbar(
-                  controller: _horizontalScrollController,
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
+                child: ExcludeFocus(
+                  excluding: widget.isEditing,
+                  child: Scrollbar(
                     controller: _horizontalScrollController,
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: _configs.map((config) {
-                        final column = _internalColumns.firstWhere(
-                          (c) => c.key == config.columnKey,
-                          orElse: () => OmGridColumnModel(
-                            column: OmGridColumn(
-                              key: config.columnKey,
-                              title: config.columnKey,
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: _configs.map((config) {
+                          final column = _internalColumns.firstWhere(
+                            (c) => c.key == config.columnKey,
+                            orElse: () => OmGridColumnModel(
+                              column: OmGridColumn(
+                                key: config.columnKey,
+                                title: config.columnKey,
+                              ),
                             ),
-                          ),
-                        );
-                        return Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 12),
-                          child: _buildFilterRow(column, config),
-                        );
-                      }).toList(),
+                          );
+                          return Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 12),
+                            child: _buildFilterRow(column, config),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ),
@@ -220,11 +220,19 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (_effectiveConfig.showClearFiltersButton &&
-                        hasActiveFilters) ...[
-                      _buildClearFiltersButton(),
-                      const SizedBox(width: 8),
-                    ],
+                    ExcludeFocus(
+                      excluding: widget.isEditing,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_effectiveConfig.showClearFiltersButton &&
+                              hasActiveFilters) ...[
+                            _buildClearFiltersButton(),
+                            const SizedBox(width: 8),
+                          ],
+                        ],
+                      ),
+                    ),
                     if (_effectiveConfig.showGlobalSearch) ...[
                       ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 350),
@@ -232,45 +240,56 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
                       ),
                       const SizedBox(width: 8),
                     ],
-                    if (_effectiveConfig.showAddButton) ...[
-                      SizedBox(
-                        height: 38,
-                        child: IntrinsicWidth(
-                          child: OmDefaultButton(
-                            text: _effectiveConfig.addButtonText ??
-                                _effectiveConfig.labels.addButton,
-                            leadingIcon: _effectiveConfig.addButtonIcon ??
-                                Icon(
-                                  Icons.add,
-                                  size: 18,
-                                  color:
-                                      _effectiveConfig.addButtonForegroundColor ??
-                                          widget.configuration
-                                              ?.primaryForegroundColor ??
-                                          Colors.white,
+                    ExcludeFocus(
+                      excluding: widget.isEditing,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_effectiveConfig.showAddButton) ...[
+                            SizedBox(
+                              height: 38,
+                              child: IntrinsicWidth(
+                                child: OmDefaultButton(
+                                  text: _effectiveConfig.addButtonText ??
+                                      _effectiveConfig.labels.addButton,
+                                  leadingIcon: _effectiveConfig.addButtonIcon ??
+                                      Icon(
+                                        Icons.add,
+                                        size: 18,
+                                        color:
+                                            _effectiveConfig
+                                                    .addButtonForegroundColor ??
+                                                widget.configuration
+                                                    ?.primaryForegroundColor ??
+                                                Colors.white,
+                                      ),
+                                  backcolor:
+                                      _effectiveConfig.addButtonBackgroundColor,
+                                  forecolor:
+                                      _effectiveConfig.addButtonForegroundColor,
+                                  borderColor:
+                                      _effectiveConfig.addButtonBorderColor,
+                                  fontsize: _effectiveConfig.addButtonFontSize,
+                                  fontWeight:
+                                      _effectiveConfig.addButtonFontWeight,
+                                  padding: _effectiveConfig.addButtonPadding,
+                                  borderRadius:
+                                      _effectiveConfig.addButtonBorderRadius,
+                                  height: 38,
+                                  width: null,
+                                  press: widget.onAddPressed ??
+                                      widget.controller?.onAddPressed,
+                                  configuration: _effectiveConfig,
                                 ),
-                            backcolor:
-                                _effectiveConfig.addButtonBackgroundColor,
-                            forecolor:
-                                _effectiveConfig.addButtonForegroundColor,
-                            borderColor: _effectiveConfig.addButtonBorderColor,
-                            fontsize: _effectiveConfig.addButtonFontSize,
-                            fontWeight: _effectiveConfig.addButtonFontWeight,
-                            padding: _effectiveConfig.addButtonPadding,
-                            borderRadius:
-                                _effectiveConfig.addButtonBorderRadius,
-                            height: 38,
-                            width: null,
-                            press: widget.onAddPressed ??
-                                widget.controller?.onAddPressed,
-                            configuration: _effectiveConfig,
-                          ),
-                        ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          if (_effectiveConfig.showSettingsButton)
+                            _buildSettingsButton(),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                    ],
-                    if (_effectiveConfig.showSettingsButton)
-                      _buildSettingsButton(),
+                    ),
                   ],
                 ),
               ),
@@ -442,6 +461,7 @@ class _QuickFilterBarState extends State<OmQuickFilterBar> {
       padding: EdgeInsets.only(top: 2),
       child: TextField(
         controller: _searchController,
+        autofocus: false,
         onChanged: (value) {
           setState(() {});
           _performFiltering();

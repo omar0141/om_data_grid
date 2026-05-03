@@ -380,6 +380,7 @@ class _GridCellState extends State<GridCell> {
         height: rowH - 8,
         child: GridComboBox(
           initialValue: widget.value?.toString() ?? '',
+          initialText: widget.value?.toString() ?? '',
           items: widget.column.comboBoxSettings?.items ?? [],
           onChange: (newVal) {
             widget.onValueChange?.call(widget.column.key, newVal);
@@ -393,7 +394,7 @@ class _GridCellState extends State<GridCell> {
           borderRadius: 0,
           showClearButton: false,
           fontSize: 14,
-          autoOpen: true,
+          autoOpen: true, enableSearch: true,
           onTabPressed: widget.onNavigateCell,
         ),
       ),
